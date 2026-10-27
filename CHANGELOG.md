@@ -1,5 +1,11 @@
 # Changelog
 
+## v5
+- Backup reminder. The date of the last backup is remembered on the device (`ju_lastbackup_v1`, not part of the backup file).
+- The grown-up page shows a "Time to save a backup" banner with a **Save backup now** button when there are saved results and a school week has ended since the last backup, the last backup is more than 7 days old, or no backup has been made yet. It shows the date of the last backup and hides once a backup is saved.
+- The child home shows only a quiet line, "Ask a grown-up to save progress", with no button.
+- Scoring, the backup file format, and the games are unchanged.
+
 ## v4
 - Earned spoken hints in the puzzle games: locked until two real wrong answers on a word. Rapid or repeated wrong answers do not unlock, there is a cap of three hints per game session, and a parent PIN "Grown-up unlock" gives one extra hint.
 - Hint log saved locally and included in backup and restore (backup file version 2; older backups still load).

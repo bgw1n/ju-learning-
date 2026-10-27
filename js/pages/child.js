@@ -58,4 +58,7 @@
         h('span', { class: 'gblurb' }, rv.blurb)), testCard);
     }
   }
+
+  /* gentle backup nudge for the grown-ups: one quiet line at the bottom, no button */
+  try { await JU.backup.showHint(document.getElementById('backup-hint')); } catch (e) { /* never disturb her games */ }
 })();

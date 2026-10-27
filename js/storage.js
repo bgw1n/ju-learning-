@@ -9,6 +9,8 @@
      correct (bool, right on the first try, or for hangman with 2 or fewer missed letters),
      tries (number of answers submitted), hinted (true when the spoken hint was used on that word; then correct is false) }
 
+   Last backup date (key ju_lastbackup_v1): one ISO time, set when Save progress downloads a backup. Used only to show the backup reminder.
+
    Hint log record shape (separate from results, key ju_hints_v1; part of the Save progress backup):
    { id, ts (ISO), session, week, subject, game, word,
      kind ('hint' = the spoken hint was used | 'grownup' = a grown-up unlocked the hint with the PIN | 'rapid' = quick wrong answers flagged),
@@ -18,6 +20,7 @@
   const STICKERS_KEY = 'ju_stickers_v1';
   const VOICE_KEY = 'ju_voice_v1';
   const HINTS_KEY = 'ju_hints_v1';
+  const BACKUP_KEY = 'ju_lastbackup_v1';
 
   function read(key, fallback) {
     try {
@@ -104,6 +107,9 @@
       return { added, skipped };
     },
     async clearHints() { localStorage.removeItem(HINTS_KEY); },
+    /* ---- last backup date (this device only; NOT in the backup file, and kept when results are cleared) ---- */
+    async getLastBackup() { const v = read(BACKUP_KEY, null); return typeof v === 'string' && !isNaN(new Date(v)) ? v : null; },
+    async setLastBackup(iso) { write(BACKUP_KEY, iso || new Date().toISOString()); return iso; },
     async clearStickers() { localStorage.removeItem(STICKERS_KEY); }
   };
 })();

@@ -230,14 +230,19 @@
 
   /* save / load progress (a JSON backup file) */
   const backupMsg = document.getElementById('backup-msg');
-  document.getElementById('save-progress').addEventListener('click', async () => {
+  const banner = document.getElementById('backup-banner');
+  async function saveBackup() {
     const data = { app: 'ju-learning', version: 2, exportedAt: new Date().toISOString(),
       results: await JU.storage.getResults(), stickers: await JU.storage.getStickers(), hints: await JU.storage.getHints() };
     const blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
     const a = h('a', { href: URL.createObjectURL(blob), download: 'julianna-progress-' + JU.ui.localDate(data.exportedAt) + '.json' });
     document.body.appendChild(a); a.click(); a.remove();
+    await JU.storage.setLastBackup(data.exportedAt);
     backupMsg.textContent = 'Saved a backup with ' + data.results.length + ' results. Keep the file somewhere safe.';
-  });
+    await JU.backup.showBanner(banner, saveBackup);
+  }
+  document.getElementById('save-progress').addEventListener('click', saveBackup);
+  JU.backup.showBanner(banner, saveBackup);
   const loadFile = document.getElementById('load-file');
   document.getElementById('load-progress').addEventListener('click', () => loadFile.click());
   loadFile.addEventListener('change', async () => {
@@ -252,6 +257,7 @@
       const hr = Array.isArray(data.hints) ? await JU.storage.importHints(data.hints) : null;
       backupMsg.textContent = 'Loaded: ' + r.added + ' new results added, ' + r.skipped + ' already here or skipped.' + (hr ? ' Hint log: ' + hr.added + ' added.' : '');
       await render();
+      await JU.backup.showBanner(banner, saveBackup);
     } catch (e) {
       backupMsg.textContent = 'That file is not a progress backup, so nothing was changed.';
     }
@@ -271,7 +277,7 @@
   /* clear, with confirm */
   const dlg = document.getElementById('confirm');
   document.getElementById('clear').addEventListener('click', () => dlg.showModal());
-  dlg.addEventListener('close', async () => { if (dlg.returnValue === 'ok') { await JU.storage.clearResults(); await JU.storage.clearHints(); await render(); } dlg.returnValue = ''; });
+  dlg.addEventListener('close', async () => { if (dlg.returnValue === 'ok') { await JU.storage.clearResults(); await JU.storage.clearHints(); await render(); await JU.backup.showBanner(banner, saveBackup); } dlg.returnValue = ''; });
   document.getElementById('reset-stickers').addEventListener('click', async () => {
     if (window.confirm('Reset all of Julianna\u2019s stickers?')) { await JU.storage.clearStickers(); await render(); }
   });

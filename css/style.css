@@ -246,3 +246,11 @@ dialog::backdrop { background: rgba(35, 50, 63, 0.45); }
 .hint-pinmsg { min-height: 1.4em; color: #8a3a22; font-weight: 600; }
 .hints-readout { font-size: 1.05rem; }
 .hints-readout.calm { color: var(--teal-dark); }
+
+/* backup reminder: calm banner on the grown-up page, one quiet line on the child page */
+.backup-banner { background: #eaf4fb; border: 2px solid #9fc4e3; border-radius: var(--radius); padding: 1rem 1.5rem; margin: 0 0 1.2rem; }
+.backup-banner h2 { margin: 0 0 0.3rem; }
+.backup-banner .lead { margin: 0 0 0.8rem; }
+.backup-banner .note { margin: 0.6rem 0 0; }
+.backup-banner[hidden], .backup-hint[hidden] { display: none; }
+.backup-hint { margin: 2rem 0 0; text-align: center; color: var(--soft); font-size: 0.95rem; }

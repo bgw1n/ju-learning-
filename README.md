@@ -77,6 +77,7 @@ All reads and writes go through `js/storage.js`, one small module with async fun
 - `ju_stickers_v1` holds stickers earned per week.
 - `ju_hints_v1` holds the hint log.
 - `ju_voice_v1` holds the voice settings (separate from scores).
+- `ju_lastbackup_v1` holds the date of the last backup, for the reminder. It is not part of the backup file, and Clear results keeps it.
 
 Results exist only in that browser on that device. They do not sync, and clearing site data erases them. On the grown-up page:
 
@@ -84,7 +85,7 @@ Results exist only in that browser on that device. They do not sync, and clearin
 - **Load progress** merges such a file back in. Results already present are skipped, so loading the same file twice, or an older backup, never creates duplicates. A file that is not a backup is refused.
 - **Export results (CSV)** is for spreadsheets, not for restoring.
 
-Save a backup now and then, for example once a week. To share results across devices later, replace the function bodies in `storage.js` with calls to a backend; nothing else needs to change.
+Save a backup now and then, for example once a week. The site reminds you (see **Backup reminder** below). To share results across devices later, replace the function bodies in `storage.js` with calls to a backend; nothing else needs to change.
 
 ## Features
 
@@ -92,6 +93,7 @@ Save a backup now and then, for example once a week. To share results across dev
 - **Review game:** appears on the child home only when there are words missed in an earlier week. It replays the most-missed words using the Unscramble and Listen-and-Type mechanics, and a word fades out after two right answers in a row.
 - **Earned hints:** in the puzzle games (Unscramble, Grow the Flower, Word Match, Clap the Beats) the spoken "Hear the word" hint is locked until the child has two real wrong answers on that word. Very fast or repeated wrong answers do not count, so the hint cannot be gamed. A grown-up can unlock one hint with the parent PIN, and there is a cap of three hints per game session. Words that needed a hint count as missed and stay in the practice list. Every hint is logged and shown on the grown-up page.
 - **Voice:** "Hear the word" uses the browser's built-in text-to-speech. `js/speech.js` ranks the English voices on the device and prefers natural-sounding ones, speaking at 0.85x by default. The grown-up page has a voice picker, speed slider, and a Test voice button. If a device only has a basic robotic voice, the page shows a short tip for getting a better one.
+- **Backup reminder:** when there are saved results and a school week has ended since the last backup (a week counts as over from Saturday), or the last backup is more than 7 days old, or no backup has ever been made, the grown-up page shows a calm banner, "Time to save a backup", with a **Save backup now** button (the same download as Save progress) and the date of the last backup. The banner hides once a backup is saved. The child home shows only a quiet line at the bottom, "Ask a grown-up to save progress", with no button. There are no timers, no network calls, and nothing is shown when there are no results. The browser requires a click to download a file, so the site can remind but cannot save a backup by itself.
 - **Accessibility:** no timers, no progress bars, animations off for people who prefer reduced motion, and letter case never gives an answer away.
 
 What counts as correct: Unscramble, Listen and Type, Word Match, and Clap the Beats count as correct when right on the first try. Grow the Flower counts as correct with two or fewer missed letters. The test counts one try per word.
@@ -110,7 +112,7 @@ index.html child.html game.html parent.html   pages
 css/style.css                                 styles
 fonts/                                        bundled Lexend font
 data/weeks.json, data/week-*.json             weekly word data
-js/                                           config, auth, storage, speech, hints, runner, ui, subjects, weeks
+js/                                           config, auth, storage, backup, speech, hints, runner, ui, subjects, weeks
 js/pages/                                     page scripts
 js/spelling/                                  one file per game
 add_week.py                                   adds a week from a clues file
