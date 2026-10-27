@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grown-up page</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>JU.auth.require(['parent']);</script>
+</head>
+<body class="dash">
+  <div id="site-header"></div>
+  <main class="page wide">
+    <h1>Grown-up page</h1>
+    <p class="note storage-note">Results are saved in this laptop&rsquo;s browser only. They do not sync to other devices, and clearing the browser&rsquo;s site data will erase them. Use <strong>Save progress</strong> to keep a backup file, and <strong>Load progress</strong> to put it back (or move it to another laptop).</p>
+
+    <section class="toolbar" aria-label="Actions">
+      <label for="week-filter">Show: </label>
+      <select id="week-filter" class="select"></select>
+      <a id="proctor" class="btn primary" href="game.html?s=spelling&amp;g=test&amp;proctor=1">Proctor mode: start the test</a>
+      <a class="btn" href="child.html">Open the games</a>
+      <button id="export" class="btn" type="button">Export results (CSV)</button>
+      <button id="save-progress" class="btn" type="button">Save progress (backup file)</button>
+      <button id="load-progress" class="btn" type="button">Load progress&hellip;</button>
+      <input id="load-file" type="file" accept="application/json,.json" hidden aria-label="Choose a progress backup file">
+      <button id="clear" class="btn danger" type="button">Clear results</button>
+    </section>
+
+    <p id="backup-msg" class="note" role="status" aria-live="polite"></p>
+
+    <div id="empty" class="card" hidden><p class="lead">No results yet. Once Julianna plays a game or takes the test, her results will show up here.</p></div>
+
+    <section class="cards" id="summary" aria-label="Summary"></section>
+
+    <section class="card" id="trend-card" aria-labelledby="trend-h">
+      <h2 id="trend-h">Week by week</h2>
+      <p class="note">Each week of words, side by side (all weeks, whatever is picked above). Review practice is not counted here.</p>
+      <div id="trend" class="trend"></div>
+      <details class="trend-table"><summary>See the numbers</summary><div class="tablewrap"><table id="trend-nums"></table></div></details>
+    </section>
+
+    <section class="card"><h2>Practice these next</h2><div id="practice"></div></section>
+    <section class="card"><h2>Words she keeps missing</h2>
+      <p class="note">Words missed in 2 or more different weeks (a miss in Review counts too). A word leaves this list after two right answers in a row in Review.</p>
+      <div class="tablewrap"><table id="keeps"></table></div></section>
+    <section class="card"><h2>Words, most missed first</h2><div class="tablewrap"><table id="words"></table></div></section>
+    <section class="card"><h2>What she typed (misspellings)</h2><div class="tablewrap"><table id="typos"></table></div></section>
+    <section class="two">
+      <div class="card"><h2>Scores by day</h2><div class="tablewrap"><table id="byday"></table></div></div>
+      <div class="card"><h2>Scores by game</h2><div class="tablewrap"><table id="bygame"></table></div></div>
+    </section>
+    <section class="card"><h2>Test results</h2><div class="tablewrap"><table id="tests"></table></div></section>
+    <section class="card"><h2>Sticker book</h2><div class="row"><p class="note" id="stickernote"></p><button id="reset-stickers" class="btn small" type="button">Reset stickers</button></div></section>
+  </main>
+
+  <dialog id="confirm" aria-labelledby="confirm-title">
+    <form method="dialog">
+      <h2 id="confirm-title">Clear all results?</h2>
+      <p>This erases every saved game and test result on this laptop. It cannot be undone. You may want to export first.</p>
+      <div class="row">
+        <button class="btn" value="cancel" id="confirm-cancel">Keep them</button>
+        <button class="btn danger" value="ok" id="confirm-ok">Yes, clear results</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/ui.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/weeks.js"></script>
+  <script src="js/subjects.js"></script>
+  <script src="js/runner.js"></script>
+  <script src="js/spelling/unscramble.js"></script>
+  <script src="js/spelling/hangman.js"></script>
+  <script src="js/spelling/match.js"></script>
+  <script src="js/spelling/listen.js"></script>
+  <script src="js/spelling/clap.js"></script>
+  <script src="js/spelling/test.js"></script>
+  <script src="js/spelling/review.js"></script>
+  <script src="js/pages/parent.js"></script>
+</body>
+</html>
