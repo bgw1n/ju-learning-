@@ -34,11 +34,34 @@
 
     <section class="cards" id="summary" aria-label="Summary"></section>
 
+    <section class="card" id="voice-card" aria-labelledby="voice-h">
+      <h2 id="voice-h">Voice settings</h2>
+      <p class="note">Pick the voice that reads the words aloud on this laptop. It is saved on this device only.</p>
+      <div class="voice-grid">
+        <div><label for="voice-select">Voice</label><select id="voice-select" class="select"></select></div>
+        <div><label for="voice-rate">Speed: <span id="voice-rate-out"></span></label>
+          <input id="voice-rate" type="range" min="0.6" max="1.1" step="0.05"></div>
+        <div class="row"><button id="voice-test" class="btn primary" type="button">Test voice</button><span id="voice-msg" class="note" role="status" aria-live="polite"></span></div>
+        <p id="voice-note" class="note voice-note" hidden></p>
+      </div>
+    </section>
+
     <section class="card" id="trend-card" aria-labelledby="trend-h">
       <h2 id="trend-h">Week by week</h2>
       <p class="note">Each week of words, side by side (all weeks, whatever is picked above). Review practice is not counted here.</p>
       <div id="trend" class="trend"></div>
       <details class="trend-table"><summary>See the numbers</summary><div class="tablewrap"><table id="trend-nums"></table></div></details>
+    </section>
+
+    <section class="card" id="hints-card" aria-labelledby="hints-h">
+      <h2 id="hints-h">Hints</h2>
+      <p class="note">In Unscramble, Grow the Flower, Word Match and Clap the Beats, the spoken &ldquo;Hear the word&rdquo; hint unlocks after 2 real wrong tries. Very quick or repeated wrong answers do not count, and then she has to ask a grown-up. A word where a hint was used does not count as right, so it stays in her practice list. Follows the week picked above.</p>
+      <div class="cards" id="hints-summary"></div>
+      <p id="hints-readout" class="hints-readout"></p>
+      <h3>By game</h3>
+      <div class="tablewrap"><table id="hints-games"></table></div>
+      <h3>By word, each week</h3>
+      <div class="tablewrap"><table id="hints-words"></table></div>
     </section>
 
     <section class="card"><h2>Practice these next</h2><div id="practice"></div></section>
@@ -58,7 +81,7 @@
   <dialog id="confirm" aria-labelledby="confirm-title">
     <form method="dialog">
       <h2 id="confirm-title">Clear all results?</h2>
-      <p>This erases every saved game and test result on this laptop. It cannot be undone. You may want to export first.</p>
+      <p>This erases every saved game and test result, and the hint log, on this laptop. It cannot be undone. You may want to export first.</p>
       <div class="row">
         <button class="btn" value="cancel" id="confirm-cancel">Keep them</button>
         <button class="btn danger" value="ok" id="confirm-ok">Yes, clear results</button>
@@ -68,6 +91,7 @@
 
   <script src="js/ui.js"></script>
   <script src="js/storage.js"></script>
+  <script src="js/speech.js"></script>
   <script src="js/weeks.js"></script>
   <script src="js/subjects.js"></script>
   <script src="js/runner.js"></script>
