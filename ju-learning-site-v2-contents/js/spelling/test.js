@@ -37,13 +37,13 @@
         ctx.clear();
         ctx.stage.appendChild(h('div', { class: 'card game' },
           ctx.roundTag(), h('h2', null, 'Listen and type the word'),
-          h('div', { class: 'row center' }, ctx.speakButton(w.word, 'Hear it again')),
+          h('div', { class: 'row center' }, ctx.speakButton(w.word, 'Hear it again', { sentence: w.sentence })),
           input,
           h('div', { class: 'row' },
             h('button', { class: 'btn', type: 'button', onclick: () => submit(true) }, 'I\u2019m not sure'),
             h('button', { class: 'btn primary big', type: 'button', onclick: () => submit(false) }, 'Next \u2192'))));
         input.focus();
-        JU.speech.say(w.word);
+        JU.speech.dictate(w.word, w.sentence);
       });
     },
     async finish(ctx) {

@@ -19,6 +19,7 @@
   JU.registerGame('spelling', {
     id: 'match', title: 'Word Match', emoji: '\uD83D\uDD17', sticker: '\uD83D\uDC1E',
     blurb: 'Match each word to its clue or its syllables.',
+    hintGate: true,
     playWord(ctx, w) {
       return new Promise(resolve => {
         const kind = ctx.index % 2 === 0 ? 'clue' : 'split';
@@ -44,6 +45,7 @@
           return o.el;
         }));
         const footer = h('div', { class: 'row' });
+        const hint = kind === 'clue' ? ctx.hintGate(w, 'Hear the word') : null;   // the syllables question shows the word, so there is no hint
         function pick(o) {
           if (locked) return;
           tries++; typedAll.push(o.text);
@@ -57,6 +59,7 @@
             footer.replaceChildren(next); next.focus();
           } else {
             o.el.classList.add('tried'); o.el.disabled = true;
+            if (hint) hint.miss(o.text);
             msg.textContent = 'Not that one. Try another!';
           }
         }
@@ -68,7 +71,7 @@
         ctx.clear();
         ctx.stage.appendChild(h('div', { class: 'card game' },
           ctx.roundTag(), h('h2', null, prompt), show,
-          kind === 'clue' ? h('div', { class: 'row center' }, ctx.speakButton(w.word, 'Hear the word')) : null,
+          hint ? h('div', { class: 'row center' }, hint.el) : null,
           list, msg, footer));
       });
     }

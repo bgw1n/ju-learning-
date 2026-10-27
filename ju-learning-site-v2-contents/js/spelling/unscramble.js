@@ -15,6 +15,7 @@
   JU.registerGame('spelling', {
     id: 'unscramble', title: 'Unscramble', emoji: '\uD83E\uDDE9', sticker: '\uD83E\uDD8B',
     blurb: 'Tap the letters to build each word.',
+    hintGate: true,   // the spoken hint is earned (js/hints.js); Review reuses this game without it
     playWord(ctx, w) {
       return new Promise(resolve => {
         const cols = JU.weeks.letterColors(ctx.week, w);
@@ -33,7 +34,8 @@
         const msg = h('p', { class: 'msg', 'aria-live': 'polite' }, 'Tap the letters in order. You can do it!');
         const check = h('button', { class: 'btn primary big', type: 'button', disabled: true, onclick: () => submit() }, 'Check my word');
         const undo = h('button', { class: 'btn', type: 'button', onclick: () => backspace() }, '\u232B Undo');
-        const hear = ctx.speakButton(w.word, 'Hear the word');
+        const hint = ctx.hintGate(w, 'Hear the word');
+        const hear = hint.el;
         const controls = h('div', { class: 'row' }, undo, check);
 
         function layout() {
@@ -73,6 +75,7 @@
             [...w.word].forEach(ch => { const t = tiles.find(x => !x.used && x.ch === ch); t.used = true; placed.push(t); });
             return finishWord(false, typed);
           }
+          hint.miss(typed);
           msg.textContent = 'Almost! Look at the colors and try again.';
           placed.length = 0; tiles.forEach(t => t.used = false); layout();
         }
@@ -96,7 +99,7 @@
           h('div', { class: 'row center' }, hear),
           answer, msg, bank, controls));
         layout();
-        JU.speech.say(w.word);
+        if (!hint.gated) JU.speech.say(w.word);   // the word is only said up front when the hint is not earned (Review)
       });
     }
   });

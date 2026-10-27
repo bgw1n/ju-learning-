@@ -74,6 +74,7 @@
       'No misspellings recorded.');
 
     renderTrend(all);
+    await renderHints(sel);
     renderKeeps(all);
 
     /* practice next */
@@ -196,13 +197,42 @@
       'No repeat misses yet. Nice!');
   }
 
+  /* ---------- hints (earned spoken hint in the puzzle games) ---------- */
+  async function renderHints(sel) {
+    const log = (await JU.storage.getHints()).filter(r => sel === 'all' || r.week === sel);
+    const uses = log.filter(r => r.kind === 'hint'), ups = log.filter(r => r.kind === 'grownup'), rapid = log.filter(r => r.kind === 'rapid');
+    const earned = uses.filter(r => r.earned).length, byGrown = uses.length - earned;
+    document.getElementById('hints-summary').replaceChildren(
+      statCard('Hints used', uses.length), statCard('Earned with 2 tries', earned),
+      statCard('Grown-up unlocks', ups.length), statCard('Rapid-miss flags', rapid.length));
+    const ro = document.getElementById('hints-readout');
+    if (!log.length) { ro.className = 'hints-readout calm'; ro.textContent = 'No hints used yet. She has not needed one, or has not played a puzzle game.'; }
+    else {
+      const bits = [];
+      bits.push(uses.length ? 'She used ' + uses.length + (uses.length === 1 ? ' hint' : ' hints') + ' (' + earned + ' earned' + (byGrown ? ', ' + byGrown + ' with a grown-up' : '') + ').' : 'No hints were used.');
+      if (ups.length) bits.push('A grown-up unlocked ' + ups.length + (ups.length === 1 ? ' hint.' : ' hints.'));
+      bits.push(rapid.length ? rapid.length + (rapid.length === 1 ? ' word had' : ' words had') + ' very quick or repeated wrong answers. Those do not unlock a hint, so it may mean she was guessing. Worth a chat if you see it often.' : 'No rapid-miss flags, so she seems to be really trying.');
+      ro.className = 'hints-readout' + (rapid.length ? '' : ' calm'); ro.textContent = bits.join(' ');
+    }
+    const gm = {};
+    log.forEach(r => { const x = gm[r.game] = gm[r.game] || { game: r.game, hints: 0, grown: 0, rapid: 0 }; if (r.kind === 'hint') x.hints++; else if (r.kind === 'grownup') x.grown++; else x.rapid++; });
+    fillTable(document.getElementById('hints-games'), ['Game', 'Hints used', 'Grown-up unlocks', 'Rapid-miss flags'],
+      Object.values(gm).sort((a, b) => b.hints - a.hints || (a.game < b.game ? -1 : 1)).map(x => [gameTitle(x.game), x.hints, x.grown, x.rapid]), 'No hints used yet.');
+    const wm = {};
+    log.forEach(r => { const k = r.week + '|' + r.word; const x = wm[k] = wm[k] || { week: r.week, word: r.word, hints: 0, grown: 0, rapid: 0, games: new Set() }; if (r.kind === 'hint') x.hints++; else if (r.kind === 'grownup') x.grown++; else x.rapid++; x.games.add(gameTitle(r.game)); });
+    const wl = id => { const w = weeks.find(x => x.id === id); return w ? w.label : id; };
+    fillTable(document.getElementById('hints-words'), ['Week', 'Word', 'Where', 'Hints used', 'Grown-up unlocks', 'Rapid-miss flags'],
+      Object.values(wm).sort((a, b) => b.hints - a.hints || b.rapid - a.rapid || (a.week < b.week ? 1 : -1) || (a.word < b.word ? -1 : 1))
+        .map(x => [wl(x.week), wordCell(x.word), [...x.games].join(', '), x.hints, x.grown, x.rapid]), 'No hints used yet.');
+  }
+
   function statCard(label, value) { return h('div', { class: 'stat' }, h('div', { class: 'stat-n' }, String(value)), h('div', { class: 'stat-l' }, label)); }
 
   /* save / load progress (a JSON backup file) */
   const backupMsg = document.getElementById('backup-msg');
   document.getElementById('save-progress').addEventListener('click', async () => {
-    const data = { app: 'ju-learning', version: 1, exportedAt: new Date().toISOString(),
-      results: await JU.storage.getResults(), stickers: await JU.storage.getStickers() };
+    const data = { app: 'ju-learning', version: 2, exportedAt: new Date().toISOString(),
+      results: await JU.storage.getResults(), stickers: await JU.storage.getStickers(), hints: await JU.storage.getHints() };
     const blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
     const a = h('a', { href: URL.createObjectURL(blob), download: 'julianna-progress-' + JU.ui.localDate(data.exportedAt) + '.json' });
     document.body.appendChild(a); a.click(); a.remove();
@@ -218,7 +248,9 @@
       if (!data || data.app !== 'ju-learning' || !Array.isArray(data.results)) throw new Error('not a backup');
       const r = await JU.storage.importResults(data.results);
       await JU.storage.importStickers(data.stickers);
-      backupMsg.textContent = 'Loaded: ' + r.added + ' new results added, ' + r.skipped + ' already here or skipped.';
+      /* older backups (version 1) have no hint log */
+      const hr = Array.isArray(data.hints) ? await JU.storage.importHints(data.hints) : null;
+      backupMsg.textContent = 'Loaded: ' + r.added + ' new results added, ' + r.skipped + ' already here or skipped.' + (hr ? ' Hint log: ' + hr.added + ' added.' : '');
       await render();
     } catch (e) {
       backupMsg.textContent = 'That file is not a progress backup, so nothing was changed.';
@@ -239,10 +271,44 @@
   /* clear, with confirm */
   const dlg = document.getElementById('confirm');
   document.getElementById('clear').addEventListener('click', () => dlg.showModal());
-  dlg.addEventListener('close', async () => { if (dlg.returnValue === 'ok') { await JU.storage.clearResults(); await render(); } dlg.returnValue = ''; });
+  dlg.addEventListener('close', async () => { if (dlg.returnValue === 'ok') { await JU.storage.clearResults(); await JU.storage.clearHints(); await render(); } dlg.returnValue = ''; });
   document.getElementById('reset-stickers').addEventListener('click', async () => {
     if (window.confirm('Reset all of Julianna\u2019s stickers?')) { await JU.storage.clearStickers(); await render(); }
   });
+
+  /* voice settings */
+  (async function voiceSettings() {
+    const sel = document.getElementById('voice-select'), rate = document.getElementById('voice-rate');
+    const out = document.getElementById('voice-rate-out'), note = document.getElementById('voice-note');
+    const msg = document.getElementById('voice-msg'), testBtn = document.getElementById('voice-test');
+    if (!JU.speech.supported) {
+      sel.disabled = rate.disabled = testBtn.disabled = true;
+      note.hidden = false; note.textContent = 'This browser cannot read aloud. Try Chrome or Edge.';
+      return;
+    }
+    await JU.speech.ready();
+    const prefs = JU.speech.getPrefs();
+    rate.value = prefs.rate; out.textContent = Number(prefs.rate).toFixed(2) + 'x';
+    function fillVoices() {
+      const list = JU.speech.voices();
+      const cur = JU.speech.getPrefs().voice;
+      sel.replaceChildren(h('option', { value: '' }, 'Automatic (best one available)'),
+        ...list.map(v => h('option', { value: JU.speech.voiceId(v) }, v.name + ' (' + v.lang + ')' + (JU.speech.isGood(v) ? ' \u2605' : ''))));
+      sel.value = cur && list.some(v => JU.speech.voiceId(v) === cur) ? cur : '';
+      note.hidden = JU.speech.hasGoodVoice();
+      note.textContent = 'This device only has a basic voice. For a clearer one, use Chrome or Edge, which often offer Natural or Google voices. On a Chromebook: Settings > Accessibility > Text-to-Speech voices.';
+      if (!list.length) note.textContent = 'No English voice was found. ' + note.textContent;
+    }
+    fillVoices();
+    JU.speech.onVoicesChanged(fillVoices);
+    sel.addEventListener('change', async () => { await JU.speech.setPrefs({ voice: sel.value }); msg.textContent = 'Saved.'; });
+    rate.addEventListener('input', () => { out.textContent = Number(rate.value).toFixed(2) + 'x'; });
+    rate.addEventListener('change', async () => { await JU.speech.setPrefs({ rate: Number(rate.value) }); msg.textContent = 'Saved.'; });
+    testBtn.addEventListener('click', () => {
+      msg.textContent = '';
+      JU.speech.dictate('total', 'The total of two plus three is five.');
+    });
+  })();
 
   await render();
 })();

@@ -226,3 +226,23 @@ dialog::backdrop { background: rgba(35, 50, 63, 0.45); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* speak buttons (Hear it + Slower) and the grown-up voice settings */
+.speakers { display: inline-flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; justify-content: center; }
+.voice-grid { display: grid; gap: 0.8rem; max-width: 640px; }
+.voice-grid label { font-weight: 600; display: block; margin-bottom: 0.25rem; }
+.voice-grid .select { width: 100%; }
+.voice-grid input[type=range] { width: 100%; min-height: 32px; accent-color: var(--teal); }
+.voice-note { background: var(--sand); border-radius: 12px; padding: 0.7rem 1rem; }
+
+/* earned hint: locked speaker, grown-up unlock, PIN box */
+.hintbox { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+.hintbox .note { margin: 0; }
+.btn.locked { background: var(--sand); border: 3px dashed #8a8575; color: #4a5560; cursor: default; }
+.btn.locked:hover:not(:disabled) { background: var(--sand); }
+.pinform { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; background: #fff; border: 3px solid var(--line); border-radius: 14px; padding: 0.6rem 1rem; }
+.pinlabel { font-weight: 600; }
+.pinbox { font: inherit; font-size: 1.4rem; letter-spacing: 0.3em; width: 7.5em; min-height: 52px; text-align: center; border: 3px solid var(--teal); border-radius: 12px; padding: 0.2rem 0.5rem; }
+.hint-pinmsg { min-height: 1.4em; color: #8a3a22; font-weight: 600; }
+.hints-readout { font-size: 1.05rem; }
+.hints-readout.calm { color: var(--teal-dark); }

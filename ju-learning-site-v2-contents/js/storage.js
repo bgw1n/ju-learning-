@@ -7,10 +7,17 @@
    { id, ts (ISO), session, week, subject, type ('unscramble'|'hangman'|'match'|'listen'|'clap'|'test'),
      proctored (bool), word, typed (first answer), typedAll (every answer, in order),
      correct (bool, right on the first try, or for hangman with 2 or fewer missed letters),
-     tries (number of answers submitted) } */
+     tries (number of answers submitted), hinted (true when the spoken hint was used on that word; then correct is false) }
+
+   Hint log record shape (separate from results, key ju_hints_v1; part of the Save progress backup):
+   { id, ts (ISO), session, week, subject, game, word,
+     kind ('hint' = the spoken hint was used | 'grownup' = a grown-up unlocked the hint with the PIN | 'rapid' = quick wrong answers flagged),
+     earned (bool, only for 'hint': true when she earned it with 2 real tries), how ('earned'|'grownup', only for 'hint') } */
 (function () {
   const RESULTS_KEY = 'ju_results_v1';
   const STICKERS_KEY = 'ju_stickers_v1';
+  const VOICE_KEY = 'ju_voice_v1';
+  const HINTS_KEY = 'ju_hints_v1';
 
   function read(key, fallback) {
     try {
@@ -68,6 +75,35 @@
       write(STICKERS_KEY, all);
       return isNew;
     },
+    /* Voice settings for this device only: { voice: <voiceURI or ''>, rate: 0.6-1.1 }. Not part of scores or backups. */
+    async getVoicePrefs() { return read(VOICE_KEY, null); },
+    async setVoicePrefs(p) { write(VOICE_KEY, p); return p; },
+    /* ---- hint log ---- */
+    async getHints() { return read(HINTS_KEY, []); },
+    async addHint(rec) {
+      const all = read(HINTS_KEY, []);
+      all.push(rec);
+      write(HINTS_KEY, all);
+      return rec;
+    },
+    /* Merge hint records from a backup without duplicating (same id, or same session + game + word + kind + time). Returns { added, skipped }. */
+    async importHints(list) {
+      const all = read(HINTS_KEY, []);
+      const key = r => [r.session, r.game, r.word, r.kind, r.ts].join('|');
+      const ids = new Set(all.map(r => r.id)), keys = new Set(all.map(key));
+      let added = 0, skipped = 0;
+      (Array.isArray(list) ? list : []).forEach(r => {
+        const ok = r && typeof r.word === 'string' && typeof r.week === 'string' && typeof r.game === 'string' && typeof r.ts === 'string' && ['hint', 'grownup', 'rapid'].indexOf(r.kind) !== -1;
+        if (!ok) { skipped++; return; }
+        if ((r.id && ids.has(r.id)) || keys.has(key(r))) { skipped++; return; }
+        const rec = Object.assign({}, r, { id: r.id || JU.ui.uid(), subject: r.subject || 'spelling' });
+        all.push(rec); ids.add(rec.id); keys.add(key(rec)); added++;
+      });
+      all.sort((a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0);
+      write(HINTS_KEY, all);
+      return { added, skipped };
+    },
+    async clearHints() { localStorage.removeItem(HINTS_KEY); },
     async clearStickers() { localStorage.removeItem(STICKERS_KEY); }
   };
 })();

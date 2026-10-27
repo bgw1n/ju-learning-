@@ -30,7 +30,7 @@
         partEls.forEach((p, k) => p.classList.toggle('lit', k === i));
         exBeats.textContent += '\uD83D\uDC4F ';
         clapSound();
-        await JU.speech.say(EXAMPLE.syllables[i], { rate: 0.7 });
+        await JU.speech.say(EXAMPLE.syllables[i], { factor: 0.8 });
         await JU.ui.sleep(250);
       }
       partEls.forEach(p => p.classList.remove('lit'));
@@ -43,7 +43,7 @@
         h('h2', null, 'Clap the Beats'),
         h('p', { class: 'lead' }, 'Every word is made of beats. Each beat is one part of the word you say. These parts are called syllables.'),
         h('ol', { class: 'steps' },
-          h('li', null, 'Listen to the word.'),
+          h('li', null, 'Look at the word and say it out loud.'),
           h('li', null, 'Say it slowly and clap once for every beat.'),
           h('li', null, 'Tap the clap button once for each beat, then press Check.'),
           h('li', null, 'Then tap between the letters to cut the word into its beats.')),
@@ -60,6 +60,7 @@
   JU.registerGame('spelling', {
     id: 'clap', title: 'Clap the Beats', emoji: '\uD83D\uDC4F', sticker: '\uD83D\uDC1D',
     blurb: 'Clap and cut each word into its beats.',
+    hintGate: true,
     intro,
     playWord(ctx, w) {
       return new Promise(resolve => {
@@ -71,6 +72,7 @@
         const body = h('div');
         const msg = h('p', { class: 'msg', 'aria-live': 'polite' });
         const footer = h('div', { class: 'row' });
+        const hint = ctx.hintGate(w, 'Hear the word');
 
         function finish() {
           ctx.record({ word: w.word, typed: typedAll[0], typedAll, correct: wrongTotal === 0, tries: typedAll.length });
@@ -89,11 +91,10 @@
             if (revealed) return step2();
             typedAll.push('claps:' + claps);
             if (claps === want) { msg.textContent = 'Yes! ' + want + (want === 1 ? ' beat.' : ' beats.'); return step2(); }
-            wrong++; wrongTotal++;
+            wrong++; wrongTotal++; hint.miss('claps:' + claps, { repeatOk: true });
             if (wrong >= MAX_WRONG) {
               claps = want; draw();
-              msg.textContent = 'This word has ' + want + (want === 1 ? ' beat' : ' beats') + '. Say it with me!';
-              JU.speech.say(w.word, { rate: 0.6 });
+              msg.textContent = 'This word has ' + want + (want === 1 ? ' beat' : ' beats') + '. Say it out loud, one beat at a time.';
               clapBtn.disabled = reset.disabled = true;
               check.textContent = 'Keep going \u2192';
               revealed = true;
@@ -105,7 +106,7 @@
           body.replaceChildren(
             h('h2', null, 'How many beats do you hear?'),
             h('div', { class: 'bigword plain' }, w.word),
-            h('div', { class: 'row center' }, ctx.speakButton(w.word, 'Hear the word')),
+            h('div', { class: 'row center' }, hint.el),
             h('div', { class: 'row' }, clapBtn, reset), count);
           footer.replaceChildren(check);
           draw();
@@ -134,14 +135,14 @@
             const str = []; { let prev = 0; mine.concat([letters.length]).forEach(c => { str.push(w.word.slice(prev, c)); prev = c; }); }
             typedAll.push('split:' + str.join('-'));
             if (mine.join(',') === wantCuts.join(',')) { return showDone(); }
-            wrong++; wrongTotal++;
+            wrong++; wrongTotal++; hint.miss('split:' + str.join('-'));
             if (wrong >= MAX_WRONG) { msg.textContent = 'Here is how it splits. Say each beat out loud.'; return showDone(); }
             msg.textContent = 'Almost! Say it slowly and tap where one beat ends.';
           });
           body.replaceChildren(
             h('h2', null, 'Now cut it into beats'),
             h('p', { class: 'note' }, want === 1 ? 'This word is one beat. Do not cut anything, just press Check.' : 'Tap the space between letters where one beat ends.'),
-            row, h('div', { class: 'row center' }, ctx.speakButton(w.word, 'Hear the word')));
+            row, h('div', { class: 'row center' }, hint.el));
           footer.replaceChildren(check);
           msg.textContent = '';
         }
@@ -158,7 +159,6 @@
         ctx.clear();
         ctx.stage.appendChild(h('div', { class: 'card game' }, ctx.roundTag(), body, msg, footer));
         step1();
-        JU.speech.say(w.word);
       });
     }
   });

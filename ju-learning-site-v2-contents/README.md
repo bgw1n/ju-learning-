@@ -89,8 +89,26 @@ The site must be served over http(s) (it loads JSON with `fetch`), so opening `i
 ## Browser notes
 
 - "Hear the word" uses the browser's built-in voice (`speechSynthesis`), which Chrome on Chromebooks and laptops has. If a browser has no voice, the games still work and show a note.
+- Voice (v3): `js/speech.js` waits for the browser's voice list, ranks English voices (Natural/Online/Neural, Google US English, Samantha, Aria... first; eSpeak, compact and novelty voices last), and speaks at 0.85x. The grown-up page has **Voice settings** (voice, speed 0.6-1.1, Test voice), saved on the device via `js/storage.js` (`ju_voice_v1`, separate from scores). The test says the word, the sentence, then the word again; games that speak have a **Slower** button. If only a basic voice exists, the grown-up page shows a short tip.
 - Animations are turned off for people who prefer reduced motion. There are no timers and no progress bars.
 
 ## Tests
 
 `tests/e2e.py` drives the site with Playwright and system Chrome (start `python3 -m http.server 8765` in this folder first; screenshots go to `/workspace/ju-learning-previews/`, with the newer ones in `v2/`). It logs in with both PINs, completes every game and the test, and checks the dashboard, CSV export, and clear. It also tests `add_week.py` (schema, idempotent, refusals), `make_update_zip.sh` (with and without `zip`), the trend charts, the keeps-missing list, backup and restore (no duplicates), the Review game (hidden without history, picks, fades), and that no request leaves the site.
+
+## Earned hints (v4)
+
+In Unscramble, Grow the Flower, Word Match (the clue question) and Clap the Beats the spoken "Hear the word" hint is locked at first (lock icon, "Hint unlocks after 2 tries"). Code: `js/hints.js`, used through `ctx.hintGate()` in `js/runner.js`; games opt in with `hintGate: true`. Listen and Type, the Test and Review are unchanged.
+
+- It unlocks for that word only after 2 real wrong answers. Wrong answers that come within 3 seconds of the word appearing or of her previous answer, or that repeat an earlier wrong answer on that word, are "rapid" and do not count; the button then says "Ask a grown-up for a hint". (Clap's beat count may repeat the same wrong number; only timing counts there.)
+- Hear the word and Slower are one hint for that word (replays are free). At most 3 hints per game session; after that it stays locked.
+- **Grown-up unlock** asks for the parent PIN (`JU.auth.verifyParent`, PIN from `js/config.js`) and unlocks the hint for that word, even past the cap. Three wrong PINs pause the box for 30 seconds.
+- Unscramble and Clap no longer say the word on their own when they start (that gave the answer away), and Clap's "show the answer" step no longer speaks the word.
+- Every hint use, grown-up unlock and rapid-miss flag is logged in `ju_hints_v1` (`storage.getHints/addHint/importHints/clearHints`), separate from scores. The backup file is now version 2 and has a `hints` list; older backups without it still load. Clear results also clears the log.
+- A word where the hint was used is saved with `hinted: true` and `correct: false`, so it counts as missed: it stays in Practice these next and the word tables, and is not treated as mastered.
+- The grown-up page has a **Hints** section (hints used, earned, grown-up unlocks, rapid-miss flags, a plain readout, tables by game and by word per week).
+
+## Changelog
+
+- **v4 (Oct 27, 2026):** earned spoken hints in the puzzle games with rapid-miss blocking, 3-hint cap per session and a PIN "Grown-up unlock"; hint log (in backup and restore); Hints section on the grown-up page; hinted words count as missed.
+- **v3 (Oct 27, 2026):** clearer, natural-sounding voice picked automatically, slower default speed, voice picker, speed slider and Test voice button on the grown-up page, "Slower" button on games, dictation order word-sentence-word in the test.

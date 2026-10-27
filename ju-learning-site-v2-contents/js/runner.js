@@ -28,6 +28,9 @@
           id: JU.ui.uid(), ts: new Date().toISOString(), session, week: week.id, subject,
           type: g.id, proctored: !!opts.proctored
         }, r);
+        /* a word where the spoken hint was used does not count as right (so it is not treated as mastered) */
+        const gt = ctx.currentGate && ctx.currentGate.word === rec.word ? ctx.currentGate : null;
+        if (gt) { if (gt.used()) { rec.correct = false; rec.hinted = true; } gt.close(); }
         results.push(rec);
         await JU.storage.addResult(rec);
         return rec;
@@ -35,8 +38,10 @@
       clear() { stage.replaceChildren(); },
       /* keyboard listener that is removed automatically when the word ends */
       onKey(fn) {
-        document.addEventListener('keydown', fn);
-        cleanups.push(() => document.removeEventListener('keydown', fn));
+        /* keys typed into a text box (like the grown-up PIN) are not game keys */
+        const handler = e => { const t = e.target && e.target.tagName; if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT') return; fn(e); };
+        document.addEventListener('keydown', handler);
+        cleanups.push(() => document.removeEventListener('keydown', handler));
       },
       /* A calm full-stage message with one button. Resolves when pressed. */
       pause(title, text, button) {
@@ -49,11 +54,18 @@
       },
       /* tag shown above each word so she knows which round she is in */
       roundTag() { return g.noRounds ? h('span') : h('div', { class: 'round-tag' }, 'Round ' + ctx.round); },
+      /* the earned "Hear the word" hint for the puzzle games: { el, miss(guess), ... }. See js/hints.js. */
+      hintGate(w, label) { return JU.hints.gate(ctx, w, label); },
       /* a speaker button for the current word or any text */
-      speakButton(text, label) {
+      speakButton(text, label, extra) {
         if (!JU.speech.supported) return h('span', { class: 'note' }, 'Sound is not available on this browser. Ask a grown-up to read it to you.');
-        return h('button', { class: 'btn round', type: 'button', onclick: () => JU.speech.say(text) },
-          h('span', { 'aria-hidden': 'true' }, '\uD83D\uDD0A'), ' ', label || 'Hear it');
+        const sentence = extra && extra.sentence;
+        const speak = factor => sentence ? JU.speech.dictate(text, sentence, { factor }) : JU.speech.say(text, { factor });
+        return h('span', { class: 'speakers' },
+          h('button', { class: 'btn round', type: 'button', onclick: () => speak(1) },
+            h('span', { 'aria-hidden': 'true' }, '\uD83D\uDD0A'), ' ', label || 'Hear it'),
+          h('button', { class: 'btn small', type: 'button', 'aria-label': 'Say it slower', onclick: () => speak(0.7) },
+            h('span', { 'aria-hidden': 'true' }, '\uD83D\uDC22'), ' Slower'));
       }
     };
 

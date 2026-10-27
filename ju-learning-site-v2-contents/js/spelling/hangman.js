@@ -35,6 +35,7 @@
   JU.registerGame('spelling', {
     id: 'hangman', title: 'Grow the Flower', emoji: '\uD83C\uDF3B', sticker: '\uD83C\uDF3B',
     blurb: 'Guess the letters and help a flower grow.',
+    hintGate: true,
     playWord(ctx, w) {
       return new Promise(resolve => {
         const word = w.word;
@@ -49,6 +50,7 @@
           keys[ch] = b; return b;
         }));
         const footer = h('div', { class: 'row' });
+        const hint = ctx.hintGate(w, 'Hear the word');
 
         function shown(i) { return guessed.indexOf(word[i]) !== -1; }
         function draw() {
@@ -73,7 +75,7 @@
           keys[ch].classList.add(hit ? 'hit' : 'miss'); keys[ch].disabled = true;
           if (hit) msg.textContent = 'Yes! There is a "' + ch + '" in the word.';
           else {
-            misses++;
+            misses++; hint.miss(ch);
             msg.textContent = 'No "' + ch + '" this time. Try another letter!';
             if (misses % HELP_AFTER === 0) {
               const i = [...word].findIndex((c, k) => !shown(k));
@@ -97,7 +99,7 @@
             garden,
             h('div', { class: 'hang-main' },
               h('p', { class: 'clue' }, h('strong', null, 'Clue: '), w.clue),
-              h('div', { class: 'row center' }, ctx.speakButton(w.word, 'Hear the word')),
+              h('div', { class: 'row center' }, hint.el),
               blanks, msg, kb, footer))));
         draw();
       });
