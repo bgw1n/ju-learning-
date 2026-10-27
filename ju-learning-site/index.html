@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Welcome, Julianna!</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+</head>
+<body class="landing">
+  <main class="login card center">
+    <div class="hello" aria-hidden="true">&#127775;</div>
+    <h1>Welcome, <span id="name">Julianna</span>!</h1>
+    <p class="lead">Type your secret number to start.</p>
+    <div class="pin-dots" id="dots" role="img" aria-label="0 of 4 numbers typed">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <p class="msg" id="msg" aria-live="polite"></p>
+    <div class="keypad" role="group" aria-label="Number keypad">
+      <button type="button" class="pad" data-k="1">1</button>
+      <button type="button" class="pad" data-k="2">2</button>
+      <button type="button" class="pad" data-k="3">3</button>
+      <button type="button" class="pad" data-k="4">4</button>
+      <button type="button" class="pad" data-k="5">5</button>
+      <button type="button" class="pad" data-k="6">6</button>
+      <button type="button" class="pad" data-k="7">7</button>
+      <button type="button" class="pad" data-k="8">8</button>
+      <button type="button" class="pad" data-k="9">9</button>
+      <button type="button" class="pad alt" data-k="back" aria-label="Delete last number">&#9003;</button>
+      <button type="button" class="pad" data-k="0">0</button>
+      <button type="button" class="pad go" data-k="go" aria-label="Go">Go</button>
+    </div>
+  </main>
+  <script src="js/pages/index.js"></script>
+</body>
+</html>
