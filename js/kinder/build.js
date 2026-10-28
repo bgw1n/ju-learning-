@@ -1,5 +1,5 @@
 /* kinder/build.js - Build a word. He hears the word and sees its picture, then taps the sounds in order from a tray of letter tiles into three boxes.
-   Each tile says its sound when tapped; the whole word is spoken when the last box is filled. Which words are open is worked out in js/kinder.js (planWords, wordItem). */
+   Each tile plays its recorded sound when tapped; the whole word (a recorded clip) is played when the last box is filled. Which words are open is worked out in js/kinder.js (planWords, wordItem). */
 (function () {
   const h = JU.ui.h, K = JU.kinder;
 
@@ -36,7 +36,7 @@
             } else {
               wrongs++; per[next]++;
               b.classList.add('nope');
-              ctl.miss(next + ':' + l, 'Let\u2019s try again. ' + item.word + '.');
+              ctl.miss(next + ':' + l, 'Let\u2019s try again. ' + item.wrd + '.');
             }
           } }, l);
         return b;

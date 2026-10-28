@@ -1,4 +1,4 @@
-/* kinder/letters.js - Letter sounds. The voice says a sound (for example "mmm") and he taps the one of three pictures that starts with it.
+/* kinder/letters.js - Letter sounds. A recorded sound (for example "mmm", from audio/kinder/) plays and he taps the one of three pictures that starts with it.
    Which letters are in play, and which come back more often, is worked out in js/kinder.js (planLetters, letterItem). */
 (function () {
   const h = JU.ui.h, K = JU.kinder;
@@ -27,11 +27,11 @@
           } else {
             wrongs.push(o.letter);
             buttons[i].disabled = true; buttons[i].classList.add('tried');
-            ctl.miss(o.pic.word + ' ' + o.letter, 'Listen again. ' + item.say + '.');
+            ctl.miss(o.pic.word + ' ' + o.letter, 'Listen again. ' + item.snd + '.');
           }
         } }, h('span', { class: 'opt-e', 'aria-hidden': 'true' }, o.pic.e)));
       return [h('div', { class: 'opts solo-opts kid-opts k-opts k-focus', tabindex: '-1', role: 'group', 'aria-label': 'Pictures' }, buttons)];
     }
   };
-  function withSound(item, env) { item.sound = item.say + '.'; return item; }
+  function withSound(item, env) { item.sound = item.snd; return item; }      // the sound button plays just the recorded sound (js/kinder.js snd)
 })();

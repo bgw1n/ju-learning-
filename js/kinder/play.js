@@ -39,7 +39,7 @@
     let queue = [], idx = 0, round = { no: roundsDone + 1, id: JU.ui.uid(), played: 0, clean: 0, comebacks: 0 };     // (a new round is planned when the start button is tapped)
 
     const speakRow = (getText, sound) => {
-      if (!JU.speech.supported) return h('p', { class: 'note', 'data-no-voice': '' }, 'Sound is not available on this browser. Ask a grown-up to help.');
+      if (!JU.speech.supported && !JU.speech.canClips) return h('p', { class: 'note', 'data-no-voice': '' }, 'Sound is not available on this browser. Ask a grown-up to help.');
       return h('span', { class: 'speakers kid-speakers k-speakers' },
         h('button', { class: 'btn round big k-hear', type: 'button', 'data-hear': '', 'aria-label': 'Hear it again', onclick: () => say(getText()) }, h('span', { 'aria-hidden': 'true' }, SPEAKER)),
         sound ? h('button', { class: 'btn round big k-ear', type: 'button', 'data-sound': '', 'aria-label': 'Hear just the sound', onclick: () => say(sound) }, h('span', { 'aria-hidden': 'true' }, EAR)) : null,
@@ -60,6 +60,7 @@
     function newRound() {
       queue = game.plan(env);
       idx = 0;
+      queue.forEach(it => JU.speech.preload([it.text, it.hint, it.right, it.done, (it.sounds || []).join(' ')].join(' ')));      // warm the cache with this round's recorded clips
       round = { no: roundsDone + 1, id: JU.ui.uid(), played: 0, clean: 0, comebacks: 0 };
     }
 
@@ -101,7 +102,7 @@
           const opened = gate ? gate.miss(guess) : false;
           let msg = spoken;
           if (opened && !announced) { announced = true; msg += ' ' + JU.hints.KID_READY; }       // the lock turns into a light bulb: he hears it, he does not have to read it
-          feedback.textContent = spoken;
+          feedback.textContent = JU.speech.plain(spoken);
           say(msg);
         },
         async finish(o) {
@@ -120,7 +121,7 @@
             queue.splice(Math.min(idx + 3, queue.length), 0, again);
           }
           if (gate) gate.close();
-          feedback.textContent = o.message || '';
+          feedback.textContent = JU.speech.plain(o.message || '');
           next.disabled = false; next.setAttribute('aria-label', 'Next');
           const last = idx === queue.length - 1;
           if (last) next.setAttribute('aria-label', 'Finish');

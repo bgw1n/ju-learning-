@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Make a small zip of just what changed, to drag onto the GitHub repo page (Add file > Upload files).
-# Always includes data/. Add anything else you changed by naming it (paths relative to the site folder),
+# Always includes data/ and audio/ (the recorded sounds, v11; skipped when there is no audio folder). Add anything else you changed by naming it (paths relative to the site folder),
 # or use --newer-than FILE to include every site file modified after FILE.
 #
 #   ./make_update_zip.sh [-o OUT.zip] [--prefix FOLDER] [--newer-than FILE] [extra files or folders...]
@@ -16,13 +16,14 @@ while [ $# -gt 0 ]; do
     -o) OUT="$2"; shift 2;;
     --prefix) PREFIX="${2%/}"; shift 2;;
     --newer-than) NEWER="$2"; shift 2;;
-    -h|--help) sed -n '2,11p' "$0"; exit 0;;
+    -h|--help) sed -n '2,12p' "$0"; exit 0;;
     *) EXTRA+=("$1"); shift;;
   esac
 done
 LIST=$(mktemp); trap 'rm -f "$LIST"' EXIT
 {
   find data -type f
+  [ -d audio ] && find audio -type f
   if [ -n "$NEWER" ]; then
     find . -type f -newer "$NEWER" -not -path './tests/*' -not -path './.git/*' -not -name '*.zip' -not -name '*.pyc' -not -path '*/__pycache__/*' | sed 's|^\./||'
   fi

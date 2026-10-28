@@ -1,5 +1,10 @@
 # Changelog
 
+## v11
+- **Dorian's letter sounds and words are recordings now.** The browser voice read "mmm" as "em em em" and "tuh" as a word, so the 26 letter sounds and the 18 three-letter words are bundled audio clips in `audio/kinder/` (about 287 KB in all, no network needed beyond this site's own files). Made offline with Piper TTS, voice en_US-kristin-medium (public domain). Hear it again and the ear button play the clip, the turtle plays it at 75% speed, and Build a word's tiles and finished word play clips too. Instructions and sentences stay on the browser voice. If a clip is missing, fails to load or the browser blocks it, the browser voice says the fallback words instead.
+- `make_update_zip.sh` now always includes `audio/`. The generator and a listening page builder are in `tools/`.
+- Not checked by ear yet: every sound needs a listen, most of all v, z, g, h, e and o.
+
 ## v10
 - **Phone layout (390px wide).** No page scrolls sideways any more: grid columns are `minmax(0, 1fr)`, the Back up to Grok Bot address box fits its row, the Family unlock table becomes one stacked block per lesson on a phone, the other wide tables scroll inside their own box, and Julianna's game cards are no longer cut off. Checked at 390x844 and 1280x800 on the main pages.
 - **Laptop lessons:** after a tap question the explanation and the Next button are scrolled into view (smoothly, or instantly for reduced motion). Same for the children's follow-ons and Dorian's kindergarten games.

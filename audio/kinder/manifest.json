@@ -1,0 +1,315 @@
+{
+ "version": 1,
+ "voice": "en_US-kristin-medium",
+ "license": "Piper voice en_US-kristin-medium: public domain (LibriVox recordings). Generated with Piper TTS.",
+ "clips": {
+  "sound-a": {
+   "file": "sound-a.mp3",
+   "kind": "sound",
+   "name": "a",
+   "dur": 0.366,
+   "bytes": 4746
+  },
+  "sound-b": {
+   "file": "sound-b.mp3",
+   "kind": "sound",
+   "name": "b",
+   "dur": 0.183,
+   "bytes": 2551
+  },
+  "sound-c": {
+   "file": "sound-c.mp3",
+   "kind": "sound",
+   "name": "c",
+   "dur": 0.157,
+   "bytes": 2238
+  },
+  "sound-d": {
+   "file": "sound-d.mp3",
+   "kind": "sound",
+   "name": "d",
+   "dur": 0.183,
+   "bytes": 2551
+  },
+  "sound-e": {
+   "file": "sound-e.mp3",
+   "kind": "sound",
+   "name": "e",
+   "dur": 0.34,
+   "bytes": 4432
+  },
+  "sound-f": {
+   "file": "sound-f.mp3",
+   "kind": "sound",
+   "name": "f",
+   "dur": 0.627,
+   "bytes": 7880
+  },
+  "sound-g": {
+   "file": "sound-g.mp3",
+   "kind": "sound",
+   "name": "g",
+   "dur": 0.157,
+   "bytes": 2238
+  },
+  "sound-h": {
+   "file": "sound-h.mp3",
+   "kind": "sound",
+   "name": "h",
+   "dur": 0.183,
+   "bytes": 2551
+  },
+  "sound-i": {
+   "file": "sound-i.mp3",
+   "kind": "sound",
+   "name": "i",
+   "dur": 0.34,
+   "bytes": 4432
+  },
+  "sound-j": {
+   "file": "sound-j.mp3",
+   "kind": "sound",
+   "name": "j",
+   "dur": 0.235,
+   "bytes": 3178
+  },
+  "sound-k": {
+   "file": "sound-k.mp3",
+   "kind": "sound",
+   "name": "k",
+   "dur": 0.157,
+   "bytes": 2238
+  },
+  "sound-l": {
+   "file": "sound-l.mp3",
+   "kind": "sound",
+   "name": "l",
+   "dur": 0.627,
+   "bytes": 7880
+  },
+  "sound-m": {
+   "file": "sound-m.mp3",
+   "kind": "sound",
+   "name": "m",
+   "dur": 0.575,
+   "bytes": 7253
+  },
+  "sound-n": {
+   "file": "sound-n.mp3",
+   "kind": "sound",
+   "name": "n",
+   "dur": 0.418,
+   "bytes": 5373
+  },
+  "sound-o": {
+   "file": "sound-o.mp3",
+   "kind": "sound",
+   "name": "o",
+   "dur": 0.496,
+   "bytes": 6313
+  },
+  "sound-p": {
+   "file": "sound-p.mp3",
+   "kind": "sound",
+   "name": "p",
+   "dur": 0.157,
+   "bytes": 2238
+  },
+  "sound-qu": {
+   "file": "sound-qu.mp3",
+   "kind": "sound",
+   "name": "qu",
+   "dur": 0.418,
+   "bytes": 5373
+  },
+  "sound-r": {
+   "file": "sound-r.mp3",
+   "kind": "sound",
+   "name": "r",
+   "dur": 0.47,
+   "bytes": 5999
+  },
+  "sound-s": {
+   "file": "sound-s.mp3",
+   "kind": "sound",
+   "name": "s",
+   "dur": 0.627,
+   "bytes": 7880
+  },
+  "sound-t": {
+   "file": "sound-t.mp3",
+   "kind": "sound",
+   "name": "t",
+   "dur": 0.157,
+   "bytes": 2238
+  },
+  "sound-u": {
+   "file": "sound-u.mp3",
+   "kind": "sound",
+   "name": "u",
+   "dur": 0.601,
+   "bytes": 7567
+  },
+  "sound-v": {
+   "file": "sound-v.mp3",
+   "kind": "sound",
+   "name": "v",
+   "dur": 0.627,
+   "bytes": 7880
+  },
+  "sound-w": {
+   "file": "sound-w.mp3",
+   "kind": "sound",
+   "name": "w",
+   "dur": 0.366,
+   "bytes": 4746
+  },
+  "sound-x": {
+   "file": "sound-x.mp3",
+   "kind": "sound",
+   "name": "x",
+   "dur": 0.366,
+   "bytes": 4746
+  },
+  "sound-y": {
+   "file": "sound-y.mp3",
+   "kind": "sound",
+   "name": "y",
+   "dur": 0.366,
+   "bytes": 4746
+  },
+  "sound-z": {
+   "file": "sound-z.mp3",
+   "kind": "sound",
+   "name": "z",
+   "dur": 0.627,
+   "bytes": 7880
+  },
+  "word-bat": {
+   "file": "word-bat.mp3",
+   "kind": "word",
+   "name": "bat",
+   "dur": 0.601,
+   "bytes": 7567
+  },
+  "word-bug": {
+   "file": "word-bug.mp3",
+   "kind": "word",
+   "name": "bug",
+   "dur": 0.601,
+   "bytes": 7567
+  },
+  "word-bus": {
+   "file": "word-bus.mp3",
+   "kind": "word",
+   "name": "bus",
+   "dur": 0.601,
+   "bytes": 7567
+  },
+  "word-can": {
+   "file": "word-can.mp3",
+   "kind": "word",
+   "name": "can",
+   "dur": 0.81,
+   "bytes": 10075
+  },
+  "word-cap": {
+   "file": "word-cap.mp3",
+   "kind": "word",
+   "name": "cap",
+   "dur": 0.784,
+   "bytes": 9761
+  },
+  "word-cat": {
+   "file": "word-cat.mp3",
+   "kind": "word",
+   "name": "cat",
+   "dur": 0.758,
+   "bytes": 9448
+  },
+  "word-dog": {
+   "file": "word-dog.mp3",
+   "kind": "word",
+   "name": "dog",
+   "dur": 0.758,
+   "bytes": 9448
+  },
+  "word-man": {
+   "file": "word-man.mp3",
+   "kind": "word",
+   "name": "man",
+   "dur": 0.758,
+   "bytes": 9448
+  },
+  "word-map": {
+   "file": "word-map.mp3",
+   "kind": "word",
+   "name": "map",
+   "dur": 0.653,
+   "bytes": 8194
+  },
+  "word-nap": {
+   "file": "word-nap.mp3",
+   "kind": "word",
+   "name": "nap",
+   "dur": 0.758,
+   "bytes": 9448
+  },
+  "word-pan": {
+   "file": "word-pan.mp3",
+   "kind": "word",
+   "name": "pan",
+   "dur": 0.94,
+   "bytes": 11642
+  },
+  "word-pig": {
+   "file": "word-pig.mp3",
+   "kind": "word",
+   "name": "pig",
+   "dur": 0.627,
+   "bytes": 7880
+  },
+  "word-pin": {
+   "file": "word-pin.mp3",
+   "kind": "word",
+   "name": "pin",
+   "dur": 0.731,
+   "bytes": 9134
+  },
+  "word-ran": {
+   "file": "word-ran.mp3",
+   "kind": "word",
+   "name": "ran",
+   "dur": 0.731,
+   "bytes": 9134
+  },
+  "word-rat": {
+   "file": "word-rat.mp3",
+   "kind": "word",
+   "name": "rat",
+   "dur": 0.836,
+   "bytes": 10388
+  },
+  "word-sun": {
+   "file": "word-sun.mp3",
+   "kind": "word",
+   "name": "sun",
+   "dur": 0.888,
+   "bytes": 11015
+  },
+  "word-tap": {
+   "file": "word-tap.mp3",
+   "kind": "word",
+   "name": "tap",
+   "dur": 0.81,
+   "bytes": 10075
+  },
+  "word-tub": {
+   "file": "word-tub.mp3",
+   "kind": "word",
+   "name": "tub",
+   "dur": 0.784,
+   "bytes": 9761
+  }
+ }
+}

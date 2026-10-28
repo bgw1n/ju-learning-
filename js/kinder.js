@@ -100,6 +100,12 @@
   };
   const pick = arr => arr[Math.floor(api.rng() * arr.length)];
 
+  /* ---------- recorded sounds (v11) ----------
+     snd('m', 'mmm') -> "{{s:m|mmm}}": plays audio/kinder/sound-m.mp3, and says "mmm" with the browser voice only if that clip is missing (see js/speech.js).
+     wrd('cat') -> "{{w:cat|cat}}" for the three-letter words. Text meant for the screen goes through JU.speech.plain(). */
+  api.snd = (letter, say) => '{{s:' + letter + '|' + say + '}}';
+  api.wrd = word => '{{w:' + word + '|' + word + '}}';
+
   /* ---------- Letter sounds ---------- */
   /* Which letters the next round draws from, and the first picks. Returns { active, letters: [4 letters] }. */
   api.planLetters = function (data, answers) {
@@ -121,12 +127,13 @@
       const p = pick(ps); seen[p.word] = true; options.push({ letter: l, pic: p, right: false });
     }
     const example = pick(L.pics.filter(p => p.word !== target.word));
-    const prompt = pos === 'end' ? 'Which picture ends with ' + L.say + '?' : 'Which picture starts with ' + L.say + '?';
+    const SND = api.snd(letter, L.say);
+    const prompt = pos === 'end' ? 'Which picture ends with ' + SND + '?' : 'Which picture starts with ' + SND + '?';
     const options3 = api.shuffle(options);
-    return { id: letter, letter, say: L.say, position: pos, prompt, target, example, options: options3,
-      text: L.say + '. ' + prompt + ' ' + options3.map(o => o.pic.word).join('. ') + '.',
-      hint: L.say + '. ' + example.word + ' ' + (pos === 'end' ? 'ends' : 'starts') + ' with ' + L.say + '. ' + prompt,
-      right: pos === 'end' ? 'Yes! ' + target.word + ' ends with ' + L.say + '.' : 'Yes! ' + target.word + ' starts with ' + L.say + '.' };
+    return { id: letter, letter, say: L.say, snd: SND, position: pos, prompt, target, example, options: options3,
+      text: SND + '. ' + prompt + ' ' + options3.map(o => o.pic.word).join('. ') + '.',
+      hint: SND + '. ' + example.word + ' ' + (pos === 'end' ? 'ends' : 'starts') + ' with ' + SND + '. ' + prompt,
+      right: pos === 'end' ? 'Yes! ' + target.word + ' ends with ' + SND + '.' : 'Yes! ' + target.word + ' starts with ' + SND + '.' };
   };
 
   /* ---------- Build a word ---------- */
@@ -161,11 +168,11 @@
     }
     let order = api.shuffle(tiles), tries = 0;
     while (order.slice(0, 3).join('') === w.word && tries++ < 8) order = api.shuffle(tiles);
-    const sounds = need.map(l => letters.letters[l].say);
-    return { id: w.word, word: w.word, e: w.e, tier: w.tier, need, tiles: order, sounds,
-      text: 'Let\u2019s build ' + w.word + '. Tap the sounds in order.',
-      hint: need.map((l, i) => sounds[i]).join('. ') + '. ' + w.word + '.',
-      done: w.word + '. You built ' + w.word + '!' };
+    const sounds = need.map(l => api.snd(l, letters.letters[l].say)), WORD = api.wrd(w.word);
+    return { id: w.word, word: w.word, wrd: WORD, e: w.e, tier: w.tier, need, tiles: order, sounds,
+      text: 'Let\u2019s build ' + WORD + '. Tap the sounds in order.',
+      hint: sounds.join('. ') + '. ' + WORD + '.',
+      done: WORD + '. You built ' + WORD + '!' };
   };
 
   /* ---------- for the grown-up page ---------- */

@@ -1,0 +1,796 @@
+{
+ "voice": "en_US-kristin-medium",
+ "sounds": {
+  "s": {
+   "method": "direct",
+   "ph": [
+    "s",
+    "ː"
+   ],
+   "kind": "cont",
+   "ls": 2.2,
+   "seed": 1,
+   "score": 4.0,
+   "check": {
+    "rec": "s e",
+    "centroid": 7456
+   }
+  },
+  "a": {
+   "method": "direct",
+   "ph": [
+    "a"
+   ],
+   "kind": "vowel",
+   "ls": 1.8,
+   "seed": 4,
+   "score": 5.35,
+   "check": {
+    "rec": "ʔ a",
+    "F1": 876,
+    "F2": 1961,
+    "dist": 0.048
+   }
+  },
+  "t": {
+   "method": "direct",
+   "ph": [
+    "t",
+    "ʌ"
+   ],
+   "kind": "ustop",
+   "ls": 1.0,
+   "seed": 0,
+   "score": 4.0,
+   "check": {
+    "rec": "t",
+    "voicing": 0.0
+   }
+  },
+  "m": {
+   "method": "direct",
+   "ph": [
+    "m",
+    "ː"
+   ],
+   "kind": "cont",
+   "ls": 2.2,
+   "seed": 5,
+   "score": 3.94,
+   "check": {
+    "rec": "m aː",
+    "voicing": 0.94
+   }
+  },
+  "p": {
+   "method": "direct",
+   "ph": [
+    "p",
+    "ʌ"
+   ],
+   "kind": "ustop",
+   "ls": 1.0,
+   "seed": 0,
+   "score": 4.0,
+   "check": {
+    "rec": "p",
+    "voicing": 0.0
+   }
+  },
+  "n": {
+   "method": "direct",
+   "ph": [
+    "n",
+    "ː"
+   ],
+   "kind": "cont",
+   "ls": 2.2,
+   "seed": 8,
+   "score": 3.97,
+   "check": {
+    "rec": "n aː",
+    "voicing": 0.97
+   }
+  },
+  "b": {
+   "method": "direct",
+   "ph": [
+    "b",
+    "ʌ"
+   ],
+   "kind": "vstop",
+   "ls": 1.0,
+   "seed": 0,
+   "score": 3.0,
+   "check": {
+    "rec": "b a"
+   }
+  },
+  "d": {
+   "method": "direct",
+   "ph": [
+    "d",
+    "ʌ"
+   ],
+   "kind": "vstop",
+   "ls": 1.0,
+   "seed": 1,
+   "score": 3.0,
+   "check": {
+    "rec": "d a"
+   }
+  },
+  "g": {
+   "method": "word_initial",
+   "words": [
+    "gum",
+    "got",
+    "gap"
+   ],
+   "kind": "vstop",
+   "ls": 1.25,
+   "seed": 2,
+   "score": 3.0,
+   "check": {
+    "rec": "k a",
+    "word": {
+     "gap": [
+      "gap",
+      "gap"
+     ]
+    }
+   }
+  },
+  "h": {
+   "method": "word_initial",
+   "words": [
+    "hat",
+    "hug",
+    "hit"
+   ],
+   "kind": "breath",
+   "ls": 1.25,
+   "seed": 1,
+   "score": 7.0,
+   "check": {
+    "rec": "ħ a",
+    "word": {
+     "hug": [
+      "hug",
+      "hug"
+     ]
+    },
+    "voicing": 0.0
+   }
+  },
+  "c": {
+   "method": "direct",
+   "ph": [
+    "k",
+    "ʌ"
+   ],
+   "kind": "ustop",
+   "ls": 1.0,
+   "seed": 0,
+   "score": 4.0,
+   "check": {
+    "rec": "k",
+    "voicing": 0.0
+   }
+  },
+  "k": {
+   "method": "direct",
+   "ph": [
+    "k",
+    "ʌ"
+   ],
+   "kind": "ustop",
+   "ls": 1.0,
+   "seed": 0,
+   "score": 4.0,
+   "check": {
+    "rec": "k",
+    "voicing": 0.0
+   }
+  },
+  "r": {
+   "method": "direct",
+   "ph": [
+    "ɹ",
+    "ː"
+   ],
+   "kind": "cont",
+   "ls": 2.2,
+   "variants": [
+    {},
+    {
+     "ph": [
+      "ɹ"
+     ],
+     "ls": 2.4
+    },
+    {
+     "ph": [
+      "ɹ",
+      "ɹ",
+      "ɹ"
+     ],
+     "ls": 1.6
+    },
+    {
+     "ph": [
+      "ɚ",
+      "ː"
+     ],
+     "ls": 2.0
+    },
+    {
+     "ph": [
+      "ɹ",
+      "ː",
+      "ː"
+     ],
+     "ls": 1.8
+    }
+   ],
+   "seed": 7,
+   "score": 3.95,
+   "check": {
+    "rec": "ɹ aː",
+    "voicing": 0.95
+   }
+  },
+  "f": {
+   "method": "word_initial",
+   "words": [
+    "fun",
+    "fan",
+    "fig"
+   ],
+   "kind": "fric",
+   "ls": 1.8,
+   "seed": 0,
+   "score": 7.0,
+   "check": {
+    "rec": "f",
+    "word": {
+     "fun": [
+      "Fun.",
+      "fun"
+     ]
+    },
+    "voicing": 0.0
+   }
+  },
+  "l": {
+   "method": "direct",
+   "ph": [
+    "l",
+    "ː"
+   ],
+   "kind": "cont",
+   "ls": 2.2,
+   "seed": 1,
+   "score": 3.94,
+   "check": {
+    "rec": "d ʉ l ɑ",
+    "voicing": 0.94
+   }
+  },
+  "j": {
+   "method": "word_initial",
+   "words": [
+    "jam",
+    "job",
+    "jug"
+   ],
+   "kind": "affr",
+   "ls": 1.25,
+   "seed": 1,
+   "score": 6.0,
+   "check": {
+    "rec": "tʃ a",
+    "word": {
+     "job": [
+      "job",
+      "job"
+     ]
+    }
+   }
+  },
+  "w": {
+   "method": "direct",
+   "ph": [
+    "w",
+    "ʌ"
+   ],
+   "kind": "glide",
+   "ls": 1.2,
+   "seed": 0,
+   "score": 3.0,
+   "check": {
+    "rec": "w a"
+   }
+  },
+  "x": {
+   "method": "direct",
+   "ph": [
+    "k",
+    "s"
+   ],
+   "kind": "cs",
+   "ls": 1.2,
+   "seed": 0,
+   "score": 3.0,
+   "check": {
+    "rec": "k s"
+   }
+  },
+  "qu": {
+   "method": "direct",
+   "ph": [
+    "k",
+    "w",
+    "ʌ"
+   ],
+   "kind": "glide",
+   "ls": 1.2,
+   "seed": 3,
+   "score": 3.0,
+   "check": {
+    "rec": "k w ɑ"
+   }
+  },
+  "y": {
+   "method": "direct",
+   "ph": [
+    "j",
+    "ʌ"
+   ],
+   "kind": "glide",
+   "ls": 1.2,
+   "seed": 0,
+   "score": 3.0,
+   "check": {
+    "rec": "j a r"
+   }
+  },
+  "e": {
+   "method": "direct",
+   "ph": [
+    "e"
+   ],
+   "kind": "vowel",
+   "ls": 1.8,
+   "variants": [
+    {
+     "pre": [
+      "h"
+     ]
+    },
+    {
+     "pre": []
+    },
+    {
+     "pre": [
+      "h"
+     ],
+     "ls": 1.2
+    },
+    {
+     "pre": [],
+     "ls": 1.2
+    },
+    {
+     "pre": [
+      "h"
+     ],
+     "ph": [
+      "ɛ"
+     ]
+    },
+    {
+     "pre": [],
+     "ph": [
+      "ɛ"
+     ],
+     "ls": 1.4
+    }
+   ],
+   "seed": 4,
+   "score": 1.78,
+   "check": {
+    "rec": "ʔ aː",
+    "F1": 555,
+    "F2": 2294,
+    "dist": 0.096
+   }
+  },
+  "i": {
+   "method": "direct",
+   "ph": [
+    "ɪ"
+   ],
+   "kind": "vowel",
+   "ls": 1.8,
+   "seed": 4,
+   "score": 5.31,
+   "check": {
+    "rec": "ʔ i",
+    "F1": 428,
+    "F2": 2614,
+    "dist": 0.053
+   }
+  },
+  "o": {
+   "method": "direct",
+   "ph": [
+    "ɑ"
+   ],
+   "kind": "vowel",
+   "ls": 1.2,
+   "variants": [
+    {
+     "pre": [
+      "h"
+     ],
+     "ph": [
+      "ɒ"
+     ]
+    },
+    {
+     "pre": []
+    },
+    {
+     "pre": [
+      "h"
+     ]
+    },
+    {
+     "pre": [],
+     "ph": [
+      "ɒ"
+     ]
+    },
+    {
+     "pre": [
+      "h"
+     ],
+     "ph": [
+      "ɒ"
+     ],
+     "ls": 1.8
+    },
+    {
+     "pre": [],
+     "ph": [
+      "ɑ"
+     ],
+     "ls": 1.8
+    }
+   ],
+   "seed": 10,
+   "score": 4.04,
+   "check": {
+    "rec": "ɑ",
+    "F1": 751,
+    "F2": 1336,
+    "dist": 0.154
+   }
+  },
+  "u": {
+   "method": "direct",
+   "ph": [
+    "ʌ"
+   ],
+   "kind": "vowel",
+   "ls": 1.8,
+   "seed": 4,
+   "score": 4.11,
+   "check": {
+    "rec": "a",
+    "F1": 689,
+    "F2": 1541,
+    "dist": 0.137
+   }
+  },
+  "v": {
+   "method": "dsp_voiced",
+   "source": "f",
+   "kind": "cont",
+   "variants": [
+    {
+     "bar": 0.9,
+     "depth": 0.8
+    },
+    {
+     "bar": 0.4,
+     "depth": 0.8
+    },
+    {
+     "bar": 0.15,
+     "depth": 0.9
+    },
+    {
+     "bar": 0.6,
+     "depth": 0.6,
+     "f0": 190
+    },
+    {
+     "bar": 0.25,
+     "depth": 0.7,
+     "f0": 225
+    },
+    {
+     "bar": 0.1,
+     "depth": 0.5
+    }
+   ],
+   "seed": 0,
+   "score": 1.0,
+   "check": {
+    "rec": "d a n a",
+    "voicing": 0.6,
+    "low": 0.564
+   }
+  },
+  "z": {
+   "method": "dsp_voiced",
+   "source": "s",
+   "kind": "cont",
+   "variants": [
+    {
+     "bar": 0.9,
+     "depth": 0.8
+    },
+    {
+     "bar": 0.4,
+     "depth": 0.8
+    },
+    {
+     "bar": 0.15,
+     "depth": 0.9
+    },
+    {
+     "bar": 0.6,
+     "depth": 0.6,
+     "f0": 190
+    },
+    {
+     "bar": 0.25,
+     "depth": 0.7,
+     "f0": 225
+    },
+    {
+     "bar": 0.1,
+     "depth": 0.5
+    }
+   ],
+   "seed": 3,
+   "score": 4.0,
+   "check": {
+    "rec": "i z eɪ",
+    "voicing": 0.33,
+    "low": 0.276
+   }
+  }
+ },
+ "words": {
+  "map": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " Map",
+     "openai/whisper-base.en": " map"
+    },
+    "rec": "m aː b"
+   }
+  },
+  "man": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " Man.",
+     "openai/whisper-base.en": " Man"
+    },
+    "rec": "m aː n"
+   }
+  },
+  "pan": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " Pan",
+     "openai/whisper-base.en": " pan"
+    },
+    "rec": "p a n"
+   }
+  },
+  "nap": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " Nap.",
+     "openai/whisper-base.en": " nap"
+    },
+    "rec": "n aː b"
+   }
+  },
+  "tap": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " TAP",
+     "openai/whisper-base.en": " Tap"
+    },
+    "rec": "t aː p"
+   }
+  },
+  "cat": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " cat",
+     "openai/whisper-base.en": " cat"
+    },
+    "rec": "k æ t"
+   }
+  },
+  "cap": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " CAP",
+     "openai/whisper-base.en": " cap"
+    },
+    "rec": "k ɛ p"
+   }
+  },
+  "can": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " CAN",
+     "openai/whisper-base.en": " can"
+    },
+    "rec": "k a n"
+   }
+  },
+  "rat": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " rat",
+     "openai/whisper-base.en": " rat"
+    },
+    "rec": "ɹ a t"
+   }
+  },
+  "ran": {
+   "ls": 1.25,
+   "seed": 2,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " Ran.",
+     "openai/whisper-base.en": " ran"
+    },
+    "rec": "ɹ aː n"
+   }
+  },
+  "pin": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " Pin.",
+     "openai/whisper-base.en": " pin"
+    },
+    "rec": "p ɪ n"
+   }
+  },
+  "dog": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " dog",
+     "openai/whisper-base.en": " Dog"
+    },
+    "rec": "d ɑ ɡ"
+   }
+  },
+  "pig": {
+   "ls": 1.25,
+   "seed": 7,
+   "score": 7.0,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " PIG",
+     "openai/whisper-base.en": " pig"
+    },
+    "rec": "p ɛ ɡ"
+   }
+  },
+  "sun": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " Sun",
+     "openai/whisper-base.en": " Sun"
+    },
+    "rec": "s ɑ n"
+   }
+  },
+  "bug": {
+   "ls": 1.25,
+   "seed": 10,
+   "score": 8.5,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " bug",
+     "openai/whisper-base.en": " bug"
+    },
+    "rec": "b ɑ ɡ"
+   }
+  },
+  "bus": {
+   "ls": 1.25,
+   "seed": 2,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " Bus.",
+     "openai/whisper-base.en": " bus"
+    },
+    "rec": "b ɑ s"
+   }
+  },
+  "bat": {
+   "ls": 1.25,
+   "seed": 12,
+   "score": 8.5,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " bat",
+     "openai/whisper-base.en": " bat"
+    },
+    "rec": "b a t"
+   }
+  },
+  "tub": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 6.1,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " tub",
+     "openai/whisper-base.en": " tub"
+    },
+    "rec": "t a b"
+   }
+  }
+ }
+}
