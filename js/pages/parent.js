@@ -257,7 +257,8 @@
       const r = await JU.storage.importAll(data);
       const others = Object.keys(r.profiles).map(k => (k === 'dorian' ? 'Dorian' : 'Family') + ': ' + r.profiles[k].added + ' new').join(', ');
       const extra = (r.flags ? r.flags.added : 0) + (r.money ? r.money.added : 0) + Object.values(r.profiles).reduce((a, x) => a + (x.flags ? x.flags.added : 0) + (x.money ? x.money.added : 0), 0);
-      backupMsg.textContent = 'Loaded: ' + P(r.added, 'new result') + ' added, ' + r.skipped + ' already here or skipped.' + (r.hints ? ' Hint log: ' + r.hints.added + ' added.' : '') + (others ? ' ' + others + '.' : '') + (extra ? ' Also added: ' + P(extra, 'flag or money activity record', 'flags and money activity records') + '.' : '');
+      const kin = Object.values(r.profiles).reduce((a, x) => a + (x.kinder ? x.kinder.added : 0), 0);
+      backupMsg.textContent = 'Loaded: ' + P(r.added, 'new result') + ' added, ' + r.skipped + ' already here or skipped.' + (r.hints ? ' Hint log: ' + r.hints.added + ' added.' : '') + (others ? ' ' + others + '.' : '') + (extra ? ' Also added: ' + P(extra, 'flag or money activity record', 'flags and money activity records') + '.' : '') + (kin ? ' Kindergarten: ' + P(kin, 'record') + ' added.' : '');
       await renderOthers();
       await render();
       await JU.backup.showBanner(banner, saveBackup);
@@ -327,10 +328,22 @@
     VIEWS.forEach(v => {
       document.getElementById('view-' + v).hidden = v !== id;
       document.getElementById('sw-' + v).setAttribute('aria-pressed', v === id ? 'true' : 'false');
+      document.getElementById('jump-' + v).hidden = v !== id;       // the Jump to row sits right under the switch
     });
     try { history.replaceState(null, '', id === 'julianna' ? location.pathname : '?p=' + id); } catch (e) { /* not important */ }
   }
   VIEWS.forEach(v => document.getElementById('sw-' + v).addEventListener('click', () => showView(v)));
+  /* "Jump to" links: scroll smoothly (instantly for people who prefer reduced motion) and put keyboard focus on the section */
+  document.querySelectorAll('.jumpto a[data-jump]').forEach(a => a.addEventListener('click', e => {
+    const target = document.getElementById(a.dataset.jump);
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: JU.ui.reduced() ? 'auto' : 'smooth', block: 'start' });
+    const hd = target.querySelector('h2') || target;
+    if (!hd.hasAttribute('tabindex')) hd.setAttribute('tabindex', '-1');
+    hd.focus({ preventScroll: true });
+  }));
+  const startHash = location.hash.slice(1);          // (showView rewrites the address, so remember a #section link first)
   showView(new URLSearchParams(location.search).get('p'));
 
   /* ---------- Dorian and Family views ---------- */
@@ -338,14 +351,28 @@
   async function renderOthers() {
     const c = await JU.storage.counts();
     document.getElementById('dorian-summary').replaceChildren(
-      statCard('Money activities finished', c.dorian.money.done), statCard('Answers saved', c.dorian.results + c.dorian.money.answers),
+      statCard('Money activities finished', c.dorian.money.done), statCard('Answers saved', c.dorian.results + c.dorian.money.answers + c.dorian.kinder.answers),
       statCard('Stickers', c.dorian.stickers), statCard('Ask a grown-up flags', c.dorian.flags));
-    document.getElementById('dorian-empty').hidden = c.dorian.results > 0 || c.dorian.stickers > 0 || c.dorian.money.answers > 0 || c.dorian.money.done > 0;
+    document.getElementById('dorian-empty').hidden = c.dorian.results > 0 || c.dorian.stickers > 0 || c.dorian.money.answers > 0 || c.dorian.money.done > 0 || c.dorian.kinder.answers > 0;
     document.getElementById('family-summary').replaceChildren(statCard('Lessons finished', c.family.lessonsDone + ' of ' + (await JU.money.load()).length), statCard('Games played', c.family.games), statCard('Stickers', c.family.stickers), statCard('Ask a grown-up flags', c.family.flags));
     await renderLessons();
     for (const who of ['julianna', 'dorian', 'family']) await renderFlags(who);
     for (const who of ['julianna', 'dorian']) await renderMoney(who);
+    await renderKinder();
   }
+
+  /* "very quick or repeated wrong taps": only worth mentioning when one session had at least RAPID_SESSION_MIN such questions,
+     so a short burst (one or two quick taps) never triggers it. Returns { session, n } for the biggest such session, or null. */
+  const RAPID_SESSION_MIN = 3;
+  function burstSession(rapidLog) {
+    const by = {};
+    rapidLog.forEach(r => { by[r.session] = (by[r.session] || 0) + 1; });
+    const best = Object.keys(by).sort((a, b) => by[b] - by[a])[0];
+    return best && by[best] >= RAPID_SESSION_MIN ? { session: best, n: by[best] } : null;
+  }
+  const rapidNote = n => 'In one session, ' + n + ' questions had very quick or repeated wrong taps. That is common when a child is excited or tired, and those taps do not unlock a hint. If it keeps happening, a friendly chat may help.';
+
+  const kinderTitle = code => (Object.values(JU.kinder.ACTIVITIES).find(a => a.code === Number(code)) || { title: 'Game ' + code }).title;
 
   /* ---------- Ask a grown-up flags (per profile) ---------- */
   async function renderFlags(who) {
@@ -358,8 +385,8 @@
     if (!flags.length) { list.replaceChildren(); return; }
     list.replaceChildren(h('p', { class: 'note', 'data-flags-count': '' }, P(flags.length, 'flag') + ' (newest first). Each one is a place where ' + (who === 'family' ? 'the family' : NAMES[who]) + ' pressed Ask a grown-up.'),
       h('div', { class: 'tablewrap' }, h('table', { class: 'flags-table' },
-        h('thead', null, h('tr', null, ['When', 'Where', 'Lesson', 'Screen'].map(t => h('th', { scope: 'col' }, t)))),
-        h('tbody', null, flags.map(f => h('tr', { 'data-flag': f.id }, h('td', null, fmtTime(f.ts)), h('td', null, f.kind === 'solo' ? 'Own activity' : 'Family lesson'), h('td', null, title(f.lesson)), h('td', null, 'Screen ' + f.screen)))))));
+        h('thead', null, h('tr', null, ['When', 'Where', 'Lesson or game', 'Screen'].map(t => h('th', { scope: 'col' }, t)))),
+        h('tbody', null, flags.map(f => h('tr', { 'data-flag': f.id }, h('td', null, fmtTime(f.ts)), h('td', null, f.kind === 'kinder' ? 'Kindergarten' : f.kind === 'solo' ? 'Own activity' : 'Family lesson'), h('td', null, f.kind === 'kinder' ? kinderTitle(f.lesson) + (f.item ? ' (' + f.item + ')' : '') : title(f.lesson)), h('td', null, 'Screen ' + f.screen)))))));
   }
   ['julianna', 'dorian', 'family'].forEach(who => {
     document.getElementById('flags-' + who).querySelector('[data-flags-clear]').addEventListener('click', async () => {
@@ -367,6 +394,34 @@
       await JU.storage.profile(who).clearFlags();
       await renderFlags(who);
     });
+  });
+
+  /* ---------- Kindergarten (Dorian): letters he knows, words built, hints ---------- */
+  async function renderKinder() {
+    const box = document.getElementById('kinder-dorian');
+    const store = JU.storage.profile('dorian');
+    const [letters, cvc, k, hints] = await Promise.all([JU.kinder.loadLetters(), JU.kinder.loadWords(), store.getKinder(), store.getHints()]);
+    const sm = JU.kinder.summary({ answers: k.answers, rounds: k.rounds, hints }, letters, cvc);
+    box.querySelector('[data-kinder-empty]').hidden = k.answers.length > 0;
+    box.querySelector('[data-kinder-summary]').replaceChildren(
+      statCard('Sessions', sm.sessions), statCard('Rounds finished', sm.rounds), statCard('Letters he knows', sm.known), statCard('Letters still learning', sm.learning), statCard('Letters not met yet', sm.notMet),
+      statCard('Words built', sm.wordsBuilt), statCard('Hints used', sm.hintsUsed + sm.grownupUnlocks));
+    const word = { known: 'Knows it', learning: 'Still learning', 'new': 'Not met yet' };
+    fillTable(box.querySelector('[data-kinder-letters]'), ['Letter', 'Sound the voice says', 'Status', 'Clean sessions (of ' + letters.rules.knownSessions + ')', 'Times seen', 'Missed first time', 'Hints'],
+      sm.letterRows.map(r => [h('strong', null, r.letter), r.say, h('span', { class: 'k-status ' + r.status, 'data-letter': r.letter, 'data-status': r.status }, word[r.status]), r.cleanSessions, r.seen, r.misses, r.hints]), 'No letters yet.');
+    fillTable(box.querySelector('[data-kinder-words]'), ['Word', 'Times built', 'Right first time', 'Clean sessions (of ' + cvc.rules.knownSessions + ')', 'Hints', 'Status'],
+      sm.wordRows.map(r => [h('strong', null, r.word), r.built, r.firstTry, r.cleanSessions, r.hints, r.known ? 'Knows it' : 'Still learning']), 'No words built yet.');
+    const kburst = burstSession(hints.filter(r => r.subject === 'kinder' && r.kind === 'rapid'));
+    const slipped = Object.keys(sm.slips).sort((a, b) => sm.slips[b] - sm.slips[a]);
+    box.querySelector('[data-kinder-note]').textContent = (slipped.length ? 'Letters he tapped by mistake while building: ' + slipped.map(l => l + ' (' + sm.slips[l] + ')').join(', ') + '. ' : '')
+      + (kburst ? rapidNote(kburst.n) + ' ' : '')
+      + (sm.rounds || sm.answers ? 'Open word tier: ' + sm.tier + ' of ' + cvc.tiers.length + '.' : '');
+  }
+  document.getElementById('kinder-clear').addEventListener('click', async () => {
+    if (!window.confirm('Clear Dorian\u2019s kindergarten results, stickers and hints? His flags, money activities and everyone else\u2019s results are not touched.')) return;
+    await JU.storage.profile('dorian').clearKinder();
+    document.querySelector('[data-kinder-clear-msg]').textContent = 'Cleared Dorian\u2019s kindergarten results.';
+    await renderOthers();
   });
 
   /* ---------- Money & Economics: a child's own follow-on activities ---------- */
@@ -388,7 +443,8 @@
     fillTable(box.querySelector('[data-money-table]'), ['Lesson', 'Own activity', 'Right on the first try', 'Hints used', 'Grown-up unlocks', 'Quick-guess flags'], rows, 'No lessons yet.');
     const note = box.querySelector('[data-money-note]');
     const guesses = hints.filter(r => r.kind === 'rapid').length;
-    note.textContent = guesses ? guesses + (guesses === 1 ? ' question had' : ' questions had') + ' very quick or repeated wrong taps. Those do not unlock a hint, so it may mean ' + (who === 'dorian' ? 'he' : 'she') + ' was guessing. Worth a chat.' : '';
+    const burst = burstSession(hints.filter(r => r.kind === 'rapid'));
+    note.textContent = burst ? rapidNote(burst.n) : '';
   }
 
   /* Family lesson unlock panel */
@@ -404,9 +460,9 @@
       h('tbody', null, rows.map((l, i) => {
         const locked = l.state === 'locked';
         return h('tr', { 'data-lesson': l.id, 'data-state': l.state },
-          h('td', null, String(l.id)),
+          h('td', { 'data-label': 'Lesson' }, String(l.id)),
           h('td', null, h('span', { class: 'note' }, 'Unit ' + l.unit + ' \u2022 '), l.title),
-          h('td', { class: 'l-state' }, word[l.state] + (l.override === 'open' && l.state !== 'complete' ? ' (opened early)' : '') + (l.override === 'locked' ? ' (locked by a grown-up)' : '')),
+          h('td', { class: 'l-state', 'data-label': 'Now' }, word[l.state] + (l.override === 'open' && l.state !== 'complete' ? ' (opened early)' : '') + (l.override === 'locked' ? ' (locked by a grown-up)' : '')),
           h('td', null, h('button', { type: 'button', class: 'btn small l-lock', 'aria-label': (locked ? 'Unlock lesson ' : 'Re-lock lesson ') + l.id + ': ' + l.title,
             onclick: async () => {
               if (locked) await fam.setLessonOverride(l.id, natural(i) ? null : 'open');
@@ -456,7 +512,7 @@
     return ['Learning progress summary (' + day(new Date().toISOString()) + ')',
       '',
       'Julianna: ' + P(c.julianna.results, 'word') + ' practiced, ' + (c.julianna.games === 1 ? '1 game or test' : c.julianna.games + ' games and tests') + ', ' + P(c.julianna.stickers, 'sticker') + ', ' + P(c.julianna.hints, 'hint log entry', 'hint log entries') + moneyBit(c.julianna.money),
-      'Dorian: ' + P(c.dorian.results + c.dorian.money.answers, 'answer') + ' saved, ' + games(c.dorian.games) + ', ' + P(c.dorian.stickers, 'sticker') + moneyBit(c.dorian.money),
+      'Dorian: ' + P(c.dorian.results + c.dorian.money.answers + c.dorian.kinder.answers, 'answer') + ' saved, ' + games(c.dorian.games) + ', ' + P(c.dorian.stickers, 'sticker') + moneyBit(c.dorian.money) + (c.dorian.kinder.rounds ? ', ' + P(c.dorian.kinder.rounds, 'kindergarten round') + ' finished' : ''),
       'Family: ' + c.family.lessonsDone + ' of ' + total + ' money lessons finished',
       flagBits.length ? 'Ask a grown-up flags waiting: ' + flagBits.join(', ') : null,
       '',
@@ -473,7 +529,7 @@
       const body = ['This is the weekly backup for the family learning site.',
         'Step 1: attach the file just downloaded, named ' + saved.fileName + ', from your Downloads folder.',
         'Step 2: press Send.',
-        'Nothing else is needed. The bot saves it and lets the family know it arrived.',
+        'Nothing else is needed. The bot saves it. You do not need to wait for a reply.',
         '', await summaryText()].join('\n');
       const url = 'mailto:' + encodeURIComponent(addr).replace(/%40/g, '@') + '?subject=' + encodeURIComponent('Family Learning backup ' + saved.date) + '&body=' + encodeURIComponent(body);
       emailBtn.dataset.mailto = url;
@@ -484,4 +540,6 @@
 
   await renderOthers();
   await render();
+  const startTarget = startHash && document.getElementById(startHash);
+  if (startTarget && startTarget.offsetParent) startTarget.scrollIntoView({ behavior: 'auto', block: 'start' });      // a link such as parent.html?p=dorian#money-dorian
 })();

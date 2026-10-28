@@ -19,6 +19,9 @@
       <button type="button" class="btn big switch-btn" id="sw-dorian" data-profile="dorian" aria-pressed="false">&#128640; Dorian</button>
       <button type="button" class="btn big switch-btn" id="sw-family" data-profile="family" aria-pressed="false">&#127968; Family</button>
     </nav>
+    <nav class="jumpto" id="jump-julianna" data-for="julianna" aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#spelling-julianna" data-jump="spelling-julianna">Spelling</a> <a href="#money-julianna" data-jump="money-julianna">Money</a> <a href="#hints-card" data-jump="hints-card">Hints</a> <a href="#flags-julianna" data-jump="flags-julianna">Flags</a></nav>
+    <nav class="jumpto" id="jump-dorian" data-for="dorian" hidden aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#kinder-dorian" data-jump="kinder-dorian">Kindergarten</a> <a href="#money-dorian" data-jump="money-dorian">Money</a> <a href="#flags-dorian" data-jump="flags-dorian">Flags</a></nav>
+    <nav class="jumpto" id="jump-family" data-for="family" hidden aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#lessons-card" data-jump="lessons-card">Lessons</a> <a href="#flags-family" data-jump="flags-family">Flags</a></nav>
 
     <section id="backup-banner" class="backup-banner" aria-labelledby="backup-banner-h" hidden></section>
     <p class="note storage-note">Results are saved in this laptop&rsquo;s browser only. They do not sync to other devices, and clearing the browser&rsquo;s site data will erase them. Use <strong>Save progress</strong> to keep a backup file for everyone (Julianna, Dorian and the Family lessons), and <strong>Load progress</strong> to put it back (or move it to another laptop).</p>
@@ -60,6 +63,7 @@
 
     <div id="view-julianna" class="profile-view" data-view="julianna">
     <h2 class="view-title">Julianna</h2>
+    
     <section class="toolbar" aria-label="Actions">
       <label for="week-filter">Show: </label>
       <select id="week-filter" class="select"></select>
@@ -69,6 +73,7 @@
       <button id="clear" class="btn danger" type="button">Clear results</button>
     </section>
 
+    <h2 id="spelling-julianna" class="sec-title" tabindex="-1">Spelling</h2>
     <div id="empty" class="card" hidden><p class="lead">No results yet. Once Julianna plays a game or takes the test, her results will show up here.</p></div>
 
     <section class="cards" id="summary" aria-label="Summary"></section>
@@ -122,11 +127,29 @@
 
     <div id="view-dorian" class="profile-view" data-view="dorian" hidden>
       <h2 class="view-title">Dorian</h2>
+      
       <section class="toolbar" aria-label="Actions"><a class="btn" id="open-dorian" href="dorian.html">Open Dorian&rsquo;s home</a></section>
       <section class="card" aria-labelledby="dorian-progress-h">
         <h2 id="dorian-progress-h">Progress</h2>
         <div class="cards" id="dorian-summary"></div>
         <p class="lead" id="dorian-empty">Nothing yet. Dorian&rsquo;s games are coming soon, and his progress will show up here.</p>
+      </section>
+      <section class="card kinder-card" id="kinder-dorian" aria-labelledby="kinder-dorian-h">
+        <h2 id="kinder-dorian-h">Kindergarten</h2>
+        <p class="note">Letter sounds and Build a word, on Dorian&rsquo;s own login. A letter counts as known after it was right on the first try, with no hint, in 3 different sessions. A word counts as known after 2. Everything here is saved under Dorian&rsquo;s own profile.</p>
+        <div class="row">
+          <a class="btn small" id="kinder-preview-letters" href="kinder.html?a=letters">Preview Letter sounds</a>
+          <a class="btn small" id="kinder-preview-build" href="kinder.html?a=build">Preview Build a word</a>
+        </div>
+        <div class="cards" data-kinder-summary></div>
+        <p class="lead" data-kinder-empty>Nothing yet. When Dorian plays Letter sounds or Build a word, his progress will show up here.</p>
+        <h3>Letters</h3>
+        <div class="tablewrap"><table data-kinder-letters></table></div>
+        <h3>Words built</h3>
+        <div class="tablewrap"><table data-kinder-words></table></div>
+        <p class="hints-readout" data-kinder-note></p>
+        <div class="row"><button class="btn small danger" type="button" id="kinder-clear">Clear kindergarten results</button></div>
+        <p class="note" data-kinder-clear-msg role="status" aria-live="polite"></p>
       </section>
       <section class="card" id="money-dorian" aria-labelledby="money-dorian-h">
       <h2 id="money-dorian-h">Money &amp; Economics: Dorian&rsquo;s own activities</h2>
@@ -145,6 +168,7 @@
 
     <div id="view-family" class="profile-view" data-view="family" hidden>
       <h2 class="view-title">Family</h2>
+      
       <section class="toolbar" aria-label="Actions"><a class="btn" id="open-family" href="family.html">Open the Family home</a></section>
       <section class="card" aria-labelledby="family-progress-h">
         <h2 id="family-progress-h">Family progress</h2>
@@ -182,6 +206,7 @@
   <script src="js/speech.js"></script>
   <script src="js/weeks.js"></script>
   <script src="js/money.js"></script>
+  <script src="js/kinder.js"></script>
   <script src="js/subjects.js"></script>
   <script src="js/runner.js"></script>
   <script src="js/spelling/unscramble.js"></script>

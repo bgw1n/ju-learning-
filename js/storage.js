@@ -18,6 +18,8 @@
 
    v8 adds, for every profile: flags (key ju_<profile>_flags_v1, Julianna's ju_flags_v1) and money solo results (ju_<profile>_money_v1, Julianna's ju_money_v1).
 
+   v9 adds the kindergarten track results (key ju_<profile>_kinder_v1; only Dorian uses it): answers and finished rounds. Its stickers use week id 'kinder', its hint log entries subject 'kinder'.
+
    Last backup date (key ju_lastbackup_v1): one ISO time, set when Save progress downloads a backup. Used only to show the backup reminder.
 
    Hint log record shape (separate from results, key ju_hints_v1; part of the Save progress backup):
@@ -47,6 +49,15 @@
     return m;
   }
 
+  function kinderClean(v) {
+    const k = { answers: [], rounds: [] };
+    if (isObj(v)) {
+      if (Array.isArray(v.answers)) k.answers = v.answers.filter(r => r && typeof r === 'object');
+      if (Array.isArray(v.rounds)) k.rounds = v.rounds.filter(r => r && typeof r === 'object');
+    }
+    return k;
+  }
+
   /* The storage for one profile. Julianna's keys keep their old names, so her saved data still loads. */
   function make(id) {
     const mid = id === 'julianna' ? '' : id + '_';
@@ -56,11 +67,12 @@
     const LESSONS_KEY = 'ju_family_lessons_v1';
     const FLAGS_KEY = 'ju_' + mid + 'flags_v1';
     const MONEY_KEY = 'ju_' + mid + 'money_v1';
+    const KINDER_KEY = 'ju_' + mid + 'kinder_v1';
 
     const api = {
       kind: 'localStorage',
       id,
-      keys: { results: RESULTS_KEY, stickers: STICKERS_KEY, hints: HINTS_KEY, flags: FLAGS_KEY, money: MONEY_KEY },
+      keys: { results: RESULTS_KEY, stickers: STICKERS_KEY, hints: HINTS_KEY, flags: FLAGS_KEY, money: MONEY_KEY, kinder: KINDER_KEY },
       async getResults() { return read(RESULTS_KEY, []); },
       async addResult(rec) {
         const all = read(RESULTS_KEY, []);
@@ -134,7 +146,7 @@
       async clearHints() { localStorage.removeItem(HINTS_KEY); },
       async clearStickers() { localStorage.removeItem(STICKERS_KEY); },
 
-      /* ---- "Ask a grown-up" flags (v8). Record: { id, ts, profile, kind ('lesson' | 'solo'), lesson (number), screen (number, 1-based) } ---- */
+      /* ---- "Ask a grown-up" flags (v8). Record: { id, ts, profile, kind ('lesson' | 'solo' | 'kinder'), lesson (number; for 'kinder' 1 = Letter sounds, 2 = Build a word), screen (number, 1-based), item? (v9: the letter or word on screen) } ---- */
       async getFlags() { return read(FLAGS_KEY, []); },
       async addFlag(rec) {
         const all = read(FLAGS_KEY, []);
@@ -150,7 +162,7 @@
         const ids = new Set(all.map(r => r.id)), keys = new Set(all.map(key));
         let added = 0, skipped = 0;
         (Array.isArray(list) ? list : []).forEach(r => {
-          const ok = r && typeof r.ts === 'string' && (r.kind === 'lesson' || r.kind === 'solo') && isFinite(Number(r.lesson));
+          const ok = r && typeof r.ts === 'string' && (r.kind === 'lesson' || r.kind === 'solo' || r.kind === 'kinder') && isFinite(Number(r.lesson));
           if (!ok) { skipped++; return; }
           if ((r.id && ids.has(r.id)) || keys.has(key(r))) { skipped++; return; }
           const rec = Object.assign({}, r, { id: r.id || JU.ui.uid(), profile: id, lesson: Number(r.lesson) });
@@ -194,7 +206,60 @@
         if (changed) { m.answers.sort((a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0); write(MONEY_KEY, m); }
         return { added, skipped };
       },
-      async clearMoney() { localStorage.removeItem(MONEY_KEY); }
+      async clearMoney() { localStorage.removeItem(MONEY_KEY); },
+
+      /* ---- Kindergarten track (v9), kept apart from every other result. See js/kinder.js for the record shapes. ----
+         { answers: [ { id, ts, session, round, activity ('letters'|'build'), item, correct, tries, hinted, wrong | letters } ],
+           rounds:  [ { id, ts, session, activity, items, clean } ] } */
+      async getKinder() { return kinderClean(read(KINDER_KEY, null)); },
+      async addKinderAnswer(rec) {
+        const k = kinderClean(read(KINDER_KEY, null));
+        const r = Object.assign({ id: JU.ui.uid(), ts: new Date().toISOString() }, rec);
+        k.answers.push(r);
+        write(KINDER_KEY, k);
+        return r;
+      },
+      async addKinderRound(rec) {
+        const k = kinderClean(read(KINDER_KEY, null));
+        const r = Object.assign({ id: JU.ui.uid(), ts: new Date().toISOString() }, rec);
+        k.rounds.push(r);
+        write(KINDER_KEY, k);
+        return r;
+      },
+      /* Merge from a backup without duplicating: an answer with the same id, or the same session + activity + item + time; a round with the same id, or the same session + activity + time. Returns { added, skipped }. */
+      async importKinder(obj) {
+        const k = kinderClean(read(KINDER_KEY, null));
+        const akey = r => [r.session, r.activity, r.item, r.ts].join('|'), rkey = r => [r.session, r.activity, r.ts].join('|');
+        const aids = new Set(k.answers.map(r => r.id)), akeys = new Set(k.answers.map(akey));
+        const rids = new Set(k.rounds.map(r => r.id)), rkeys = new Set(k.rounds.map(rkey));
+        let added = 0, skipped = 0;
+        const src = isObj(obj) ? obj : {};
+        (Array.isArray(src.answers) ? src.answers : []).forEach(r => {
+          const ok = r && typeof r.ts === 'string' && typeof r.item === 'string' && (r.activity === 'letters' || r.activity === 'build');
+          if (!ok) { skipped++; return; }
+          if ((r.id && aids.has(r.id)) || akeys.has(akey(r))) { skipped++; return; }
+          const rec = Object.assign({}, r, { id: r.id || JU.ui.uid(), correct: !!r.correct });
+          k.answers.push(rec); aids.add(rec.id); akeys.add(akey(rec)); added++;
+        });
+        (Array.isArray(src.rounds) ? src.rounds : []).forEach(r => {
+          const ok = r && typeof r.ts === 'string' && (r.activity === 'letters' || r.activity === 'build');
+          if (!ok) { skipped++; return; }
+          if ((r.id && rids.has(r.id)) || rkeys.has(rkey(r))) { skipped++; return; }
+          const rec = Object.assign({}, r, { id: r.id || JU.ui.uid() });
+          k.rounds.push(rec); rids.add(rec.id); rkeys.add(rkey(rec)); added++;
+        });
+        if (added) { k.answers.sort((a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0); k.rounds.sort((a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0); write(KINDER_KEY, k); }
+        return { added, skipped };
+      },
+      /* Clears this profile's kindergarten answers and rounds, plus its kindergarten stickers and kindergarten hint log. Nothing else. */
+      async clearKinder() {
+        localStorage.removeItem(KINDER_KEY);
+        const st = read(STICKERS_KEY, {});
+        if (st.kinder) { delete st.kinder; write(STICKERS_KEY, st); }
+        const hs = read(HINTS_KEY, []);
+        const keep = hs.filter(r => r.subject !== 'kinder');
+        if (keep.length !== hs.length) write(HINTS_KEY, keep);
+      }
     };
 
     if (id === 'family') {
@@ -253,14 +318,15 @@
     async getLastBackup() { const v = read(BACKUP_KEY, null); return typeof v === 'string' && !isNaN(new Date(v)) ? v : null; },
     async setLastBackup(iso) { write(BACKUP_KEY, iso || new Date().toISOString()); return iso; },
 
-    /* ---- the backup file (version 4; versions 1 to 3 still load) ----
+    /* ---- the backup file (version 5; versions 1 to 4 still load) ----
+       Version 5 adds "kinder" (Dorian's kindergarten answers and rounds) under profiles.dorian.
        Version 4 adds "flags" (Ask a grown-up) for every profile and "money" (solo activity results) for Julianna and Dorian.
        Julianna's data stays at the top level exactly as in versions 1 and 2, so an older file loads into her
        and a version 3 file is still readable by old code. Everyone else is under "profiles":
-       { app:'ju-learning', version:4, exportedAt, results, stickers, hints, flags, money,
-         profiles: { dorian: { results, stickers, hints }, family: { results, stickers, hints, lessons } } } */
+       { app:'ju-learning', version:5, exportedAt, results, stickers, hints, flags, money,
+         profiles: { dorian: { results, stickers, hints, flags, money, kinder }, family: { results, stickers, hints, lessons } } } */
     async exportAll() {
-      const out = { app: 'ju-learning', version: 4, exportedAt: new Date().toISOString(),
+      const out = { app: 'ju-learning', version: 5, exportedAt: new Date().toISOString(),
         results: await stores.julianna.getResults(), stickers: await stores.julianna.getStickers(), hints: await stores.julianna.getHints(),
         flags: await stores.julianna.getFlags(), money: await stores.julianna.getMoney(),
         profiles: {} };
@@ -268,10 +334,11 @@
         out.profiles[p] = { results: await stores[p].getResults(), stickers: await stores[p].getStickers(), hints: await stores[p].getHints(), flags: await stores[p].getFlags() };
       }
       out.profiles.dorian.money = await stores.dorian.getMoney();
+      out.profiles.dorian.kinder = await stores.dorian.getKinder();
       out.profiles.family.lessons = await stores.family.getLessonState();
       return out;
     },
-    /* True when a parsed file looks like one of our backups (version 1, 2, 3 or 4). */
+    /* True when a parsed file looks like one of our backups (version 1 to 5). */
     isBackup(data) {
       return isObj(data) && data.app === 'ju-learning' && (Array.isArray(data.results) || isObj(data.profiles));
     },
@@ -295,7 +362,8 @@
         if (p === 'family' && blk.lessons) lessons = await stores.family.importLessonState(blk.lessons);
         const pf = Array.isArray(blk.flags) ? await stores[p].importFlags(blk.flags) : null;
         const pm = p === 'dorian' && isObj(blk.money) ? await stores.dorian.importMoney(blk.money) : null;
-        profiles[p] = { added: pr.added, skipped: pr.skipped, hints: ph, lessons, flags: pf, money: pm };
+        const pk = p === 'dorian' && isObj(blk.kinder) ? await stores.dorian.importKinder(blk.kinder) : null;     // versions 1 to 4 have no kinder part
+        profiles[p] = { added: pr.added, skipped: pr.skipped, hints: ph, lessons, flags: pf, money: pm, kinder: pk };
       }
       return { added: r.added, skipped: r.skipped, hints, flags, money, profiles };
     },
@@ -309,6 +377,8 @@
           flags: (await stores[p].getFlags()).length };
         const m = await stores[p].getMoney();
         out[p].money = { done: Object.keys(m.done).length, answers: m.answers.length };
+        const k = await stores[p].getKinder();
+        out[p].kinder = { answers: k.answers.length, rounds: k.rounds.length, sessions: new Set(k.answers.map(a => a.session)).size };
       }
       out.family.lessonsDone = Object.keys((await stores.family.getLessonState()).complete).length;
       return out;

@@ -59,6 +59,7 @@
           feedback.textContent = o.why;
           next.disabled = false; next.setAttribute('aria-label', 'Next');
           JU.moneyUI.say(o.why);
+          JU.moneyUI.reveal(feedback, next);      // v10: on a laptop the explanation and Next are in view without scrolling
         } }, o.e ? h('span', { class: 'opt-e', 'aria-hidden': 'true' }, o.e) : null, h('span', { class: 'opt-label' }, o.label),
           h('span', { class: 'opt-tag', hidden: true }, '\u2B50 a strong answer')));
         const f = frame(sc, number, [

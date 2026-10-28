@@ -1,5 +1,22 @@
 # Changelog
 
+## v10
+- **Phone layout (390px wide).** No page scrolls sideways any more: grid columns are `minmax(0, 1fr)`, the Back up to Grok Bot address box fits its row, the Family unlock table becomes one stacked block per lesson on a phone, the other wide tables scroll inside their own box, and Julianna's game cards are no longer cut off. Checked at 390x844 and 1280x800 on the main pages.
+- **Laptop lessons:** after a tap question the explanation and the Next button are scrolled into view (smoothly, or instantly for reduced motion). Same for the children's follow-ons and Dorian's kindergarten games.
+- **Dorian's pages speak what they show.** Wrong taps, explanations, counts, the Ask a grown-up note and finish messages are shown and spoken; the money intro speaks its title. The hint lock is a lock picture (says "Ask a grown-up for a hint."), an open hint is a light bulb, and the hear, slower and ask buttons are pictures. The voice says "A hint is ready. Tap the light bulb."
+- **Replay is practice.** On Dorian's home a finished money game keeps its picture with a check mark and stays tappable. Replaying a finished activity (Dorian's or Julianna's) saves nothing new: no extra answers, hint log, finish time or sticker. Ask a grown-up still saves a flag.
+- **Grown-up page:** a Jump to row under the profile switch (Julianna: Spelling, Money, Hints, Flags; Dorian: Kindergarten, Money, Flags; Family: Lessons, Flags). The "very quick or repeated wrong taps" note is calmer and shows only when one session had 3 or more.
+- The backup email now says "The bot saves it. You do not need to wait for a reply." Backup file stays at version 5.
+
+## v9
+- **Dorian's kindergarten track, round 1.** Two games on his own login (`kinder.html?a=letters`, `?a=build`), voice-led, picture-first and tap-only, with a spoken start screen, Hear it again, a slower button and Ask a grown-up on every screen. No typing, timers, progress bars or scores on his screen; a wrong tap gets a gentle "Listen again" or "Let's try again".
+- **Letter sounds:** the voice says a sound and he taps the picture (of three) that starts with it. Starts with s a t m p n; a letter is known after it was right on the first try in 3 sessions, and then the next letter of b d g h c k r f l j w v z x qu y e i o u joins (never more than 6 still learning). Letters he missed come back more often. Data: `data/kinder/letters.json`.
+- **Build a word:** he hears a three-letter word, sees its picture and taps the sounds in order into three boxes; each tile says its sound and the whole word is spoken at the end. Picture words in three tiers (s a t m p n; then i c r; then o g d u b); a tier opens when 4 words of the one before are known. Data: `data/kinder/cvc.json`.
+- Rounds of 4 to 6 items (a missed item comes back once, at most 2 comebacks) end with a picture sticker saved under Dorian's profile, and his home shows his stickers as pictures. Earned hints use the existing rules; Ask a grown-up reuses the money flags.
+- Dorian's home has big picture buttons for both games (each says its name), and the "coming soon" text is gone.
+- **Grown-up page:** a Kindergarten card on the Dorian view (sessions, rounds, letters known / still learning, words built, hints used, letter and word tables), preview links that save nothing, and **Clear kindergarten results** (his kindergarten data only). Flags list the kindergarten flags.
+- **Backup file version 5** adds Dorian's kindergarten results; versions 1-4 still load, and merging never duplicates.
+
 ## v8
 - **Money & Economics Unit 1, lessons 1-4, are playable.** Family lessons (`lesson.html?n=N`, Family login): a voiced story with pictures, two or three "what would you do?" taps with a reason after each tap, a calm Grown-up talk screen, and a **We finished!** button that marks the lesson complete (opening the next) and awards a Family sticker.
 - **Hear it again** and **Ask a grown-up** on every screen. Ask saves a flag (profile, lesson, screen, time). The grown-up page lists flags for each profile, with **Clear flags**.

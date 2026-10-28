@@ -1,0 +1,566 @@
+{
+ "note": "Letter sounds for Dorian. 'say' is what the voice speaks for the sound: change it if it sounds off. 'pics' are words that START with the letter (or END with it when position is 'end'). 'sameSound' letters never appear as wrong choices for each other. Add a letter: put it in 'extended' (the order is the order they open) and add an entry under 'letters' with at least 2 pics.",
+ "rules": {
+  "knownSessions": 3,
+  "maxLearning": 6,
+  "roundItems": 4,
+  "maxRoundItems": 6
+ },
+ "start": [
+  "s",
+  "a",
+  "t",
+  "m",
+  "p",
+  "n"
+ ],
+ "extended": [
+  "b",
+  "d",
+  "g",
+  "h",
+  "c",
+  "k",
+  "r",
+  "f",
+  "l",
+  "j",
+  "w",
+  "v",
+  "z",
+  "x",
+  "qu",
+  "y",
+  "e",
+  "i",
+  "o",
+  "u"
+ ],
+ "letters": {
+  "s": {
+   "say": "sss",
+   "pics": [
+    {
+     "e": "☀️",
+     "word": "sun"
+    },
+    {
+     "e": "🐍",
+     "word": "snake"
+    },
+    {
+     "e": "🧦",
+     "word": "sock"
+    },
+    {
+     "e": "⭐",
+     "word": "star"
+    }
+   ]
+  },
+  "a": {
+   "say": "ah",
+   "pics": [
+    {
+     "e": "🍎",
+     "word": "apple"
+    },
+    {
+     "e": "🐜",
+     "word": "ant"
+    },
+    {
+     "e": "🐊",
+     "word": "alligator"
+    }
+   ]
+  },
+  "t": {
+   "say": "tuh",
+   "pics": [
+    {
+     "e": "🐯",
+     "word": "tiger"
+    },
+    {
+     "e": "🐢",
+     "word": "turtle"
+    },
+    {
+     "e": "🌳",
+     "word": "tree"
+    },
+    {
+     "e": "⛺",
+     "word": "tent"
+    }
+   ]
+  },
+  "m": {
+   "say": "mmm",
+   "pics": [
+    {
+     "e": "🐭",
+     "word": "mouse"
+    },
+    {
+     "e": "🌙",
+     "word": "moon"
+    },
+    {
+     "e": "🐒",
+     "word": "monkey"
+    },
+    {
+     "e": "🗺️",
+     "word": "map"
+    }
+   ]
+  },
+  "p": {
+   "say": "puh",
+   "pics": [
+    {
+     "e": "🐷",
+     "word": "pig"
+    },
+    {
+     "e": "🍕",
+     "word": "pizza"
+    },
+    {
+     "e": "🐧",
+     "word": "penguin"
+    },
+    {
+     "e": "🐼",
+     "word": "panda"
+    }
+   ]
+  },
+  "n": {
+   "say": "nnn",
+   "pics": [
+    {
+     "e": "👃",
+     "word": "nose"
+    },
+    {
+     "e": "🍜",
+     "word": "noodles"
+    },
+    {
+     "e": "🥜",
+     "word": "nut"
+    },
+    {
+     "e": "📓",
+     "word": "notebook"
+    }
+   ]
+  },
+  "b": {
+   "say": "buh",
+   "pics": [
+    {
+     "e": "🐻",
+     "word": "bear"
+    },
+    {
+     "e": "🐝",
+     "word": "bee"
+    },
+    {
+     "e": "🦋",
+     "word": "butterfly"
+    },
+    {
+     "e": "🍌",
+     "word": "banana"
+    },
+    {
+     "e": "🎈",
+     "word": "balloon"
+    }
+   ]
+  },
+  "d": {
+   "say": "duh",
+   "pics": [
+    {
+     "e": "🐶",
+     "word": "dog"
+    },
+    {
+     "e": "🦆",
+     "word": "duck"
+    },
+    {
+     "e": "🚪",
+     "word": "door"
+    },
+    {
+     "e": "🥁",
+     "word": "drum"
+    },
+    {
+     "e": "🐬",
+     "word": "dolphin"
+    }
+   ]
+  },
+  "g": {
+   "say": "guh",
+   "pics": [
+    {
+     "e": "🐐",
+     "word": "goat"
+    },
+    {
+     "e": "🍇",
+     "word": "grapes"
+    },
+    {
+     "e": "🎸",
+     "word": "guitar"
+    },
+    {
+     "e": "🦍",
+     "word": "gorilla"
+    }
+   ]
+  },
+  "h": {
+   "say": "huh",
+   "pics": [
+    {
+     "e": "🐴",
+     "word": "horse"
+    },
+    {
+     "e": "🏠",
+     "word": "house"
+    },
+    {
+     "e": "🎩",
+     "word": "hat"
+    },
+    {
+     "e": "🔨",
+     "word": "hammer"
+    },
+    {
+     "e": "🚁",
+     "word": "helicopter"
+    }
+   ]
+  },
+  "c": {
+   "say": "kuh",
+   "pics": [
+    {
+     "e": "🐱",
+     "word": "cat"
+    },
+    {
+     "e": "🥕",
+     "word": "carrot"
+    },
+    {
+     "e": "🚗",
+     "word": "car"
+    },
+    {
+     "e": "🐮",
+     "word": "cow"
+    },
+    {
+     "e": "🍰",
+     "word": "cake"
+    }
+   ],
+   "sameSound": [
+    "k"
+   ]
+  },
+  "k": {
+   "say": "kuh",
+   "pics": [
+    {
+     "e": "🔑",
+     "word": "key"
+    },
+    {
+     "e": "🥝",
+     "word": "kiwi"
+    },
+    {
+     "e": "🦘",
+     "word": "kangaroo"
+    }
+   ],
+   "sameSound": [
+    "c"
+   ]
+  },
+  "r": {
+   "say": "rrr",
+   "pics": [
+    {
+     "e": "🌈",
+     "word": "rainbow"
+    },
+    {
+     "e": "🐰",
+     "word": "rabbit"
+    },
+    {
+     "e": "🚀",
+     "word": "rocket"
+    },
+    {
+     "e": "🤖",
+     "word": "robot"
+    },
+    {
+     "e": "💍",
+     "word": "ring"
+    }
+   ]
+  },
+  "f": {
+   "say": "fff",
+   "pics": [
+    {
+     "e": "🐟",
+     "word": "fish"
+    },
+    {
+     "e": "🐸",
+     "word": "frog"
+    },
+    {
+     "e": "🌸",
+     "word": "flower"
+    },
+    {
+     "e": "🔥",
+     "word": "fire"
+    },
+    {
+     "e": "🦊",
+     "word": "fox"
+    }
+   ]
+  },
+  "l": {
+   "say": "lll",
+   "pics": [
+    {
+     "e": "🦁",
+     "word": "lion"
+    },
+    {
+     "e": "🍋",
+     "word": "lemon"
+    },
+    {
+     "e": "🍃",
+     "word": "leaf"
+    },
+    {
+     "e": "🐞",
+     "word": "ladybug"
+    }
+   ]
+  },
+  "j": {
+   "say": "juh",
+   "pics": [
+    {
+     "e": "🧥",
+     "word": "jacket"
+    },
+    {
+     "e": "👖",
+     "word": "jeans"
+    },
+    {
+     "e": "🤹",
+     "word": "juggler"
+    }
+   ]
+  },
+  "w": {
+   "say": "wuh",
+   "pics": [
+    {
+     "e": "🍉",
+     "word": "watermelon"
+    },
+    {
+     "e": "🐋",
+     "word": "whale"
+    },
+    {
+     "e": "⌚",
+     "word": "watch"
+    },
+    {
+     "e": "🐺",
+     "word": "wolf"
+    },
+    {
+     "e": "🌊",
+     "word": "wave"
+    }
+   ]
+  },
+  "v": {
+   "say": "vvv",
+   "pics": [
+    {
+     "e": "🎻",
+     "word": "violin"
+    },
+    {
+     "e": "🌋",
+     "word": "volcano"
+    },
+    {
+     "e": "🚐",
+     "word": "van"
+    }
+   ]
+  },
+  "z": {
+   "say": "zzz",
+   "pics": [
+    {
+     "e": "🦓",
+     "word": "zebra"
+    },
+    {
+     "e": "0️⃣",
+     "word": "zero"
+    },
+    {
+     "e": "🤐",
+     "word": "zipper"
+    }
+   ]
+  },
+  "x": {
+   "say": "ks",
+   "pics": [
+    {
+     "e": "🦊",
+     "word": "fox"
+    },
+    {
+     "e": "📦",
+     "word": "box"
+    },
+    {
+     "e": "6️⃣",
+     "word": "six"
+    }
+   ],
+   "position": "end"
+  },
+  "qu": {
+   "say": "kwuh",
+   "pics": [
+    {
+     "e": "👸",
+     "word": "queen"
+    },
+    {
+     "e": "❓",
+     "word": "question"
+    }
+   ]
+  },
+  "y": {
+   "say": "yuh",
+   "pics": [
+    {
+     "e": "🧶",
+     "word": "yarn"
+    },
+    {
+     "e": "💛",
+     "word": "yellow"
+    },
+    {
+     "e": "🧘",
+     "word": "yoga"
+    }
+   ]
+  },
+  "e": {
+   "say": "eh",
+   "pics": [
+    {
+     "e": "🥚",
+     "word": "egg"
+    },
+    {
+     "e": "🐘",
+     "word": "elephant"
+    },
+    {
+     "e": "✉️",
+     "word": "envelope"
+    },
+    {
+     "e": "🧝",
+     "word": "elf"
+    }
+   ]
+  },
+  "i": {
+   "say": "ih",
+   "pics": [
+    {
+     "e": "🦎",
+     "word": "iguana"
+    },
+    {
+     "e": "🐛",
+     "word": "insect"
+    }
+   ]
+  },
+  "o": {
+   "say": "aw",
+   "pics": [
+    {
+     "e": "🐙",
+     "word": "octopus"
+    },
+    {
+     "e": "🍊",
+     "word": "orange"
+    },
+    {
+     "e": "🐂",
+     "word": "ox"
+    }
+   ]
+  },
+  "u": {
+   "say": "uh",
+   "pics": [
+    {
+     "e": "☂️",
+     "word": "umbrella"
+    },
+    {
+     "e": "⬆️",
+     "word": "up"
+    }
+   ]
+  }
+ }
+}

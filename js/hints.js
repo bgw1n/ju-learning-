@@ -13,11 +13,17 @@
    - A word where the hint was used is recorded as not correct (see runner.js), so it is not treated as mastered.
    Money & Economics solo activities (js/money/solo.js) reuse this same gate with a small ctx of their own:
    { game: { id, hintGate: true }, week: { id }, subject: 'money', session, speakButton, hintNoun: 'question', store: <that child's storage> }, and a
-   "word" { word: <question id>, say: <spoken clue> }. */
+   "word" { word: <question id>, say: <spoken clue> }.
+   ctx.kid (Dorian, v10): the lock and the hint are picture buttons with no words on them; pressing the lock says "Ask a grown-up for a hint."
+   gate.miss() returns true when that wrong answer opened the hint, so the page can say api.KID_READY. */
 (function () {
   const h = JU.ui.h;
   const NEED = 2, RAPID_MS = 3000, CAP = 3, PIN_TRIES = 3, PIN_LOCK_MS = 30000;
   const api = { NEED, RAPID_MS, CAP, skew: 0 };
+  /* what the voice says for Dorian (ctx.kid): the lock picture, and when a hint opens */
+  api.KID_LOCKED = 'Ask a grown-up for a hint.';
+  api.KID_CAPPED = 'That was three hints. Ask a grown-up for more.';
+  api.KID_READY = 'A hint is ready. Tap the light bulb.';
   /* the clock the rules use (skew lets the tests move time forward) */
   api.now = () => Date.now() + api.skew;
 
@@ -77,6 +83,16 @@
 
     function render() {
       if (st.closed) { box.replaceChildren(); box.hidden = true; return; }
+      if (st.unlocked && ctx.kid) {
+        /* Dorian's version: pictures only. The voice says what is happening (see api.KID_READY), so there is no text to read. */
+        box.dataset.state = 'open';
+        box.replaceChildren(h('span', { class: 'speakers kid-speakers' },
+          h('button', { class: 'btn round big hint-icon', type: 'button', 'data-hint-hear': '', 'aria-label': label, onclick: () => press(1) },
+            h('span', { 'aria-hidden': 'true' }, '\uD83D\uDCA1')),
+          h('button', { class: 'btn round big hint-icon', type: 'button', 'aria-label': 'Say it slower', onclick: () => press(0.7) },
+            h('span', { 'aria-hidden': 'true' }, TURTLE))));
+        return;
+      }
       if (st.unlocked) {
         box.dataset.state = 'open';
         box.replaceChildren(h('span', { class: 'speakers' },
@@ -88,6 +104,16 @@
         return;
       }
       box.dataset.state = 'locked';
+      if (ctx.kid) {
+        /* a lock picture, no words; pressing it says what to do */
+        const spoken = st.capped ? api.KID_CAPPED : api.KID_LOCKED;
+        const kids = [h('button', { class: 'btn round big locked hint-icon', type: 'button', 'aria-label': spoken, 'data-hint-lock': '',
+          onclick: () => { try { JU.speech.say(spoken); } catch (e) { /* no voice */ } } }, h('span', { 'aria-hidden': 'true' }, LOCK))];
+        if (st.pin) kids.push(pinForm());
+        else kids.push(h('button', { class: 'btn small ghost', type: 'button', 'data-hint-grownup': '', onclick: () => { st.pin = true; render(); const i = box.querySelector('input'); if (i) i.focus(); } }, 'Grown-up unlock'));
+        box.replaceChildren(...kids);
+        return;
+      }
       let text = 'Hint unlocks after ' + NEED + ' tries';
       if (st.capped) text = 'That was ' + CAP + ' hints. Ask a grown-up for more';
       else if (st.flagged) text = 'Ask a grown-up for a hint';
@@ -103,7 +129,8 @@
       used: () => st.used,
       /* call on every wrong answer; guess is any string that identifies it */
       miss(guess, opts) {
-        if (st.closed) return;
+        if (st.closed) return false;
+        const wasUnlocked = st.unlocked;
         const t = api.now(), key = String(guess);
         /* opts.repeatOk: repeating the same wrong answer is a natural mistake here (clapping the same wrong number), so only timing counts */
         const repeat = !(opts && opts.repeatOk) && st.wrongs.some(x => x.guess === key);
@@ -115,7 +142,9 @@
         if (!st.unlocked && !st.capped && st.earned >= NEED) {
           if (ctx.hintCount >= CAP) st.capped = true; else { st.unlocked = true; st.how = 'earned'; }
         }
+        const was = st.unlocked && !wasUnlocked;
         render();
+        return was;       // true when this wrong answer is the one that opened the hint
       },
       close() { st.closed = true; render(); }
     };

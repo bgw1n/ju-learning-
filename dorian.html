@@ -14,9 +14,14 @@
   <div id="parent-bar" class="parent-bar" hidden><a class="btn small ghost" href="parent.html?p=dorian">&larr; Grown-up page</a></div>
   <main class="kid-home">
     <h1 class="kid-hello"><span id="kid-star" aria-hidden="true">&#128075;</span> Hi, Dorian!</h1>
-    <div class="kid-stage" aria-hidden="true">&#127752;</div>
-    <p class="kid-soon">Games are coming soon! <span aria-hidden="true">&#127880;</span></p>
+    <div class="kid-stage" id="kid-stage" role="button" tabindex="0" aria-label="Hi Dorian">&#128640;</div>
+    <p class="kid-soon">Tap a picture to play! <span aria-hidden="true">&#127880;</span></p>
+    <div id="kid-kinder" class="kid-money kid-kinder" role="group" aria-label="Letters and words">
+      <a class="kid-btn kid-act" href="kinder.html?a=letters" data-act="letters" data-say="Letter sounds" aria-label="Letter sounds"><span class="kid-pic" aria-hidden="true">&#128292;</span></a>
+      <a class="kid-btn kid-act" href="kinder.html?a=build" data-act="build" data-say="Build a word" aria-label="Build a word"><span class="kid-pic" aria-hidden="true">&#129521;</span></a>
+    </div>
     <div id="kid-money" class="kid-money" role="group" aria-label="Money activities" hidden></div>
+    <div id="kid-stickers" class="kid-stickers" role="group" aria-label="Your stickers" hidden></div>
     <div class="kid-buttons">
       <button type="button" class="kid-btn" id="hear" aria-label="Hear it again">
         <span class="kid-pic" aria-hidden="true">&#128266;</span>
@@ -30,6 +35,8 @@
   <script src="js/storage.js"></script>
   <script src="js/speech.js"></script>
   <script src="js/money.js"></script>
+  <script src="js/kinder.js"></script>
+  <script src="js/kinder/play.js"></script>
   <script src="js/pages/dorian.js"></script>
 </body>
 </html>

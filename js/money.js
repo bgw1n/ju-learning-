@@ -62,9 +62,10 @@
     return list.filter(l => l.status === 'ready').map(l => ({ id: l.id, title: l.title, unit: l.unit, icon: l.icon || '\u2B50', open: l.complete, done: !!m.done[String(l.id)] }));
   }
 
-  /* Log an "Ask a grown-up" press for this profile. kind: 'lesson' (family lesson) or 'solo'; screen is 1-based. */
-  function flag(profileId, kind, lesson, screen) {
-    return JU.storage.profile(profileId).addFlag({ kind, lesson: Number(lesson), screen: Number(screen) });
+  /* Log an "Ask a grown-up" press for this profile. kind: 'lesson' (family lesson), 'solo', or 'kinder' (Dorian's kindergarten track:
+     lesson 1 = Letter sounds, 2 = Build a word); screen is 1-based. extra: more fields to keep, such as { item: 'm' }. */
+  function flag(profileId, kind, lesson, screen, extra) {
+    return JU.storage.profile(profileId).addFlag(Object.assign({}, extra || {}, { kind, lesson: Number(lesson), screen: Number(screen) }));
   }
 
   JU.money = { load, resolve, resolved, loadLesson, soloList, flag };

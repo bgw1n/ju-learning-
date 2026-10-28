@@ -31,19 +31,25 @@
     const store = JU.storage.profile(profileId);
     const items = expand(cfg.items);
     const session = JU.ui.uid();
+    /* v10: playing an activity that was already finished is practice: nothing new is saved (no answers, no hints, no second finish or sticker),
+       so the first time's results are never counted twice. "Ask a grown-up" still saves a flag. A grown-up preview saves nothing either. */
+    const practice = !preview && !!(await store.getMoney()).done[String(n)];
+    const saves = !preview && !practice;
     const noStore = { addHint: async () => { } };
-    const ctx = { game: { id: 'money-' + n, hintGate: true }, week: { id: 'money-L' + n }, subject: 'money', session, hintNoun: 'question',
-      store: preview ? noStore : store, speakButton: () => h('span'), hintCount: 0 };
+    const ctx = { game: { id: 'money-' + n, hintGate: true }, week: { id: 'money-L' + n }, subject: 'money', session, hintNoun: 'question', kid,
+      store: saves ? store : noStore, speakButton: () => h('span'), hintCount: 0 };
     const home = opts.home || (kid ? 'dorian.html' : 'child.html');
     let idx = -1;   // -1: intro, 0..items.length-1: questions, items.length: done
 
     const say = t => JU.moneyUI.say(t);
+    const PRACTICE_SAY = 'You did this one already. Let us practice again!';
+    const PRACTICE_NOTE = 'Practice again: nothing new is saved this time.';
     const nextLabel = last => kid ? h('span', { 'aria-hidden': 'true' }, last ? '\u2B50' : '\u27A1\uFE0F') : (last ? 'Finish' : 'Next \u2192');
     const nextBtn = (last, onclick, disabled) => h('button', { class: 'btn primary ' + (kid ? 'kid-next' : 'big'), type: 'button', 'data-next': '', disabled: disabled || null,
       'aria-label': last ? 'Finish' : 'Next', onclick }, nextLabel(last));
 
     function frame(number, kind, kids, q) {
-      const ask = JU.moneyUI.askButton({ profile: profileId, kind: 'solo', lesson: n, screen: number, save: !preview, kid });
+      const ask = JU.moneyUI.askButton({ profile: profileId, kind: 'solo', lesson: n, screen: number, save: !preview, kid });     // (a flag is saved even in practice)
       const root = h('section', { class: 'solo-screen card' + (kid ? ' kidcard' : ''), 'data-screen': number, 'data-kind': kind, 'data-q': q || null, 'aria-label': 'Screen ' + number }, kids, ask.note);
       return { ask, root };
     }
@@ -61,23 +67,26 @@
     async function record(it, wrongs, gate) {
       const hinted = !!(gate && gate.used());
       const rec = { session, lesson: n, q: it.id, kind: it.kind || it.type, correct: wrongs === 0 && !hinted, tries: wrongs + 1, hinted };
-      if (!preview) await store.addMoneyAnswer(rec);
+      if (saves) await store.addMoneyAnswer(rec);
       return rec;
     }
 
     function drawIntro() {
       const text = cfg.intro;
+      const spokenIntro = (practice ? PRACTICE_SAY + ' ' : '') + (kid ? cfg.title + '. ' : '') + text;     // Dorian also hears the title he sees
       const start = h('button', { class: 'btn primary ' + (kid ? 'kid-next' : 'big'), type: 'button', 'data-next': '', 'aria-label': 'Start', onclick: () => go(0) }, kid ? h('span', { 'aria-hidden': 'true' }, '\u25B6\uFE0F') : 'Start \u2192');
       const f = frame(1, 'intro', [
         JU.moneyArt.render(cfg.art),
         h('h1', { class: 'lesson-title', tabindex: '-1' }, cfg.title),
         h('p', { class: 'lesson-text intro-text' }, text),
         preview ? h('p', { class: 'note preview-note' }, 'Grown-up preview: nothing you tap here is saved.') : null,
-        h('div', { class: 'speakrow' }, JU.moneyUI.speakRow(() => text, { kid }))]);
+        practice ? (kid ? h('p', { class: 'practice-badge', 'data-practice': '', role: 'img', 'aria-label': 'Practice again' }, '\uD83D\uDD01')
+          : h('p', { class: 'note preview-note', 'data-practice': '' }, PRACTICE_NOTE)) : null,
+        h('div', { class: 'speakrow' }, JU.moneyUI.speakRow(() => spokenIntro, { kid }))]);
       f.root.insertBefore(bottom(f.ask, start), f.ask.note);
       mount.replaceChildren(f.root);
       f.root.querySelector('.lesson-title').focus({ preventScroll: true });
-      say(text);
+      say(spokenIntro);
     }
 
     function drawItem() {
@@ -104,6 +113,7 @@
               feedback.textContent = it.doneText || ('You counted ' + it.n + '!');
               await record(it, 0, null);
               unlockNext(); say(String(counted) + '. ' + feedback.textContent);
+              JU.moneyUI.reveal(feedback, next);
             } else say(String(counted));
           } }, JU.moneyArt.token(kid ? 78 : 56));
           tokens.push(b);
@@ -122,22 +132,21 @@
               await record(it, wrongs, gate);
               if (gate) gate.close();
               unlockNext(); say(msg);
+              JU.moneyUI.reveal(feedback, next);
             } else {
               wrongs++;
               buttons[oi].disabled = true; buttons[oi].classList.add('tried');
               const msg = 'Not that one. Try another.';
               feedback.textContent = msg;
-              if (gate) gate.miss(o.label || ('pile ' + (oi + 1)));
-              say(msg);
+              const opened = gate ? gate.miss(o.label || ('pile ' + (oi + 1))) : false;
+              say(kid && opened ? msg + ' ' + JU.hints.KID_READY : msg);       // Dorian hears it as well as sees it (and hears when a hint opens)
             }
           } }, optionBody(o)));
         const hintBox = [];
         if (!it.noHint && it.options.length >= 3 && JU.speech.supported) {
           gate = JU.hints.gate(ctx, { word: it.id, say: it.hint || 'Think about it one more time.' }, 'Hear a hint');
-          if (gate.gated) {
-            hintBox.push(gate.el);
-            if (kid) gate.el.addEventListener('click', e => { if (e.target.closest('[data-hint-lock]')) say('Try two times, and a hint will open. Or ask a grown-up.'); });
-          } else gate = null;
+          if (gate.gated) hintBox.push(gate.el);
+          else gate = null;
         }
         body = [h('div', { class: 'opts solo-opts' + (kid ? ' kid-opts' : '') }, buttons), ...hintBox];
       }
@@ -145,7 +154,7 @@
       const f = frame(number, it.type === 'count' ? 'count' : 'choose', [
         JU.moneyArt.render(it.art),
         it.context ? h('p', { class: 'solo-context' }, it.context) : null,
-        h('h2', { class: 'lesson-text', tabindex: '-1' }, it.prompt),
+        h('h2', { class: 'lesson-text', tabindex: '-1' }, kid && it.say ? it.say : it.prompt),       // Dorian reads exactly what he hears
         h('div', { class: 'speakrow' }, JU.moneyUI.speakRow(() => text, { kid })),
         ...body, feedback], it.id);
       f.root.insertBefore(bottom(f.ask, next), f.ask.note);
@@ -157,10 +166,10 @@
     async function drawDone() {
       JU.moneyUI.stop();
       let isNew = false;
-      if (!preview) { await store.setSoloDone(n); isNew = await store.earnSticker('money', 'solo-' + n); }
+      if (saves) { await store.setSoloDone(n); isNew = await store.earnSticker('money', 'solo-' + n); }
       const number = items.length + 2;
       const f = frame(number, 'done', null);
-      const msg = 'You finished! ' + (preview ? 'This was a preview, so nothing was saved.' : isNew ? 'You earned a new sticker!' : 'Your sticker is already in your collection. Great practice!');
+      const msg = 'You finished! ' + (preview ? 'This was a preview, so nothing was saved.' : practice ? 'Great practice! Your sticker is still in your collection.' : isNew ? 'You earned a new sticker!' : 'Your sticker is already in your collection. Great practice!');
       f.root.classList.add('done');
       f.root.prepend(
         h('div', { class: 'sticker-pop', 'aria-hidden': 'true', 'data-sticker': '' }, cfg.sticker || data.sticker || '\u2B50'),

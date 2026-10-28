@@ -1,0 +1,130 @@
+{
+ "note": "Build a word. Each word has exactly 3 letters, each a single sound, with a picture. 'tier' says when it opens (see tiers). Add a word: append { word, e, tier } using only letters that tier has. Every letter must exist in letters.json (its tile speaks that sound).",
+ "rules": {
+  "knownSessions": 2,
+  "wordsToOpenNext": 4,
+  "trayExtraAfter": 5,
+  "roundItems": 4,
+  "maxRoundItems": 6
+ },
+ "tiers": [
+  {
+   "letters": [
+    "s",
+    "a",
+    "t",
+    "m",
+    "p",
+    "n"
+   ]
+  },
+  {
+   "add": [
+    "i",
+    "c",
+    "r"
+   ]
+  },
+  {
+   "add": [
+    "o",
+    "g",
+    "d",
+    "u",
+    "b"
+   ]
+  }
+ ],
+ "words": [
+  {
+   "word": "map",
+   "e": "🗺️",
+   "tier": 1
+  },
+  {
+   "word": "man",
+   "e": "👨",
+   "tier": 1
+  },
+  {
+   "word": "pan",
+   "e": "🍳",
+   "tier": 1
+  },
+  {
+   "word": "nap",
+   "e": "😴",
+   "tier": 1
+  },
+  {
+   "word": "tap",
+   "e": "🚰",
+   "tier": 1
+  },
+  {
+   "word": "cat",
+   "e": "🐱",
+   "tier": 2
+  },
+  {
+   "word": "cap",
+   "e": "🧢",
+   "tier": 2
+  },
+  {
+   "word": "can",
+   "e": "🥫",
+   "tier": 2
+  },
+  {
+   "word": "rat",
+   "e": "🐀",
+   "tier": 2
+  },
+  {
+   "word": "ran",
+   "e": "🏃",
+   "tier": 2
+  },
+  {
+   "word": "pin",
+   "e": "📌",
+   "tier": 2
+  },
+  {
+   "word": "dog",
+   "e": "🐶",
+   "tier": 3
+  },
+  {
+   "word": "pig",
+   "e": "🐷",
+   "tier": 3
+  },
+  {
+   "word": "sun",
+   "e": "☀️",
+   "tier": 3
+  },
+  {
+   "word": "bug",
+   "e": "🐛",
+   "tier": 3
+  },
+  {
+   "word": "bus",
+   "e": "🚌",
+   "tier": 3
+  },
+  {
+   "word": "bat",
+   "e": "🦇",
+   "tier": 3
+  },
+  {
+   "word": "tub",
+   "e": "🛁",
+   "tier": 3
+  }
+ ]
+}

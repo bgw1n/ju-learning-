@@ -37,7 +37,7 @@
     try { ids = (await JU.weeks.list(JU.subjects[0].id)).map(w => w.id); } catch (e) { /* no week list: the other rules still work */ }
     /* anything saved by any profile counts: Julianna's results, Dorian's, the Family's, and finished family lessons */
     const c = await JU.storage.counts();
-    const some = c.julianna.results + c.dorian.results + c.family.results + c.family.lessonsDone + c.julianna.money.answers + c.dorian.money.answers + c.julianna.money.done + c.dorian.money.done;
+    const some = c.julianna.results + c.dorian.results + c.family.results + c.family.lessonsDone + c.julianna.money.answers + c.dorian.money.answers + c.julianna.money.done + c.dorian.money.done + c.dorian.kinder.answers;
     return decide(some ? [{}] : [], await JU.storage.getLastBackup(), ids, new Date());
   }
 
