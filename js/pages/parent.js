@@ -14,6 +14,7 @@
   weeks.slice().reverse().forEach(w => filter.appendChild(h('option', { value: w.id }, w.label)));
   filter.addEventListener('change', render);
 
+  const P = JU.ui.plural;
   const pct = (a, b) => b ? Math.round(100 * a / b) + '%' : '\u2013';
   function fillTable(table, head, rows, emptyText) {
     table.replaceChildren(
@@ -122,7 +123,7 @@
       'No tests taken yet.');
 
     const st = await JU.storage.getStickers();
-    const count = Object.values(st).reduce((a, w) => a + Object.keys(w).length, 0);
+    const count = Object.keys(st).filter(wk => wk !== 'money').reduce((a, wk) => a + Object.keys(st[wk]).length, 0);     // spelling stickers; money stickers are in the money card
     document.getElementById('stickernote').textContent = 'Stickers earned so far: ' + count;
   }
   /* ---------- week by week trend ---------- */
@@ -199,7 +200,7 @@
 
   /* ---------- hints (earned spoken hint in the puzzle games) ---------- */
   async function renderHints(sel) {
-    const log = (await JU.storage.getHints()).filter(r => sel === 'all' || r.week === sel);
+    const log = (await JU.storage.getHints()).filter(r => r.subject !== 'money' && (sel === 'all' || r.week === sel));     // money hints are shown in the money card
     const uses = log.filter(r => r.kind === 'hint'), ups = log.filter(r => r.kind === 'grownup'), rapid = log.filter(r => r.kind === 'rapid');
     const earned = uses.filter(r => r.earned).length, byGrown = uses.length - earned;
     document.getElementById('hints-summary').replaceChildren(
@@ -234,12 +235,14 @@
   async function saveBackup() {
     const data = await JU.storage.exportAll();
     const blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
-    const a = h('a', { href: URL.createObjectURL(blob), download: 'family-learning-progress-' + JU.ui.localDate(data.exportedAt) + '.json' });
+    const fileName = 'family-learning-progress-' + JU.ui.localDate(data.exportedAt) + '.json';
+    const a = h('a', { href: URL.createObjectURL(blob), download: fileName });
     document.body.appendChild(a); a.click(); a.remove();
     await JU.storage.setLastBackup(data.exportedAt);
     const dn = data.profiles.dorian.results.length, fl = Object.keys(data.profiles.family.lessons.complete).length;
-    backupMsg.textContent = 'Saved a backup with ' + data.results.length + ' results for Julianna, ' + dn + ' for Dorian and ' + fl + ' finished family lesson' + (fl === 1 ? '' : 's') + '. Keep the file somewhere safe.';
+    backupMsg.textContent = 'Saved a backup with ' + P(data.results.length, 'result') + ' for Julianna, ' + dn + ' for Dorian and ' + P(fl, 'finished family lesson') + '. Keep the file somewhere safe.';
     await JU.backup.showBanner(banner, saveBackup);
+    return { fileName, date: JU.ui.localDate(data.exportedAt) };
   }
   document.getElementById('save-progress').addEventListener('click', saveBackup);
   JU.backup.showBanner(banner, saveBackup);
@@ -253,7 +256,8 @@
       if (!JU.storage.isBackup(data)) throw new Error('not a backup');
       const r = await JU.storage.importAll(data);
       const others = Object.keys(r.profiles).map(k => (k === 'dorian' ? 'Dorian' : 'Family') + ': ' + r.profiles[k].added + ' new').join(', ');
-      backupMsg.textContent = 'Loaded: ' + r.added + ' new results added, ' + r.skipped + ' already here or skipped.' + (r.hints ? ' Hint log: ' + r.hints.added + ' added.' : '') + (others ? ' ' + others + '.' : '');
+      const extra = (r.flags ? r.flags.added : 0) + (r.money ? r.money.added : 0) + Object.values(r.profiles).reduce((a, x) => a + (x.flags ? x.flags.added : 0) + (x.money ? x.money.added : 0), 0);
+      backupMsg.textContent = 'Loaded: ' + P(r.added, 'new result') + ' added, ' + r.skipped + ' already here or skipped.' + (r.hints ? ' Hint log: ' + r.hints.added + ' added.' : '') + (others ? ' ' + others + '.' : '') + (extra ? ' Also added: ' + P(extra, 'flag or money activity record', 'flags and money activity records') + '.' : '');
       await renderOthers();
       await render();
       await JU.backup.showBanner(banner, saveBackup);
@@ -330,13 +334,61 @@
   showView(new URLSearchParams(location.search).get('p'));
 
   /* ---------- Dorian and Family views ---------- */
-  const statCardsFor = (c, extra) => [statCard('Games played', c.games), statCard('Words and answers saved', c.results), statCard('Stickers', c.stickers)].concat(extra || []);
+  const NAMES = { julianna: 'Julianna', dorian: 'Dorian', family: 'The Family' };
   async function renderOthers() {
     const c = await JU.storage.counts();
-    document.getElementById('dorian-summary').replaceChildren(...statCardsFor(c.dorian));
-    document.getElementById('dorian-empty').hidden = c.dorian.results > 0 || c.dorian.stickers > 0;
-    document.getElementById('family-summary').replaceChildren(statCard('Lessons finished', c.family.lessonsDone + ' of ' + (await JU.money.load()).length), statCard('Games played', c.family.games), statCard('Stickers', c.family.stickers));
+    document.getElementById('dorian-summary').replaceChildren(
+      statCard('Money activities finished', c.dorian.money.done), statCard('Answers saved', c.dorian.results + c.dorian.money.answers),
+      statCard('Stickers', c.dorian.stickers), statCard('Ask a grown-up flags', c.dorian.flags));
+    document.getElementById('dorian-empty').hidden = c.dorian.results > 0 || c.dorian.stickers > 0 || c.dorian.money.answers > 0 || c.dorian.money.done > 0;
+    document.getElementById('family-summary').replaceChildren(statCard('Lessons finished', c.family.lessonsDone + ' of ' + (await JU.money.load()).length), statCard('Games played', c.family.games), statCard('Stickers', c.family.stickers), statCard('Ask a grown-up flags', c.family.flags));
     await renderLessons();
+    for (const who of ['julianna', 'dorian', 'family']) await renderFlags(who);
+    for (const who of ['julianna', 'dorian']) await renderMoney(who);
+  }
+
+  /* ---------- Ask a grown-up flags (per profile) ---------- */
+  async function renderFlags(who) {
+    const box = document.getElementById('flags-' + who);
+    const flags = (await JU.storage.profile(who).getFlags()).slice().sort((a, b) => a.ts < b.ts ? 1 : -1);     // newest first
+    const lessons = await JU.money.load();
+    const title = id => { const l = lessons.find(x => x.id === Number(id)); return 'Lesson ' + id + (l ? ': ' + l.title : ''); };
+    const list = box.querySelector('[data-flags-list]'), empty = box.querySelector('[data-flags-empty]'), clr = box.querySelector('[data-flags-clear]');
+    empty.hidden = flags.length > 0; clr.hidden = flags.length === 0;
+    if (!flags.length) { list.replaceChildren(); return; }
+    list.replaceChildren(h('p', { class: 'note', 'data-flags-count': '' }, P(flags.length, 'flag') + ' (newest first). Each one is a place where ' + (who === 'family' ? 'the family' : NAMES[who]) + ' pressed Ask a grown-up.'),
+      h('div', { class: 'tablewrap' }, h('table', { class: 'flags-table' },
+        h('thead', null, h('tr', null, ['When', 'Where', 'Lesson', 'Screen'].map(t => h('th', { scope: 'col' }, t)))),
+        h('tbody', null, flags.map(f => h('tr', { 'data-flag': f.id }, h('td', null, fmtTime(f.ts)), h('td', null, f.kind === 'solo' ? 'Own activity' : 'Family lesson'), h('td', null, title(f.lesson)), h('td', null, 'Screen ' + f.screen)))))));
+  }
+  ['julianna', 'dorian', 'family'].forEach(who => {
+    document.getElementById('flags-' + who).querySelector('[data-flags-clear]').addEventListener('click', async () => {
+      if (!window.confirm('Clear all the Ask a grown-up flags for ' + NAMES[who].replace('The ', '') + '?')) return;
+      await JU.storage.profile(who).clearFlags();
+      await renderFlags(who);
+    });
+  });
+
+  /* ---------- Money & Economics: a child's own follow-on activities ---------- */
+  async function renderMoney(who) {
+    const box = document.getElementById('money-' + who);
+    const store = JU.storage.profile(who), m = await store.getMoney();
+    const lessons = (await JU.money.load()).filter(l => l.status === 'ready');
+    const hints = (await store.getHints()).filter(r => r.subject === 'money');
+    const ok = m.answers.filter(a => a.correct).length;
+    box.querySelector('[data-money-summary]').replaceChildren(
+      statCard('Activities finished', Object.keys(m.done).length + ' of ' + lessons.length), statCard('Answers saved', m.answers.length),
+      statCard('Right on the first try', pct(ok, m.answers.length)), statCard('Hints used', hints.filter(r => r.kind === 'hint').length));
+    const rows = lessons.map(l => {
+      const as = m.answers.filter(a => a.lesson === l.id), hs = hints.filter(r => r.game === 'money-' + l.id);
+      return [h('span', null, 'Lesson ' + l.id + ': ' + l.title + ' ', h('a', { class: 'small-link', href: 'solo.html?n=' + l.id + '&p=' + who, 'aria-label': 'Preview lesson ' + l.id + ' (nothing is saved)' }, 'Preview')), m.done[String(l.id)] ? 'Finished ' + fmtTime(m.done[String(l.id)]) : 'Not yet',
+        as.length ? as.filter(a => a.correct).length + ' of ' + as.length + ' (' + pct(as.filter(a => a.correct).length, as.length) + ')' : '\u2013',
+        hs.filter(r => r.kind === 'hint').length, hs.filter(r => r.kind === 'grownup').length, hs.filter(r => r.kind === 'rapid').length];
+    });
+    fillTable(box.querySelector('[data-money-table]'), ['Lesson', 'Own activity', 'Right on the first try', 'Hints used', 'Grown-up unlocks', 'Quick-guess flags'], rows, 'No lessons yet.');
+    const note = box.querySelector('[data-money-note]');
+    const guesses = hints.filter(r => r.kind === 'rapid').length;
+    note.textContent = guesses ? guesses + (guesses === 1 ? ' question had' : ' questions had') + ' very quick or repeated wrong taps. Those do not unlock a hint, so it may mean ' + (who === 'dorian' ? 'he' : 'she') + ' was guessing. Worth a chat.' : '';
   }
 
   /* Family lesson unlock panel */
@@ -366,33 +418,68 @@
       })));
   }
 
-  /* ---------- Backup by email: a mailto: link with a plain-text summary. No attachment, no address in the site's files. ---------- */
+  /* ---------- Back up to Grok Bot: one click = download the backup file + open a pre-filled mailto:. ----------
+     The address is typed once and kept only in this browser (localStorage). It is never in a site file or the backup file.
+     A web page cannot attach a file, so the message tells the grown-up to attach the file that was just downloaded. */
   const EMAIL_KEY = 'ju_backup_email_v1';          // this browser only
+  const EMAIL_RE = /^[^\s@,;?&<>"]+@[^\s@,;?&<>"]+\.[^\s@,;?&<>"]+$/;
   const emailBox = document.getElementById('backup-email'), emailMsg = document.getElementById('email-msg');
-  try { emailBox.value = JSON.parse(localStorage.getItem(EMAIL_KEY)) || ''; } catch (e) { /* none saved */ }
-  emailBox.addEventListener('change', () => { localStorage.setItem(EMAIL_KEY, JSON.stringify(emailBox.value.trim())); });
+  const emailSaved = document.getElementById('email-saved'), emailEdit = document.getElementById('email-edit');
+  const emailBtn = document.getElementById('email-backup');
+  const NEED_ADDR = 'Type the backup address once first.';
+  function getAddr() { try { const v = JSON.parse(localStorage.getItem(EMAIL_KEY)); return typeof v === 'string' && EMAIL_RE.test(v) ? v : ''; } catch (e) { return ''; } }
+  function showEmail(editing) {
+    const addr = getAddr();
+    emailSaved.hidden = !addr || editing; emailEdit.hidden = !!addr && !editing;
+    document.getElementById('email-sending').textContent = addr ? 'Sending to: ' + addr : '';
+    emailBtn.disabled = !addr;
+    emailMsg.textContent = addr ? '' : NEED_ADDR;
+    if (addr && editing) emailBox.value = addr;
+  }
+  function saveAddr() {
+    const v = emailBox.value.trim();
+    if (!EMAIL_RE.test(v)) { emailMsg.textContent = 'That does not look like an email address. Please check it.'; emailBox.focus(); return; }
+    localStorage.setItem(EMAIL_KEY, JSON.stringify(v));
+    emailBox.value = '';
+    showEmail(false);
+  }
+  document.getElementById('email-save').addEventListener('click', saveAddr);
+  emailBox.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); saveAddr(); } });
+  document.getElementById('email-change').addEventListener('click', () => { showEmail(true); emailBox.focus(); emailBox.select(); });
+  showEmail(false);
   async function summaryText() {
     const c = await JU.storage.counts(), last = await JU.storage.getLastBackup(), total = (await JU.money.load()).length;
     const day = iso => new Date(iso).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    const games = n => n === 1 ? '1 game' : n + ' games';
+    const moneyBit = m => m.done ? ', ' + P(m.done, 'money activity', 'money activities') + ' finished' : '';
+    const flagBits = [['Julianna', c.julianna.flags], ['Dorian', c.dorian.flags], ['Family', c.family.flags]].filter(x => x[1]).map(x => P(x[1], 'flag') + ' for ' + x[0]);
     return ['Learning progress summary (' + day(new Date().toISOString()) + ')',
       '',
-      'Julianna: ' + c.julianna.results + ' words practiced, ' + c.julianna.games + ' games and tests, ' + c.julianna.stickers + ' stickers, ' + c.julianna.hints + ' hint log entries',
-      'Dorian: ' + c.dorian.results + ' answers saved, ' + c.dorian.games + ' games, ' + c.dorian.stickers + ' stickers',
+      'Julianna: ' + P(c.julianna.results, 'word') + ' practiced, ' + (c.julianna.games === 1 ? '1 game or test' : c.julianna.games + ' games and tests') + ', ' + P(c.julianna.stickers, 'sticker') + ', ' + P(c.julianna.hints, 'hint log entry', 'hint log entries') + moneyBit(c.julianna.money),
+      'Dorian: ' + P(c.dorian.results + c.dorian.money.answers, 'answer') + ' saved, ' + games(c.dorian.games) + ', ' + P(c.dorian.stickers, 'sticker') + moneyBit(c.dorian.money),
       'Family: ' + c.family.lessonsDone + ' of ' + total + ' money lessons finished',
+      flagBits.length ? 'Ask a grown-up flags waiting: ' + flagBits.join(', ') : null,
       '',
       'Last backup file saved: ' + (last ? day(last) : 'never'),
       '',
-      'This is only a summary of counts. The real backup is the file from Save progress on the grown-up page.'].join('\n');
+      'This is only a summary of counts. The real backup is the attached file.'].filter(x => x !== null).join('\n');
   }
-  document.getElementById('email-backup').addEventListener('click', async () => {
-    const addr = emailBox.value.trim();
-    localStorage.setItem(EMAIL_KEY, JSON.stringify(addr));
-    if (!/^[^\s@,;?&]+@[^\s@,;?&]+\.[^\s@,;?&]+$/.test(addr)) { emailMsg.textContent = 'Type one email address first.'; emailBox.focus(); return; }
-    const url = 'mailto:' + encodeURIComponent(addr).replace(/%40/g, '@') + '?subject=' + encodeURIComponent('Learning progress summary') + '&body=' + encodeURIComponent(await summaryText());
-    const btn = document.getElementById('email-backup');
-    btn.dataset.mailto = url;
-    const a = h('a', { href: url }); document.body.appendChild(a); a.click(); a.remove();
-    emailMsg.textContent = 'Your email app should open with the summary. Nothing was sent yet.';
+  emailBtn.addEventListener('click', async () => {
+    const addr = getAddr();
+    if (!addr) { showEmail(false); return; }
+    emailBtn.disabled = true;
+    try {
+      const saved = await saveBackup();                       // same download as Save progress; also sets the last-backup date
+      const body = ['This is the weekly backup for the family learning site.',
+        'Step 1: attach the file just downloaded, named ' + saved.fileName + ', from your Downloads folder.',
+        'Step 2: press Send.',
+        'Nothing else is needed. The bot saves it and lets the family know it arrived.',
+        '', await summaryText()].join('\n');
+      const url = 'mailto:' + encodeURIComponent(addr).replace(/%40/g, '@') + '?subject=' + encodeURIComponent('Family Learning backup ' + saved.date) + '&body=' + encodeURIComponent(body);
+      emailBtn.dataset.mailto = url;
+      const a = h('a', { href: url }); document.body.appendChild(a); a.click(); a.remove();
+      emailMsg.textContent = 'The backup file was saved as ' + saved.fileName + '. Your email app should open: attach that file and press Send. Nothing is sent until you do.';
+    } finally { emailBtn.disabled = !getAddr(); }
   });
 
   await renderOthers();

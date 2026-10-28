@@ -37,7 +37,7 @@
     try { ids = (await JU.weeks.list(JU.subjects[0].id)).map(w => w.id); } catch (e) { /* no week list: the other rules still work */ }
     /* anything saved by any profile counts: Julianna's results, Dorian's, the Family's, and finished family lessons */
     const c = await JU.storage.counts();
-    const some = c.julianna.results + c.dorian.results + c.family.results + c.family.lessonsDone;
+    const some = c.julianna.results + c.dorian.results + c.family.results + c.family.lessonsDone + c.julianna.money.answers + c.dorian.money.answers + c.julianna.money.done + c.dorian.money.done;
     return decide(some ? [{}] : [], await JU.storage.getLastBackup(), ids, new Date());
   }
 
@@ -58,7 +58,8 @@
       h('h2', { id: 'backup-banner-h' }, 'Time to save a backup'),
       h('p', { class: 'lead', id: 'backup-why' }, WHY[s.reason]),
       h('div', { class: 'row' }, btn),
-      h('p', { class: 'note', id: 'backup-last' }, s.last ? 'Last backup: ' + fmt(s.last) : 'No backup has been saved on this device yet.'));
+      h('p', { class: 'note', id: 'backup-last' }, s.last ? 'Last backup: ' + fmt(s.last) : 'No backup has been saved on this device yet.'),
+      h('p', { class: 'note', id: 'backup-or' }, 'Or use Back up to Grok Bot below to save the file and email it in one click.'));
     el.hidden = false;
     return s;
   }

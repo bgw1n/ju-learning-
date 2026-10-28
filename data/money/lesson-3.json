@@ -1,0 +1,470 @@
+{
+ "id": 3,
+ "title": "Earning and value",
+ "sticker": "💪",
+ "screens": [
+  {
+   "kind": "intro",
+   "title": "Lesson 3: Earning and value",
+   "text": "Where does money come from? Let us find out. Press Start when you are ready.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "🧹",
+     "📚",
+     {
+      "svg": "token"
+     },
+     {
+      "svg": "token"
+     },
+     {
+      "svg": "token"
+     }
+    ],
+    "alt": "A broom, books and paper tokens"
+   }
+  },
+  {
+   "kind": "story",
+   "text": "Money comes from work. Grown-ups do a job, and they get paid for it. Teachers, builders and cooks all earn money.",
+   "art": {
+    "kind": "row",
+    "items": [
+     {
+      "e": "👩‍🏫",
+      "label": "teacher"
+     },
+     {
+      "e": "👷",
+      "label": "builder"
+     },
+     {
+      "e": "🧑‍🍳",
+      "label": "cook"
+     },
+     "➡️",
+     {
+      "svg": "cash"
+     }
+    ],
+    "alt": "A teacher, a builder and a cook earn money"
+   }
+  },
+  {
+   "kind": "story",
+   "text": "Our paper tokens work the same way. You do schoolwork and chores, and you earn tokens. Kids in our family earn about 10 to 20 tokens a day.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "📚",
+     "🧹",
+     "➡️",
+     {
+      "svg": "token"
+     },
+     {
+      "svg": "token"
+     },
+     {
+      "svg": "token"
+     }
+    ],
+    "alt": "Schoolwork and chores earn paper tokens"
+   }
+  },
+  {
+   "kind": "story",
+   "text": "Tokens are like money. 50 tokens is about 10 dollars. That means 5 tokens is about 1 dollar.",
+   "art": {
+    "kind": "row",
+    "items": [
+     {
+      "svg": "token"
+     },
+     {
+      "svg": "token"
+     },
+     {
+      "svg": "token"
+     },
+     {
+      "svg": "token"
+     },
+     {
+      "svg": "token"
+     },
+     {
+      "t": "="
+     },
+     {
+      "t": "$1"
+     }
+    ],
+    "alt": "Five tokens are about one dollar"
+   }
+  },
+  {
+   "kind": "ask",
+   "prompt": "Which job should earn more tokens?",
+   "options": [
+    {
+     "label": "Putting one sock in the hamper.",
+     "why": "A sock only takes a few seconds. It is a very small job, so it should earn only a tiny bit.",
+     "e": "🧦"
+    },
+    {
+     "label": "Cleaning up the whole playroom.",
+     "why": "Yes. The playroom takes much more time and effort, so it is fair for it to earn more.",
+     "e": "🧸",
+     "best": true
+    },
+    {
+     "label": "They should earn the same.",
+     "why": "Fair does not always mean the same. When one job takes more time and effort, it should earn more.",
+     "e": "⚖️"
+    }
+   ]
+  },
+  {
+   "kind": "story",
+   "text": "In our family, 100 tokens earns a treasure. A treasure is worth about 20 dollars. 50 tokens is about 10 dollars, so 100 tokens is twice as much.",
+   "art": {
+    "kind": "row",
+    "items": [
+     {
+      "t": "100"
+     },
+     {
+      "svg": "token"
+     },
+     "➡️",
+     "🎁",
+     {
+      "t": "≈ $20"
+     }
+    ],
+    "alt": "One hundred tokens earn a treasure worth about twenty dollars"
+   }
+  },
+  {
+   "kind": "ask",
+   "prompt": "Why does a treasure take 100 tokens?",
+   "options": [
+    {
+     "label": "Because a treasure is worth a lot, so it takes a lot of work to earn it.",
+     "why": "Yes. The cost matches the value. A bigger reward takes more work.",
+     "e": "🎁",
+     "best": true
+    },
+    {
+     "label": "Because tokens are free.",
+     "why": "Tokens are not free. You earn each one with schoolwork or chores. That is what makes them worth something.",
+     "e": "🆓"
+    },
+    {
+     "label": "Because grown-ups just want to say no.",
+     "why": "Not at all. The treasure is worth about 20 dollars, so it takes a good amount of work. That is what makes it fair.",
+     "e": "🙅"
+    }
+   ]
+  },
+  {
+   "kind": "story",
+   "text": "Saving tokens takes time. If you earn 15 tokens a day, you reach 100 in about a week. Working for something, and waiting for it, can make it feel great.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "📅",
+     "➡️",
+     "🎁"
+    ],
+    "alt": "About a week of tokens earns a treasure"
+   }
+  },
+  {
+   "kind": "ask",
+   "prompt": "Today you earned 15 tokens. About how much money is that? Remember, 5 tokens is about 1 dollar.",
+   "options": [
+    {
+     "label": "About 1 dollar.",
+     "why": "5 tokens is 1 dollar. 15 tokens is three groups of 5, so it is more than 1 dollar.",
+     "e": "$1"
+    },
+    {
+     "label": "About 3 dollars.",
+     "why": "Yes. 15 is three groups of 5. Three groups of 1 dollar is 3 dollars.",
+     "e": "$3",
+     "best": true
+    },
+    {
+     "label": "About 10 dollars.",
+     "why": "10 dollars is 50 tokens. 15 tokens is much less, about 3 dollars.",
+     "e": "$10"
+    }
+   ]
+  }
+ ],
+ "talk": [
+  {
+   "q": "How many tokens is a treasure worth in dollars?",
+   "note": "About $20: 100 tokens, and every 5 tokens is about $1."
+  },
+  {
+   "q": "If we earn 15 tokens a day, how many days does it take to get to a treasure?",
+   "note": "7 days. After 6 days that is 90 tokens, so day 7 gets us past 100."
+  },
+  {
+   "q": "Which job around here should earn the most tokens? Why is that fair?"
+  }
+ ],
+ "solo": {
+  "julianna": {
+   "title": "Julianna's turn: tokens and days",
+   "sticker": "💪",
+   "intro": "Let us pretend we are making a token list. These numbers are just for practice. First pick a fair token amount for each job. Then work out how many days it takes to earn a treasure.",
+   "art": {
+    "kind": "row",
+    "items": [
+     {
+      "svg": "token"
+     },
+     {
+      "svg": "token"
+     },
+     "➡️",
+     "🎁"
+    ],
+    "alt": "Tokens lead to a treasure"
+   },
+   "items": [
+    {
+     "type": "choose",
+     "id": "a1",
+     "prompt": "Pretend list: how many tokens seems fair for putting your cup in the sink? It takes a few seconds.",
+     "options": [
+      {
+       "label": "1 token",
+       "right": true
+      },
+      {
+       "label": "10 tokens"
+      },
+      {
+       "label": "40 tokens"
+      }
+     ],
+     "hint": "It is a very small job. Pick the smallest amount.",
+     "why": "Right. A few seconds of work should earn a very small amount."
+    },
+    {
+     "type": "choose",
+     "id": "a2",
+     "prompt": "Pretend list: how many tokens seems fair for finishing a page of schoolwork? It takes about 15 minutes.",
+     "options": [
+      {
+       "label": "2 tokens"
+      },
+      {
+       "label": "5 tokens",
+       "right": true
+      },
+      {
+       "label": "40 tokens"
+      }
+     ],
+     "hint": "It takes much longer than a cup, but not a whole afternoon.",
+     "why": "Right. A bigger job than a cup, so more tokens, but not a huge number."
+    },
+    {
+     "type": "choose",
+     "id": "a3",
+     "prompt": "Pretend list: how many tokens seems fair for cleaning up the whole playroom? It takes about 30 minutes.",
+     "options": [
+      {
+       "label": "3 tokens"
+      },
+      {
+       "label": "100 tokens"
+      },
+      {
+       "label": "10 tokens",
+       "right": true
+      }
+     ],
+     "hint": "It is the biggest job so far, but 100 tokens is a whole treasure.",
+     "why": "Right. It takes the most time of the three, so it earns the most. But it is not a whole treasure."
+    },
+    {
+     "type": "choose",
+     "id": "v1",
+     "prompt": "A treasure costs 100 tokens. You earn 10 tokens each day. How many days to get 100?",
+     "options": [
+      {
+       "label": "5 days"
+      },
+      {
+       "label": "10 days",
+       "right": true
+      },
+      {
+       "label": "20 days"
+      }
+     ],
+     "hint": "Count by tens: 10, 20, 30, and keep going to 100.",
+     "why": "Right. Counting by tens: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100. That is 10 days."
+    },
+    {
+     "type": "choose",
+     "id": "v2",
+     "prompt": "Now you earn 15 tokens each day. How many days to get to 100?",
+     "options": [
+      {
+       "label": "5 days"
+      },
+      {
+       "label": "10 days"
+      },
+      {
+       "label": "7 days",
+       "right": true
+      }
+     ],
+     "hint": "After 6 days you have 90. Is that enough?",
+     "why": "Right. 15, 30, 45, 60, 75, 90. After 6 days you have 90, which is not quite 100. Day 7 gets you past it. So 7 days."
+    },
+    {
+     "type": "choose",
+     "id": "v3",
+     "prompt": "Now you earn 20 tokens each day. How many days to get to 100?",
+     "options": [
+      {
+       "label": "10 days"
+      },
+      {
+       "label": "5 days",
+       "right": true
+      },
+      {
+       "label": "4 days"
+      }
+     ],
+     "hint": "Count by twenties: 20, 40, 60, and keep going.",
+     "why": "Right. 20, 40, 60, 80, 100. That is 5 days."
+    },
+    {
+     "type": "choose",
+     "id": "v4",
+     "prompt": "Remember, 5 tokens is about 1 dollar. About how many dollars is a treasure, 100 tokens?",
+     "options": [
+      {
+       "label": "About $10"
+      },
+      {
+       "label": "About $20",
+       "right": true
+      },
+      {
+       "label": "About $100"
+      }
+     ],
+     "hint": "How many groups of 5 are in 100? Or: 50 tokens is $10, so 100 is twice as much.",
+     "why": "Right. 100 tokens is twice 50 tokens, and 50 tokens is about $10. So a treasure is worth about $20."
+    }
+   ]
+  },
+  "dorian": {
+   "title": "Dorian's turn: counting tokens",
+   "sticker": "💪",
+   "intro": "Hi Dorian! Let us count tokens together. Tap each token and I will count. Press the big green button to start.",
+   "art": {
+    "kind": "row",
+    "items": [
+     {
+      "svg": "token"
+     },
+     {
+      "svg": "token"
+     },
+     {
+      "svg": "token"
+     }
+    ],
+    "alt": "Paper tokens"
+   },
+   "items": [
+    {
+     "type": "count",
+     "id": "c10",
+     "n": 10,
+     "prompt": "Tap each token. Let us count to ten!",
+     "doneText": "Ten tokens! Great counting!"
+    },
+    {
+     "type": "choose",
+     "id": "p1",
+     "prompt": "Tap the biggest pile.",
+     "options": [
+      {
+       "label": "a small pile",
+       "pile": {
+        "n": 3,
+        "glyph": "token"
+       }
+      },
+      {
+       "label": "the biggest pile",
+       "pile": {
+        "n": 8,
+        "glyph": "token"
+       },
+       "right": true
+      },
+      {
+       "label": "a medium pile",
+       "pile": {
+        "n": 5,
+        "glyph": "token"
+       }
+      }
+     ],
+     "hint": "The biggest pile has the most tokens.",
+     "why": "Yes! That pile has the most tokens. It is the biggest.",
+     "say": "Tap the biggest pile. The pile with the most tokens."
+    },
+    {
+     "type": "choose",
+     "id": "p2",
+     "prompt": "Tap the biggest pile of coins.",
+     "options": [
+      {
+       "label": "a pile of coins",
+       "pile": {
+        "n": 12,
+        "glyph": "coin"
+       }
+      },
+      {
+       "label": "a smaller pile of coins",
+       "pile": {
+        "n": 7,
+        "glyph": "coin"
+       }
+      },
+      {
+       "label": "the biggest pile of coins",
+       "pile": {
+        "n": 20,
+        "glyph": "coin"
+       },
+       "right": true
+      }
+     ],
+     "hint": "Look for the pile that goes up the highest.",
+     "why": "Yes! That pile has the most coins.",
+     "say": "Tap the biggest pile of coins."
+    }
+   ]
+  }
+ }
+}

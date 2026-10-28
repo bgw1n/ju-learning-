@@ -10,7 +10,10 @@
    - At most CAP hints per game session. After that it stays locked (a grown-up can still unlock).
    - "Grown-up unlock" asks for the parent PIN (JU.auth.verifyParent) and unlocks the hint for that word.
    - Every hint use, grown-up unlock and rapid-miss flag is logged through JU.storage (separate from scores, in the backup file).
-   - A word where the hint was used is recorded as not correct (see runner.js), so it is not treated as mastered. */
+   - A word where the hint was used is recorded as not correct (see runner.js), so it is not treated as mastered.
+   Money & Economics solo activities (js/money/solo.js) reuse this same gate with a small ctx of their own:
+   { game: { id, hintGate: true }, week: { id }, subject: 'money', session, speakButton, hintNoun: 'question', store: <that child's storage> }, and a
+   "word" { word: <question id>, say: <spoken clue> }. */
 (function () {
   const h = JU.ui.h;
   const NEED = 2, RAPID_MS = 3000, CAP = 3, PIN_TRIES = 3, PIN_LOCK_MS = 30000;
@@ -35,7 +38,7 @@
     function log(kind, extra) {
       const rec = Object.assign({ id: JU.ui.uid(), ts: new Date().toISOString(), session: ctx.session, week: ctx.week.id,
         subject: ctx.subject, game: ctx.game.id, word: w.word, kind }, extra || {});
-      JU.storage.addHint(rec).catch(e => console.error(e));
+      (ctx.store || JU.storage).addHint(rec).catch(e => console.error(e));     // ctx.store: another profile's storage (Dorian's solo activities)
     }
 
     function press(factor) {
@@ -44,7 +47,7 @@
         st.used = true; ctx.hintCount++;
         log('hint', { earned: st.how === 'earned', how: st.how });
       }
-      JU.speech.say(w.word, { factor });
+      JU.speech.say(w.say || w.word, { factor });     // w.say: a spoken clue that is not the answer (Money solo activities)
     }
 
     function pinForm() {
@@ -81,7 +84,7 @@
             h('span', { 'aria-hidden': 'true' }, SPEAKER), ' ', label),
           h('button', { class: 'btn small', type: 'button', 'aria-label': 'Say it slower', onclick: () => press(0.7) },
             h('span', { 'aria-hidden': 'true' }, TURTLE), ' Slower')),
-          h('p', { class: 'note' }, 'Hint unlocked for this word only.'));
+          h('p', { class: 'note' }, 'Hint unlocked for this ' + (ctx.hintNoun || 'word') + ' only.'));
         return;
       }
       box.dataset.state = 'locked';

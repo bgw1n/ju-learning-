@@ -30,16 +30,21 @@
     </section>
     <p id="backup-msg" class="note" role="status" aria-live="polite"></p>
 
-    <details class="card email-card" id="email-card">
-      <summary>Backup by email</summary>
-      <p class="note">Opens your email app with a short plain-text summary (counts only, no attachment). The real backup is still the file from <strong>Save progress</strong>. The address is typed here and kept only in this browser, never in the website&rsquo;s files.</p>
-      <div class="row">
-        <label for="backup-email">Send the summary to:</label>
-        <input id="backup-email" class="textbox" type="email" autocomplete="off" inputmode="email" placeholder="your email address">
-        <button id="email-backup" class="btn primary" type="button">Backup by email</button>
+    <section class="card email-card" id="email-card" aria-labelledby="email-h">
+      <h2 id="email-h">Back up to Grok Bot</h2>
+      <p class="note">One click saves the backup file and opens your email app with the message already filled in. You only attach the file and press Send. The address is typed once here and kept only in this browser, never in the website&rsquo;s files.</p>
+      <div class="row" id="email-saved" hidden>
+        <span id="email-sending" class="note"></span>
+        <button id="email-change" class="btn small ghost" type="button">Change address</button>
       </div>
+      <div class="row" id="email-edit" hidden>
+        <label for="backup-email">Backup address:</label>
+        <input id="backup-email" class="textbox" type="email" autocomplete="off" inputmode="email" placeholder="the backup email address">
+        <button id="email-save" class="btn" type="button">Save address</button>
+      </div>
+      <div class="row"><button id="email-backup" class="btn primary big" type="button" disabled>Back up to Grok Bot</button></div>
       <p id="email-msg" class="note" role="status" aria-live="polite"></p>
-    </details>
+    </section>
 
     <section class="card" id="voice-card" aria-labelledby="voice-h">
       <h2 id="voice-h">Voice settings</h2>
@@ -102,7 +107,16 @@
 
     <section class="card" id="flags-julianna" aria-labelledby="flags-julianna-h">
       <h2 id="flags-julianna-h">Ask a grown-up flags</h2>
+      <div data-flags-list></div>
       <p class="note" data-flags-empty>No flags yet. When Julianna asks for a grown-up, it will show up here.</p>
+      <div class="row"><button class="btn small" type="button" data-flags-clear hidden>Clear flags</button></div>
+    </section>
+    <section class="card" id="money-julianna" aria-labelledby="money-julianna-h">
+      <h2 id="money-julianna-h">Money &amp; Economics: Julianna&rsquo;s own activities</h2>
+      <p class="note">Each activity opens on Julianna&rsquo;s own login once the Family has finished that lesson. Results are saved under Julianna&rsquo;s own profile.</p>
+      <div class="cards" data-money-summary></div>
+      <div class="tablewrap"><table data-money-table></table></div>
+      <p class="hints-readout" data-money-note></p>
     </section>
     </div>
 
@@ -114,10 +128,19 @@
         <div class="cards" id="dorian-summary"></div>
         <p class="lead" id="dorian-empty">Nothing yet. Dorian&rsquo;s games are coming soon, and his progress will show up here.</p>
       </section>
+      <section class="card" id="money-dorian" aria-labelledby="money-dorian-h">
+      <h2 id="money-dorian-h">Money &amp; Economics: Dorian&rsquo;s own activities</h2>
+      <p class="note">Each activity opens on Dorian&rsquo;s own login once the Family has finished that lesson. Results are saved under Dorian&rsquo;s own profile.</p>
+      <div class="cards" data-money-summary></div>
+      <div class="tablewrap"><table data-money-table></table></div>
+      <p class="hints-readout" data-money-note></p>
+    </section>
       <section class="card" id="flags-dorian" aria-labelledby="flags-dorian-h">
-        <h2 id="flags-dorian-h">Ask a grown-up flags</h2>
-        <p class="note" data-flags-empty>No flags yet. When Dorian asks for a grown-up, it will show up here.</p>
-      </section>
+      <h2 id="flags-dorian-h">Ask a grown-up flags</h2>
+      <div data-flags-list></div>
+      <p class="note" data-flags-empty>No flags yet. When Dorian asks for a grown-up, it will show up here.</p>
+      <div class="row"><button class="btn small" type="button" data-flags-clear hidden>Clear flags</button></div>
+    </section>
     </div>
 
     <div id="view-family" class="profile-view" data-view="family" hidden>
@@ -132,13 +155,20 @@
         <p class="note">Lesson 1 starts open. Each lesson opens when the one before it is marked complete. Here you can open a lesson early, lock it again, or mark it complete or not complete.</p>
         <div class="tablewrap"><table id="lessons-table"></table></div>
       </section>
+      <section class="card" id="flags-family" aria-labelledby="flags-family-h">
+      <h2 id="flags-family-h">Ask a grown-up flags</h2>
+      <div data-flags-list></div>
+      <p class="note" data-flags-empty>No flags yet. When the family asks for a grown-up, it will show up here.</p>
+      <div class="row"><button class="btn small" type="button" data-flags-clear hidden>Clear flags</button></div>
+    </section>
+
     </div>
   </main>
 
   <dialog id="confirm" aria-labelledby="confirm-title">
     <form method="dialog">
       <h2 id="confirm-title">Clear all results?</h2>
-      <p>This erases every saved game and test result of Julianna&rsquo;s, and her hint log, on this laptop. Dorian&rsquo;s and the Family&rsquo;s are not touched. It cannot be undone. You may want to export first.</p>
+      <p>This erases every saved game and test result of Julianna&rsquo;s, and her hint log, on this laptop. Her money activities, Dorian&rsquo;s and the Family&rsquo;s are not touched. It cannot be undone. You may want to export first.</p>
       <div class="row">
         <button class="btn" value="cancel" id="confirm-cancel">Keep them</button>
         <button class="btn danger" value="ok" id="confirm-ok">Yes, clear results</button>

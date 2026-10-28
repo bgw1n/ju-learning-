@@ -1,4 +1,5 @@
-/* Family home: the 16 Money & Economics lessons as cards. Only unlocked lessons can be opened. */
+/* Family home: the 16 Money & Economics lessons as cards. Only unlocked lessons can be opened; a lesson with content opens its page
+   (lesson.html?n=N), one still 'coming-soon' shows a note. */
 (async function () {
   const h = JU.ui.h;
   JU.ui.header({ title: '', brand: 'Family Learning Place' });
@@ -20,11 +21,11 @@
           h('span', { class: 'lnum', 'aria-hidden': 'true' }, locked ? '\uD83D\uDD12' : l.complete ? '\u2705' : String(l.id)),
           h('span', { class: 'ltitle' }, 'Lesson ' + l.id + ': ' + l.title),
           h('span', { class: 'lstate' }, LABEL[l.state] + (l.state === 'open' && l.status === 'coming-soon' ? ' \u2022 coming soon' : ''))];
-        return h('li', null, locked
-          ? h('div', { class: 'lcard locked', 'data-lesson': l.id, 'data-state': 'locked', role: 'group', 'aria-label': 'Lesson ' + l.id + ': ' + l.title + ', locked' }, body)
-          : h('button', { type: 'button', class: 'lcard ' + l.state, 'data-lesson': l.id, 'data-state': l.state, onclick: () => {
-              document.getElementById('lesson-dialog-title').textContent = 'Lesson ' + l.id + ': ' + l.title;
-              dlg.showModal();
-            } }, body));
+        if (locked) return h('li', null, h('div', { class: 'lcard locked', 'data-lesson': l.id, 'data-state': 'locked', role: 'group', 'aria-label': 'Lesson ' + l.id + ': ' + l.title + ', locked' }, body));
+        if (l.status === 'ready') return h('li', null, h('a', { class: 'lcard ' + l.state, href: 'lesson.html?n=' + l.id, 'data-lesson': l.id, 'data-state': l.state }, body));
+        return h('li', null, h('button', { type: 'button', class: 'lcard ' + l.state, 'data-lesson': l.id, 'data-state': l.state, onclick: () => {
+          document.getElementById('lesson-dialog-title').textContent = 'Lesson ' + l.id + ': ' + l.title;
+          dlg.showModal();
+        } }, body));
       })))));
 })();

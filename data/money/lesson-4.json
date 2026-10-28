@@ -1,0 +1,393 @@
+{
+ "id": 4,
+ "title": "Cash vs cards",
+ "sticker": "💳",
+ "screens": [
+  {
+   "kind": "intro",
+   "title": "Lesson 4: Cash vs cards",
+   "text": "Cash and cards look different, but both are real money. Let us see how. Press Start when you are ready.",
+   "art": {
+    "kind": "row",
+    "items": [
+     {
+      "svg": "cash"
+     },
+     "🆚",
+     "💳"
+    ],
+    "alt": "Cash compared with a card"
+   }
+  },
+  {
+   "kind": "story",
+   "text": "When we pay with cash, we hand money to the store. The money leaves our hand. Now the store has it.",
+   "art": {
+    "kind": "flow",
+    "amount": 5,
+    "alt": "Five dollars in cash goes from our hand to the store"
+   }
+  },
+  {
+   "kind": "story",
+   "text": "A card swipe looks different, but it works the same way. Nothing is in our hand, but the money still moves. We swipe 5 dollars, and our account goes from 20 dollars down to 15 dollars.",
+   "art": {
+    "kind": "balance",
+    "from": 20,
+    "spend": 5,
+    "to": 15,
+    "alt": "Swipe five dollars: the account goes from twenty dollars to fifteen dollars"
+   }
+  },
+  {
+   "kind": "story",
+   "text": "Swipe again. Another 5 dollars leaves. Now our account has 10 dollars. Each swipe makes the balance smaller.",
+   "art": {
+    "kind": "balance",
+    "from": 15,
+    "spend": 5,
+    "to": 10,
+    "alt": "Swipe five more dollars: the account goes from fifteen dollars to ten dollars"
+   }
+  },
+  {
+   "kind": "ask",
+   "prompt": "We have 10 dollars in our account. We swipe for a 4 dollar snack. How much is left?",
+   "art": {
+    "kind": "balance",
+    "from": 10,
+    "spend": 4,
+    "to": null,
+    "alt": "The account has ten dollars and we swipe four dollars. How much is left?"
+   },
+   "options": [
+    {
+     "label": "4 dollars",
+     "why": "4 dollars is how much we spent. What is left is 10 take away 4, which is 6."
+    },
+    {
+     "label": "6 dollars",
+     "why": "Yes. 10 take away 4 is 6. The snack took 4 dollars out of our account.",
+     "best": true
+    },
+    {
+     "label": "14 dollars",
+     "why": "A swipe takes money away, so the balance goes down, not up. 10 take away 4 is 6."
+    }
+   ]
+  },
+  {
+   "kind": "story",
+   "text": "A swipe is real money leaving, just like cash. It is easy to forget, because nothing is in our hand. So we check the balance and keep the receipt. Some cards borrow money instead. We will learn about those later.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "🧾",
+     "💳"
+    ],
+    "alt": "A receipt and a card"
+   }
+  },
+  {
+   "kind": "ask",
+   "prompt": "What happens to our money when we swipe?",
+   "options": [
+    {
+     "label": "It goes to the store.",
+     "why": "Yes. The store gets the money, and our balance goes down. It is real money, just like cash.",
+     "e": "🏪",
+     "best": true
+    },
+    {
+     "label": "Nothing. A swipe is free.",
+     "why": "A swipe is not free. It is how we pay. The money leaves our account and the store gets it.",
+     "e": "🆓"
+    },
+    {
+     "label": "It stays in our account.",
+     "why": "If it stayed in our account, the store would not get paid. Our balance goes down with each swipe.",
+     "e": "🏦"
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "prompt": "How can we find out how much money is left?",
+   "options": [
+    {
+     "label": "Check the account balance, or look at the receipt.",
+     "why": "Yes. The balance and the receipt tell us for sure.",
+     "e": "🧾",
+     "best": true
+    },
+    {
+     "label": "Guess.",
+     "why": "Guessing is risky. It is better to check, so we know for sure.",
+     "e": "🤔"
+    },
+    {
+     "label": "Keep swiping until the card stops working.",
+     "why": "That is a surprise nobody likes. Checking the balance first helps us plan.",
+     "e": "😳"
+    }
+   ]
+  }
+ ],
+ "talk": [
+  {
+   "q": "Look at a real receipt together. Where did that money go?",
+   "note": "To the store, for the things on the receipt."
+  },
+  {
+   "q": "How do we know how much is left in our account?",
+   "note": "Look at the balance (an app, a statement or the receipt). It goes down with every swipe."
+  },
+  {
+   "q": "Is a swipe different from handing over cash, or the same? How do we use swipes in our family?"
+  }
+ ],
+ "solo": {
+  "julianna": {
+   "title": "Julianna's turn: follow the balance",
+   "sticker": "💳",
+   "intro": "Your card starts with 10 dollars. You will swipe three times. After each swipe, tap the new balance.",
+   "art": {
+    "kind": "balance",
+    "from": 10,
+    "spend": 3,
+    "to": 7,
+    "alt": "A card with ten dollars; one swipe"
+   },
+   "items": [
+    {
+     "type": "choose",
+     "id": "b1",
+     "prompt": "Your card has 10 dollars. You swipe for a 3 dollar snack. What is the new balance?",
+     "art": {
+      "kind": "balance",
+      "from": 10,
+      "spend": 3,
+      "to": null,
+      "alt": "Ten dollars, swipe three dollars"
+     },
+     "options": [
+      {
+       "label": "$7",
+       "right": true
+      },
+      {
+       "label": "$13"
+      },
+      {
+       "label": "$3"
+      }
+     ],
+     "hint": "A swipe takes money away. Is the answer bigger or smaller than 10?",
+     "why": "Right. 10 take away 3 is 7 dollars."
+    },
+    {
+     "type": "choose",
+     "id": "b2",
+     "prompt": "Next you swipe 2 dollars for pencils. What is the new balance?",
+     "art": {
+      "kind": "balance",
+      "from": 7,
+      "spend": 2,
+      "to": null,
+      "alt": "Seven dollars, swipe two dollars"
+     },
+     "options": [
+      {
+       "label": "$9"
+      },
+      {
+       "label": "$2"
+      },
+      {
+       "label": "$5",
+       "right": true
+      }
+     ],
+     "hint": "Start at 7 dollars and take away 2.",
+     "why": "Right. 7 take away 2 is 5 dollars."
+    },
+    {
+     "type": "choose",
+     "id": "b3",
+     "prompt": "Last, you swipe 4 dollars for a book. What is the new balance?",
+     "art": {
+      "kind": "balance",
+      "from": 5,
+      "spend": 4,
+      "to": null,
+      "alt": "Five dollars, swipe four dollars"
+     },
+     "options": [
+      {
+       "label": "$9"
+      },
+      {
+       "label": "$4"
+      },
+      {
+       "label": "$1",
+       "right": true
+      }
+     ],
+     "hint": "Start at 5 dollars and take away 4.",
+     "why": "Right. 5 take away 4 is 1 dollar. Not much left!"
+    },
+    {
+     "type": "choose",
+     "id": "b4",
+     "prompt": "You swiped 3 dollars, 2 dollars and 4 dollars. Where did that money go?",
+     "options": [
+      {
+       "label": "It is still on the card."
+      },
+      {
+       "label": "It went to the stores. That is 9 dollars in all.",
+       "right": true
+      },
+      {
+       "label": "It disappeared."
+      }
+     ],
+     "hint": "Who got paid when you swiped?",
+     "why": "Right. 3 plus 2 plus 4 is 9 dollars, and all of it went to the stores. A swipe is real money leaving."
+    },
+    {
+     "type": "choose",
+     "id": "b5",
+     "prompt": "Your balance is 1 dollar. A toy costs 5 dollars. What is a good idea?",
+     "options": [
+      {
+       "label": "Check the balance first, and see that 1 dollar is not enough.",
+       "right": true
+      },
+      {
+       "label": "Swipe anyway. Swipes are free."
+      },
+      {
+       "label": "Swipe and hope the card makes more money."
+      }
+     ],
+     "hint": "What can we look at to know how much we have?",
+     "why": "Right. Checking the balance tells us we have only 1 dollar. We can wait and save up for the toy."
+    }
+   ]
+  },
+  "dorian": {
+   "title": "Dorian's turn: swipe and pay",
+   "sticker": "💳",
+   "intro": "Hi Dorian! When we swipe a card, money goes to the store. Let us play. Press the big green button to start.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "💳",
+     "➡️",
+     "🏪"
+    ],
+    "alt": "A card pays the store"
+   },
+   "items": [
+    {
+     "type": "choose",
+     "id": "w1",
+     "prompt": "We swipe the card at the store. Tap where the money goes.",
+     "art": {
+      "kind": "row",
+      "items": [
+       "💳",
+       "➡️",
+       "❓"
+      ],
+      "alt": "A card is swiped. Where does the money go?"
+     },
+     "options": [
+      {
+       "label": "our house",
+       "e": "🏠"
+      },
+      {
+       "label": "the store",
+       "e": "🏪",
+       "right": true
+      },
+      {
+       "label": "a cloud",
+       "e": "☁️"
+      }
+     ],
+     "hint": "Who gets paid when we buy something?",
+     "why": "The store! The money goes away from us to the store."
+    },
+    {
+     "type": "choose",
+     "id": "w2",
+     "prompt": "We had a pile of 8 coins. We swiped the card. Now our pile is smaller. Tap our pile now.",
+     "art": {
+      "kind": "piles",
+      "piles": [
+       {
+        "n": 8,
+        "glyph": "coin",
+        "label": "before"
+       }
+      ],
+      "alt": "A pile of eight coins before we swipe"
+     },
+     "options": [
+      {
+       "label": "a big pile",
+       "pile": {
+        "n": 10,
+        "glyph": "coin"
+       }
+      },
+      {
+       "label": "a smaller pile",
+       "pile": {
+        "n": 5,
+        "glyph": "coin"
+       },
+       "right": true
+      },
+      {
+       "label": "the same pile",
+       "pile": {
+        "n": 8,
+        "glyph": "coin"
+       }
+      }
+     ],
+     "hint": "After we pay, we have fewer coins.",
+     "why": "Yes! Our pile got smaller. The money went to the store.",
+     "say": "We had a pile of eight coins. We swiped the card. Now our pile is smaller. Tap our pile now."
+    },
+    {
+     "type": "choose",
+     "id": "w3",
+     "prompt": "Tap the thing we swipe at the store.",
+     "options": [
+      {
+       "label": "a card",
+       "e": "💳",
+       "right": true
+      },
+      {
+       "label": "an apple",
+       "e": "🍎"
+      },
+      {
+       "label": "a sock",
+       "e": "🧦"
+      }
+     ],
+     "hint": "It is flat and it fits in a wallet.",
+     "why": "The card! We swipe it to pay. It uses real money."
+    }
+   ]
+  }
+ }
+}

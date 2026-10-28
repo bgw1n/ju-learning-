@@ -1,5 +1,18 @@
 # Changelog
 
+## v8
+- **Money & Economics Unit 1, lessons 1-4, are playable.** Family lessons (`lesson.html?n=N`, Family login): a voiced story with pictures, two or three "what would you do?" taps with a reason after each tap, a calm Grown-up talk screen, and a **We finished!** button that marks the lesson complete (opening the next) and awards a Family sticker.
+- **Hear it again** and **Ask a grown-up** on every screen. Ask saves a flag (profile, lesson, screen, time). The grown-up page lists flags for each profile, with **Clear flags**.
+- **Solo follow-ons** (`solo.html?n=N`) from each child's own login, locked until the Family finishes that lesson, saved under the child's own profile and counted on the progress cards. Julianna's use the existing earned-hint rules. Dorian's are voice-led, picture-first and tap-only, with counts to 10 or 20.
+- Lesson content lives in `data/money/lesson-N.json`, drawn by one shared renderer. `lessons.json` marks lessons 1-4 `ready`.
+- **Backup file version 4** adds flags and money results. Version 1-3 files still load; merging never duplicates.
+- Grown-up page wording uses the singular where it should ("1 sticker", "1 hint log entry", "1 game", "1 answer", "1 word"). The backup email now says "The bot saves it and lets the family know it arrived."
+
+## v7
+- One-click **Back up to Grok Bot** on the grown-up page replaces Backup by email. One click downloads the usual backup file (and records the last-backup date, like Save progress) and opens an email already filled in: a subject, short instructions to attach the file just downloaded (named exactly), and a plain-text summary of counts. The page cannot attach the file itself.
+- The receiving address is typed once and kept only in that browser (`localStorage`); it is not in the repo, the site files, or the backup file. Shown as "Sending to: ..." with a Change address link; the button is disabled until a valid address is saved.
+- The backup reminder banner mentions the new button. Save progress and Save backup now are plain downloads, as before.
+
 ## v6
 - Second child and a family course. The landing page is now "Who's playing?" with three picture buttons (Julianna, Dorian, Family) and a small Grown-up entry, each with its own PIN (set them in `js/config.js`; they are a casual gate, not security).
 - Roles `julianna`, `dorian`, `family` and `parent`; protected pages send anyone not logged in, or in the wrong role, back to the landing page.

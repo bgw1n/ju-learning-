@@ -1,0 +1,613 @@
+{
+ "id": 2,
+ "title": "Needs vs wants",
+ "sticker": "❤️",
+ "screens": [
+  {
+   "kind": "intro",
+   "title": "Lesson 2: Needs vs wants",
+   "text": "Some things we must have. Some things are just fun. Let us learn the difference. Press Start when you are ready.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "🍞",
+     "💧",
+     "🧥",
+     "🆚",
+     "🧸",
+     "🎮",
+     "🍬"
+    ],
+    "alt": "Bread, water and a coat, compared with a toy, a game and candy"
+   }
+  },
+  {
+   "kind": "story",
+   "text": "A need is something we must have to stay safe and healthy. Food, water, a warm coat and a bed are needs.",
+   "art": {
+    "kind": "row",
+    "items": [
+     {
+      "e": "🍞",
+      "label": "food"
+     },
+     {
+      "e": "💧",
+      "label": "water"
+     },
+     {
+      "e": "🧥",
+      "label": "a coat"
+     },
+     {
+      "e": "🛏️",
+      "label": "a bed"
+     }
+    ],
+    "alt": "Food, water, a coat and a bed"
+   }
+  },
+  {
+   "kind": "story",
+   "text": "A want is something that is fun or nice to have. We can live without it. A toy, a game and candy are wants.",
+   "art": {
+    "kind": "row",
+    "items": [
+     {
+      "e": "🧸",
+      "label": "a toy"
+     },
+     {
+      "e": "🎮",
+      "label": "a game"
+     },
+     {
+      "e": "🍬",
+      "label": "candy"
+     }
+    ],
+    "alt": "A toy, a game and candy"
+   }
+  },
+  {
+   "kind": "ask",
+   "prompt": "Is water a need or a want?",
+   "art": {
+    "kind": "row",
+    "items": [
+     "💧"
+    ],
+    "alt": "A glass of water"
+   },
+   "options": [
+    {
+     "label": "A need",
+     "why": "A need. Our bodies must have water every day to stay healthy.",
+     "e": "❤️",
+     "best": true
+    },
+    {
+     "label": "A want",
+     "why": "Water is something we must have, so it is a need. Some drinks are just treats, but plain water keeps us healthy.",
+     "e": "⭐"
+    }
+   ]
+  },
+  {
+   "kind": "story",
+   "text": "Some wants are okay! Toys, games and treats make life fun. Wanting things is normal. We just think about it before we spend.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "😊",
+     "🧸",
+     "🍦"
+    ],
+    "alt": "A happy face with a toy and ice cream"
+   }
+  },
+  {
+   "kind": "ask",
+   "prompt": "Is a video game a need or a want?",
+   "art": {
+    "kind": "row",
+    "items": [
+     "🎮"
+    ],
+    "alt": "A video game controller"
+   },
+   "options": [
+    {
+     "label": "A need",
+     "why": "Games are fun, but we can be safe and healthy without one. So a game is a want.",
+     "e": "❤️"
+    },
+    {
+     "label": "A want",
+     "why": "A want. Games are fun, but we can be safe and healthy without one. Wants are okay!",
+     "e": "⭐",
+     "best": true
+    }
+   ]
+  },
+  {
+   "kind": "story",
+   "text": "Sometimes one thing can be both. A coat is a need when you are cold. If your coat still fits and keeps you warm, a second fancy coat is a want.",
+   "art": {
+    "kind": "row",
+    "items": [
+     {
+      "e": "🧥",
+      "label": "keeps me warm"
+     },
+     "➡️",
+     {
+      "e": "✨🧥",
+      "label": "extra fancy one"
+     }
+    ],
+    "alt": "A warm coat, and then an extra fancy coat"
+   }
+  },
+  {
+   "kind": "ask",
+   "prompt": "Your coat still fits and keeps you warm. A new fancy coat is on sale. Is the new coat a need or a want?",
+   "art": {
+    "kind": "row",
+    "items": [
+     "🧥",
+     "✨"
+    ],
+    "alt": "A fancy new coat"
+   },
+   "options": [
+    {
+     "label": "A need",
+     "why": "Warm clothes are a need, and you already have a coat that works. The new one would be extra, so it is a want.",
+     "e": "❤️"
+    },
+    {
+     "label": "A want",
+     "why": "A want. Your coat already keeps you warm. The new one would be nice, but you do not have to have it.",
+     "e": "⭐",
+     "best": true
+    }
+   ]
+  },
+  {
+   "kind": "story",
+   "text": "When money is short, needs come first. We pay for food, water, clothes and a place to sleep. Then, if there is money left, we can think about wants. A want can wait, and we can save up for it.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "1️⃣",
+     "🍞",
+     "🧥",
+     "➡️",
+     "2️⃣",
+     "🧸",
+     "🎮"
+    ],
+    "alt": "First needs, then wants"
+   }
+  }
+ ],
+ "talk": [
+  {
+   "q": "Pick one need and one want from this week. How are they different?"
+  },
+  {
+   "q": "If we only had money for one thing today, how would we decide?",
+   "note": "Needs first, then wants. A want can wait and be saved for."
+  },
+  {
+   "q": "Is there a want you are saving up for? How could we plan for it?"
+  }
+ ],
+ "solo": {
+  "julianna": {
+   "title": "Julianna's turn: needs, wants and choices",
+   "sticker": "❤️",
+   "intro": "First, sort eight things into needs and wants. Then, you will make two choices when you can only buy one thing.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "❤️",
+     "⭐"
+    ],
+    "alt": "Needs and wants"
+   },
+   "items": [
+    {
+     "type": "sort",
+     "id": "n1",
+     "prompt": "Bread. Need or want?",
+     "thing": {
+      "e": "🍞",
+      "label": "bread"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 0,
+     "why": "A need. We must eat to stay healthy."
+    },
+    {
+     "type": "sort",
+     "id": "n2",
+     "prompt": "A video game. Need or want?",
+     "thing": {
+      "e": "🎮",
+      "label": "video game"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 1,
+     "why": "A want. Fun, but we can be healthy without it."
+    },
+    {
+     "type": "sort",
+     "id": "n3",
+     "prompt": "A coat on a snowy day, when you have no coat. Need or want?",
+     "thing": {
+      "e": "🧥",
+      "label": "a coat"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 0,
+     "why": "A need. We have to stay warm."
+    },
+    {
+     "type": "sort",
+     "id": "n4",
+     "prompt": "Candy. Need or want?",
+     "thing": {
+      "e": "🍬",
+      "label": "candy"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 1,
+     "why": "A want. A treat is nice, but we do not have to have it."
+    },
+    {
+     "type": "sort",
+     "id": "n5",
+     "prompt": "Clean water. Need or want?",
+     "thing": {
+      "e": "💧",
+      "label": "water"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 0,
+     "why": "A need. Our bodies need water every day."
+    },
+    {
+     "type": "sort",
+     "id": "n6",
+     "prompt": "A new toy. Need or want?",
+     "thing": {
+      "e": "🧸",
+      "label": "a toy"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 1,
+     "why": "A want. Toys are fun, and wants are okay."
+    },
+    {
+     "type": "sort",
+     "id": "n7",
+     "prompt": "A bed to sleep in. Need or want?",
+     "thing": {
+      "e": "🛏️",
+      "label": "a bed"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 0,
+     "why": "A need. We need good sleep."
+    },
+    {
+     "type": "sort",
+     "id": "n8",
+     "prompt": "A skateboard. Need or want?",
+     "thing": {
+      "e": "🛹",
+      "label": "a skateboard"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 1,
+     "why": "A want. It is fun, but not something we must have."
+    },
+    {
+     "type": "choose",
+     "id": "o1",
+     "prompt": "You have $10. Your school shoes are too small and they hurt your feet. You also want a new game. You can only buy one right now. Which comes first, and why?",
+     "options": [
+      {
+       "label": "The game first, because it is more fun. My feet can wait.",
+       "e": "🎮"
+      },
+      {
+       "label": "The shoes first, because shoes that fit are a need. I can save up for the game.",
+       "e": "👟",
+       "right": true
+      },
+      {
+       "label": "Neither. I will spend it all on candy.",
+       "e": "🍬"
+      }
+     ],
+     "hint": "Think about which one your body needs.",
+     "why": "Right. Shoes that fit are a need, so they come first. The game is a want, and it can wait until you save up."
+    },
+    {
+     "type": "choose",
+     "id": "o2",
+     "prompt": "There is money for one thing today: food for lunch this week, or a new toy. Which comes first, and why?",
+     "options": [
+      {
+       "label": "Food first. We need to eat, and the toy can wait.",
+       "e": "🥪",
+       "right": true
+      },
+      {
+       "label": "The toy first. I have wanted it a long time.",
+       "e": "🧸"
+      },
+      {
+       "label": "The toy first. I can ask for food later.",
+       "e": "🕒"
+      }
+     ],
+     "hint": "Which one can wait, and which one cannot?",
+     "why": "Right. Food is a need, so it comes first. The toy is a want. Waiting for it can even make it feel better when we finally get it."
+    }
+   ]
+  },
+  "dorian": {
+   "title": "Dorian's turn: need or want",
+   "sticker": "❤️",
+   "intro": "Hi Dorian! Tap the heart for a need. A need is something we must have. Tap the star for a want. A want is something fun. Press the big green button to start.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "❤️",
+     "⭐"
+    ],
+    "alt": "A heart for a need and a star for a want"
+   },
+   "items": [
+    {
+     "type": "sort",
+     "id": "k1",
+     "prompt": "Bread. Heart for a need, star for a want.",
+     "say": "Bread. Tap the heart for a need, or the star for a want.",
+     "thing": {
+      "e": "🍞",
+      "label": "bread"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 0,
+     "why": "Bread is a need. We need food to grow."
+    },
+    {
+     "type": "sort",
+     "id": "k2",
+     "prompt": "A video game. Heart for a need, star for a want.",
+     "say": "A video game. Tap the heart for a need, or the star for a want.",
+     "thing": {
+      "e": "🎮",
+      "label": "game"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 1,
+     "why": "A game is a want. It is fun!"
+    },
+    {
+     "type": "sort",
+     "id": "k3",
+     "prompt": "Water. Heart for a need, star for a want.",
+     "say": "Water. Tap the heart for a need, or the star for a want.",
+     "thing": {
+      "e": "💧",
+      "label": "water"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 0,
+     "why": "Water is a need. Our bodies need water."
+    },
+    {
+     "type": "sort",
+     "id": "k4",
+     "prompt": "A teddy bear. Heart for a need, star for a want.",
+     "say": "A teddy bear. Tap the heart for a need, or the star for a want.",
+     "thing": {
+      "e": "🧸",
+      "label": "teddy"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 1,
+     "why": "A teddy is a want. Teddies are nice to hug!"
+    },
+    {
+     "type": "sort",
+     "id": "k5",
+     "prompt": "A bed. Heart for a need, star for a want.",
+     "say": "A bed. Tap the heart for a need, or the star for a want.",
+     "thing": {
+      "e": "🛏️",
+      "label": "bed"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 0,
+     "why": "A bed is a need. We need sleep."
+    },
+    {
+     "type": "sort",
+     "id": "k6",
+     "prompt": "Candy. Heart for a need, star for a want.",
+     "say": "Candy. Tap the heart for a need, or the star for a want.",
+     "thing": {
+      "e": "🍬",
+      "label": "candy"
+     },
+     "groups": [
+      {
+       "label": "Need",
+       "e": "❤️"
+      },
+      {
+       "label": "Want",
+       "e": "⭐"
+      }
+     ],
+     "answer": 1,
+     "why": "Candy is a want. Yummy, but we do not need it."
+    },
+    {
+     "type": "choose",
+     "id": "k7",
+     "prompt": "It is cold outside. Tap what we need.",
+     "art": {
+      "kind": "row",
+      "items": [
+       "❄️",
+       "🥶"
+      ],
+      "alt": "A cold face with a snowflake"
+     },
+     "options": [
+      {
+       "label": "a game",
+       "e": "🎮"
+      },
+      {
+       "label": "a coat",
+       "e": "🧥",
+       "right": true
+      },
+      {
+       "label": "candy",
+       "e": "🍬"
+      }
+     ],
+     "hint": "Think about what keeps us warm.",
+     "why": "A coat! We need a coat to stay warm."
+    }
+   ]
+  }
+ }
+}

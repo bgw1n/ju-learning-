@@ -59,6 +59,19 @@
     }
   }
 
+  /* Family Money: her own follow-on to each family lesson. It opens once the Family has finished that lesson. */
+  try {
+    const list = await JU.money.soloList('julianna');
+    if (list.length) {
+      document.getElementById('money-cards').replaceChildren(...list.map(l => h('li', null, l.open
+        ? h('a', { class: 'mcard' + (l.done ? ' done' : ''), href: 'solo.html?n=' + l.id, 'data-lesson': l.id, 'data-state': l.done ? 'done' : 'open' },
+            h('span', { class: 'mnum', 'aria-hidden': 'true' }, l.done ? '\u2705' : l.icon), h('span', { class: 'mtitle' }, 'Lesson ' + l.id + ': ' + l.title), h('span', { class: 'mstate' }, l.done ? 'Done' : 'Your turn'))
+        : h('div', { class: 'mcard locked', 'data-lesson': l.id, 'data-state': 'locked', role: 'group', 'aria-label': 'Lesson ' + l.id + ': ' + l.title + ', locked until the family finishes the lesson' },
+            h('span', { class: 'mnum', 'aria-hidden': 'true' }, '\uD83D\uDD12'), h('span', { class: 'mtitle' }, 'Lesson ' + l.id + ': ' + l.title), h('span', { class: 'mstate' }, 'Opens after the family lesson')))));
+      document.getElementById('money-section').hidden = false;
+    }
+  } catch (e) { /* never disturb her games */ }
+
   /* gentle backup nudge for the grown-ups: one quiet line at the bottom, no button */
   try { await JU.backup.showHint(document.getElementById('backup-hint')); } catch (e) { /* never disturb her games */ }
 })();

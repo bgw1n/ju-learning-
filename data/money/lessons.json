@@ -4,28 +4,32 @@
   "unit": 1,
   "unitTitle": "What money is",
   "title": "Why money? (vs swapping)",
-  "status": "coming-soon"
+  "icon": "🤝",
+  "status": "ready"
  },
  {
   "id": 2,
   "unit": 1,
   "unitTitle": "What money is",
   "title": "Needs vs wants",
-  "status": "coming-soon"
+  "icon": "❤️",
+  "status": "ready"
  },
  {
   "id": 3,
   "unit": 1,
   "unitTitle": "What money is",
   "title": "Earning and value",
-  "status": "coming-soon"
+  "icon": "💪",
+  "status": "ready"
  },
  {
   "id": 4,
   "unit": 1,
   "unitTitle": "What money is",
   "title": "Cash vs cards",
-  "status": "coming-soon"
+  "icon": "💳",
+  "status": "ready"
  },
  {
   "id": 5,

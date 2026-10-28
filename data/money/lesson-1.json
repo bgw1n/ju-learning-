@@ -1,0 +1,513 @@
+{
+ "id": 1,
+ "title": "Why money? (vs swapping)",
+ "sticker": "🤝",
+ "screens": [
+  {
+   "kind": "intro",
+   "title": "Lesson 1: Why money?",
+   "text": "Why do people use money? Let us find out with a short story. Press Start when you are ready.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "👧",
+     "🎨",
+     "↔️",
+     "🍎",
+     "🧒"
+    ],
+    "alt": "A girl with a drawing, and a boy with an apple"
+   }
+  },
+  {
+   "kind": "story",
+   "text": "Maya made a drawing. Theo has a snack. Maya is hungry, and she would like his snack.",
+   "art": {
+    "kind": "row",
+    "items": [
+     {
+      "e": "👧",
+      "label": "Maya"
+     },
+     "🎨",
+     {
+      "e": "🧒",
+      "label": "Theo"
+     },
+     "🍎"
+    ],
+    "alt": "Maya with her drawing, and Theo with his apple"
+   }
+  },
+  {
+   "kind": "story",
+   "text": "Maya asks Theo to swap. But Theo is not hungry for a drawing. He says, no thank you. Now the swap is stuck.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "👧",
+     "🎨",
+     "🚫",
+     "🍎",
+     "🧒"
+    ],
+    "alt": "The drawing and the apple cannot be swapped"
+   }
+  },
+  {
+   "kind": "ask",
+   "prompt": "Here are three swaps. Which one would work?",
+   "options": [
+    {
+     "label": "Theo's apple for Sam's toy car. Theo wants a car, and Sam wants an apple.",
+     "why": "Yes! Each person gets something they want. A swap works when both people say yes.",
+     "e": "🍎↔️🚗",
+     "best": true
+    },
+    {
+     "label": "Maya's drawing for Theo's apple. Theo does not want a drawing.",
+     "why": "That one is stuck, like in our story. Theo would say no, because he does not want a drawing.",
+     "e": "🎨↔️🍎"
+    },
+    {
+     "label": "Sam's toy car for Maya's drawing. Sam wants a snack, not a drawing.",
+     "why": "That one would not work either. Sam wants a snack, so he would say no to a drawing.",
+     "e": "🚗↔️🎨"
+    }
+   ]
+  },
+  {
+   "kind": "story",
+   "text": "Maya could walk around and ask everyone, does anyone want a drawing? That could take a long time. And she is still hungry.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "🚶‍♀️",
+     "❓",
+     "🧒",
+     "👩",
+     "👴"
+    ],
+    "alt": "Maya walking around asking people"
+   }
+  },
+  {
+   "kind": "story",
+   "text": "People thought of a clever idea: a coin. A coin is worth something to everyone. So Theo can take a coin, and later he can use that coin to buy something he wants.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "👧",
+     {
+      "svg": "coin"
+     },
+     "➡️",
+     "🧒",
+     "🍎",
+     "➡️",
+     "👧"
+    ],
+    "alt": "Maya pays Theo a coin, and Theo gives Maya the apple"
+   }
+  },
+  {
+   "kind": "ask",
+   "prompt": "What could solve Maya's problem?",
+   "options": [
+    {
+     "label": "Maya helps a neighbor and earns a coin. Then she pays Theo with the coin.",
+     "why": "Yes! Theo can take a coin, because he can use it later to buy something he wants. Now both of them are happy.",
+     "e": "🧹",
+     "best": true
+    },
+    {
+     "label": "Maya keeps drawing and hopes that Theo changes his mind.",
+     "why": "That might work someday, but Maya is hungry right now. It is not a good idea to count on someone changing their mind.",
+     "e": "✏️"
+    },
+    {
+     "label": "Maya takes the snack when Theo is not looking.",
+     "why": "That is taking, not trading. It is not fair, and Theo would be upset. We ask, and we trade fairly.",
+     "e": "🙈"
+    }
+   ]
+  },
+  {
+   "kind": "story",
+   "text": "Money is something that everyone agrees is worth something. That is why everyone will take it. It makes buying and selling much easier than swapping.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "🧒",
+     "👩",
+     {
+      "svg": "coin"
+     },
+     "👴",
+     "👧"
+    ],
+    "alt": "Many different people all accept a coin"
+   }
+  },
+  {
+   "kind": "ask",
+   "prompt": "Why do people use money?",
+   "options": [
+    {
+     "label": "Because everyone will take it, so we do not have to find a perfect swap.",
+     "why": "Yes! Money works for almost everyone, so we can buy what we need without hunting for a perfect swap.",
+     "e": "🤝",
+     "best": true
+    },
+    {
+     "label": "Because coins are shiny.",
+     "why": "Coins can be shiny, but that is not why we use them. We use them because everyone agrees they are worth something.",
+     "e": "✨"
+    },
+    {
+     "label": "Because swapping is against the rules.",
+     "why": "Swapping is not against the rules. People still swap sometimes! Money just makes trading easier when a perfect swap is hard to find.",
+     "e": "📜"
+    }
+   ]
+  }
+ ],
+ "talk": [
+  {
+   "q": "Think of something you have that nobody would want to swap for. What could you do to get what you want anyway?",
+   "note": "You could earn money and buy it, or find someone who does want what you have."
+  },
+  {
+   "q": "Why is money easier than swapping?",
+   "note": "Everyone accepts it, you do not have to find a perfect match, and you can save it for later."
+  },
+  {
+   "q": "Have you ever swapped something with a friend? How did it go?"
+  }
+ ],
+ "solo": {
+  "julianna": {
+   "title": "Julianna's turn: works or gets stuck?",
+   "sticker": "🤝",
+   "intro": "Read each trade. Tap whether it works or gets stuck. Then tap the reason why.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "✅",
+     "↔️",
+     "🚧"
+    ],
+    "alt": "Works or gets stuck"
+   },
+   "items": [
+    {
+     "type": "sort",
+     "id": "t1",
+     "prompt": "Ava has a ball and wants a book. Ben has a book and wants a ball. They swap.",
+     "thing": "⚽↔️📘",
+     "groups": [
+      {
+       "label": "Works",
+       "e": "✅"
+      },
+      {
+       "label": "Gets stuck",
+       "e": "🚧"
+      }
+     ],
+     "answer": 0,
+     "why": "Yes, this swap works.",
+     "reasons": [
+      {
+       "label": "Each person wants what the other one has.",
+       "right": true
+      },
+      {
+       "label": "Balls are better than books."
+      },
+      {
+       "label": "Ben is older than Ava."
+      }
+     ],
+     "hint": "Think about what each person wants.",
+     "reasonWhy": "Right. A swap works when both people want what the other one has."
+    },
+    {
+     "type": "sort",
+     "id": "t2",
+     "prompt": "Cam has a drawing. Dee has a sandwich, but she does not want a drawing.",
+     "thing": "🎨↔️🥪",
+     "groups": [
+      {
+       "label": "Works",
+       "e": "✅"
+      },
+      {
+       "label": "Gets stuck",
+       "e": "🚧"
+      }
+     ],
+     "answer": 1,
+     "why": "Yes, this swap gets stuck.",
+     "reasons": [
+      {
+       "label": "Drawings are not worth anything."
+      },
+      {
+       "label": "Dee does not want what Cam has.",
+       "right": true
+      },
+      {
+       "label": "Dee is being mean."
+      }
+     ],
+     "hint": "Does Dee want the drawing?",
+     "reasonWhy": "Right. Dee does not need a drawing, so she says no. She is not being mean. A swap needs both people to say yes."
+    },
+    {
+     "type": "sort",
+     "id": "t3",
+     "prompt": "Hal gives Ivy a coin for a snack. Later, Ivy uses the coin to buy a toy.",
+     "thing": "💰➡️🍌",
+     "groups": [
+      {
+       "label": "Works",
+       "e": "✅"
+      },
+      {
+       "label": "Gets stuck",
+       "e": "🚧"
+      }
+     ],
+     "answer": 0,
+     "why": "Yes, this works.",
+     "reasons": [
+      {
+       "label": "Coins are heavy."
+      },
+      {
+       "label": "Ivy likes Hal."
+      },
+      {
+       "label": "Everyone takes coins, so Ivy can use it later.",
+       "right": true
+      }
+     ],
+     "hint": "What can Ivy do with the coin later?",
+     "reasonWhy": "Right. Money works for almost everyone, so no perfect match is needed."
+    },
+    {
+     "type": "sort",
+     "id": "t4",
+     "prompt": "Gus wants to swap one banana for a bike.",
+     "thing": "🍌↔️🚲",
+     "groups": [
+      {
+       "label": "Works",
+       "e": "✅"
+      },
+      {
+       "label": "Gets stuck",
+       "e": "🚧"
+      }
+     ],
+     "answer": 1,
+     "why": "Yes, this gets stuck.",
+     "reasons": [
+      {
+       "label": "The two things are not worth the same.",
+       "right": true
+      },
+      {
+       "label": "Bananas are not food."
+      },
+      {
+       "label": "Bikes can never be swapped."
+      }
+     ],
+     "hint": "Is a banana worth as much as a bike?",
+     "reasonWhy": "Right. A banana is worth much less than a bike, so the owner of the bike would say no."
+    },
+    {
+     "type": "sort",
+     "id": "t5",
+     "prompt": "Lia wants a toy. She only has apples, and everyone nearby already has apples.",
+     "thing": "🍎↔️🧸",
+     "groups": [
+      {
+       "label": "Works",
+       "e": "✅"
+      },
+      {
+       "label": "Gets stuck",
+       "e": "🚧"
+      }
+     ],
+     "answer": 1,
+     "why": "Yes, Lia is stuck.",
+     "reasons": [
+      {
+       "label": "Apples are bad."
+      },
+      {
+       "label": "Nobody nearby needs apples, so there is nobody to swap with.",
+       "right": true
+      },
+      {
+       "label": "Lia should not want a toy."
+      }
+     ],
+     "hint": "Who wants apples when everyone has them?",
+     "reasonWhy": "Right. Nobody nearby needs apples. With money, Lia could sell the apples somewhere else, or buy the toy."
+    },
+    {
+     "type": "sort",
+     "id": "t6",
+     "prompt": "Sol wants lunch. He cleans a neighbor’s yard and gets a coin. Then he uses the coin to buy lunch at a shop.",
+     "thing": "🧹➡️🥪",
+     "groups": [
+      {
+       "label": "Works",
+       "e": "✅"
+      },
+      {
+       "label": "Gets stuck",
+       "e": "🚧"
+      }
+     ],
+     "answer": 0,
+     "why": "Yes, this works.",
+     "reasons": [
+      {
+       "label": "The shop does not need yard work. The coin lets Sol pay anyway.",
+       "right": true
+      },
+      {
+       "label": "Shops always give lunch for free."
+      },
+      {
+       "label": "Yards are worth more than lunch."
+      }
+     ],
+     "hint": "Does the shop want a clean yard? What does the shop take instead?",
+     "reasonWhy": "Right. The coin does the job of a go-between. It lets Sol pay the shop even though the shop does not need yard work."
+    }
+   ]
+  },
+  "dorian": {
+   "title": "Dorian's turn: money game",
+   "sticker": "🤝",
+   "intro": "Hi Dorian! Let us play a money game. Tap the pictures. I will say everything out loud. Press the big green button to start.",
+   "art": {
+    "kind": "row",
+    "items": [
+     "👦",
+     {
+      "svg": "coin"
+     },
+     "🍎"
+    ],
+    "alt": "A boy, a coin and an apple"
+   },
+   "items": [
+    {
+     "type": "choose",
+     "id": "d1",
+     "prompt": "The snack kid says no to the drawing. What will the snack kid take?",
+     "art": {
+      "kind": "row",
+      "items": [
+       "🎨",
+       "🚫",
+       "🧒",
+       "🍎"
+      ],
+      "alt": "The snack kid says no to a drawing"
+     },
+     "options": [
+      {
+       "label": "a leaf",
+       "e": "🍂"
+      },
+      {
+       "label": "a coin",
+       "svg": "coin",
+       "right": true
+      },
+      {
+       "label": "a sock",
+       "e": "🧦"
+      }
+     ],
+     "hint": "Think of the shiny thing that everyone uses to buy things.",
+     "why": "A coin! Everyone takes coins. Now we can buy the snack."
+    },
+    {
+     "type": "choose",
+     "id": "d2",
+     "prompt": "Tap the coin that fixes it.",
+     "art": {
+      "kind": "row",
+      "items": [
+       "🎨",
+       "❌",
+       "🍎"
+      ],
+      "alt": "The drawing does not work"
+     },
+     "options": [
+      {
+       "label": "a balloon",
+       "e": "🎈"
+      },
+      {
+       "label": "a teddy bear",
+       "e": "🧸"
+      },
+      {
+       "label": "a coin",
+       "svg": "coin",
+       "right": true
+      }
+     ],
+     "hint": "A coin is round and shiny.",
+     "why": "Yes! The coin fixes it. Now the drawing kid can buy the snack."
+    },
+    {
+     "type": "choose",
+     "id": "d3",
+     "prompt": "The drawing kid pays with a coin. Tap what she gets.",
+     "art": {
+      "kind": "row",
+      "items": [
+       "👧",
+       {
+        "svg": "coin"
+       },
+       "➡️",
+       "❓"
+      ],
+      "alt": "A girl pays a coin and gets something"
+     },
+     "options": [
+      {
+       "label": "a sock",
+       "e": "🧦"
+      },
+      {
+       "label": "a car",
+       "e": "🚗"
+      },
+      {
+       "label": "the apple",
+       "e": "🍎",
+       "right": true
+      }
+     ],
+     "hint": "What did she want to eat?",
+     "why": "The apple! A coin can buy a snack."
+    }
+   ]
+  }
+ }
+}

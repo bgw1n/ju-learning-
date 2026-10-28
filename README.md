@@ -82,6 +82,7 @@ All reads and writes go through `js/storage.js`, one small module with async fun
 Results exist only in that browser on that device. They do not sync, and clearing site data erases them. On the grown-up page:
 
 - **Save progress** downloads one JSON backup file with every result, sticker, and hint.
+- **Back up to Grok Bot** (v7) does the same download, then opens an email already filled in with instructions and a counts summary, to an address typed once on the grown-up page and kept only in that browser (never in the repo or the backup file). Attaching the file is the one manual step.
 - **Load progress** merges such a file back in. Results already present are skipped, so loading the same file twice, or an older backup, never creates duplicates. A file that is not a backup is refused.
 - **Export results (CSV)** is for spreadsheets, not for restoring.
 

@@ -62,6 +62,8 @@ a { color: var(--blue); }
 .btn.round { border-radius: 40px; background: #eaf4fb; border-color: #9fc4e3; }
 .row { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; margin: 0.9rem 0; }
 .row.center { justify-content: center; }
+[hidden] { display: none !important; }
+.row[hidden] { display: none; }
 .card .row:last-child { justify-content: center; }
 .select { font: inherit; font-size: 1.05rem; padding: 0.5rem 0.8rem; border: 3px solid var(--line); border-radius: 12px; background: #fff; min-height: 48px; }
 
@@ -271,7 +273,8 @@ dialog::backdrop { background: rgba(35, 50, 63, 0.45); }
 .view-title { margin-top: 0.2rem; }
 .profile-view[hidden] { display: none; }
 .textbox { font: inherit; font-size: 1.05rem; min-height: 52px; padding: 0.4rem 0.8rem; border: 3px solid var(--line); border-radius: 12px; min-width: 18rem; }
-.email-card summary { font-weight: 700; font-size: 1.15rem; cursor: pointer; }
+.email-card .row { align-items: center; margin: 0.5rem 0; }
+.email-card .btn.small.ghost { text-decoration: underline; }
 #lessons-table td { vertical-align: middle; }
 .parent-bar { padding: 0.5rem 1rem; }
 
@@ -289,8 +292,9 @@ body.kid { background: #fff8ec; }
 .unit { margin: 1.4rem 0; }
 .lesson-grid { list-style: none; padding: 0; margin: 0.6rem 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 .lcard { font: inherit; width: 100%; height: 100%; display: flex; align-items: center; gap: 0.9rem; text-align: left; padding: 1rem 1.2rem; border-radius: 20px; border: 3px solid var(--line); background: #fff; color: var(--ink); box-shadow: 0 4px 0 var(--line); }
-button.lcard { cursor: pointer; }
-button.lcard:hover { background: var(--sand); }
+button.lcard, a.lcard { cursor: pointer; }
+a.lcard { text-decoration: none; }
+button.lcard:hover, a.lcard:hover { background: var(--sand); }
 .lcard.open { border-color: var(--teal); box-shadow: 0 4px 0 var(--teal); }
 .lcard.complete { background: var(--leaf); }
 .lcard.locked { background: var(--sand); border-style: dashed; color: #4a5560; box-shadow: none; }
@@ -304,3 +308,116 @@ button.lcard:hover { background: var(--sand); }
   .lesson-grid { grid-template-columns: 1fr; }
   .kid-hello { font-size: 2.4rem; } .kid-stage { font-size: 6rem; }
 }
+
+/* v8: Money & Economics lesson pages (family lessons and the children's solo activities) */
+.lesson-page { max-width: 880px; }
+.lesson-screen, .solo-screen { display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center; padding: 1.6rem 1.8rem; }
+.lesson-screen > *, .solo-screen > * { max-width: 100%; }
+.lesson-title { margin: 0; font-size: 2rem; color: var(--teal-dark); }
+.lesson-eyebrow { margin: 0; font-weight: 600; color: var(--orange); }
+.lesson-text { margin: 0; font-size: 1.6rem; font-weight: 600; line-height: 1.45; max-width: 36em; }
+.lesson-text:focus, .lesson-title:focus { outline: none; }
+.intro-text { font-weight: 500; font-size: 1.4rem; }
+.solo-context { margin: 0; font-size: 1.1rem; color: var(--soft); max-width: 36em; }
+.speakrow { display: flex; justify-content: center; }
+.lesson-nav { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem; width: 100%; margin-top: 0.6rem; }
+.btn.ask { background: #fff7e6; border-color: #f0c070; }
+.btn.ask:hover:not(:disabled) { background: #ffefcc; }
+.ask-note { margin: 0; min-height: 1.4em; font-weight: 600; color: var(--teal-dark); max-width: 36em; }
+.feedback { margin: 0; min-height: 2.4em; font-size: 1.25rem; color: var(--ink); max-width: 36em; line-height: 1.45; }
+.preview-note { background: var(--sand); border-radius: 12px; padding: 0.5rem 1rem; }
+
+.opts { display: grid; gap: 0.8rem; width: 100%; max-width: 640px; }
+.opt { font: inherit; font-size: 1.25rem; text-align: left; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 0.9rem 1.2rem; border-radius: 16px; border: 3px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; min-height: 64px; }
+.opt:hover:not(:disabled) { background: #f3faf9; border-color: var(--teal); }
+.opt.picked { border-color: var(--teal-dark); background: #eef7f6; }
+.opt.best { background: var(--leaf); border-color: #3f9c5a; }
+.opt-e { font-size: 2.2rem; line-height: 1; }
+.opt-label { flex: 1; min-width: 8rem; }
+.opt-tag { width: 100%; font-size: 0.9rem; font-weight: 600; color: #1d6b3a; }
+.opt-tag[hidden] { display: none; }
+.opt:disabled { cursor: default; }
+.solo-opt { justify-content: center; text-align: center; flex-direction: column; gap: 0.4rem; }
+.solo-opts { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); max-width: 760px; }
+.solo-opt.tried { opacity: 0.45; border-style: dashed; }
+.solo-opt.right { background: var(--leaf); border-color: #3f9c5a; opacity: 1; }
+.solo-opt.two { min-height: 96px; }
+.solo-opt .opt-label { flex: none; min-width: 0; }
+
+.talk-list { text-align: left; font-size: 1.35rem; line-height: 1.5; max-width: 36em; margin: 0.4rem 0; padding-left: 1.6rem; }
+.talk-list li { margin: 0.8rem 0; }
+.talk-q { display: block; font-weight: 600; }
+.talk-note { display: block; font-size: 0.95rem; color: var(--soft); font-weight: 400; }
+.lesson-screen.calm { background: #f4faf9; }
+
+/* pictures */
+.art { margin: 0; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: center; gap: 0.9rem 1.2rem; min-height: 5rem; }
+.art-item { display: inline-flex; flex-direction: column; align-items: center; gap: 0.2rem; font-size: 4.2rem; line-height: 1.1; }
+.art-e { font-size: 4.2rem; line-height: 1.1; }
+.art-cap { font-size: 1rem; font-weight: 600; color: var(--soft); }
+.art-text { font-size: 3.2rem; font-weight: 700; color: var(--teal-dark); }
+.art-item.dim { opacity: 0.4; }
+.pile { display: inline-grid; grid-template-columns: repeat(5, auto); gap: 4px; justify-content: center; max-width: 100%; }
+.pile-box { font-size: 1rem; }
+.flow-box, .bal-box, .bal-swipe, .flow-track { display: inline-flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+.flow-track { flex-direction: row; gap: 0.6rem; }
+.flow-cash { display: inline-flex; flex-direction: column; align-items: center; animation: slide-cash 1.6s ease-out; }
+.flow-arrow { font-size: 2.6rem; }
+.bal-box { border: 3px solid var(--line); border-radius: 18px; background: #fff; padding: 0.5rem 1.4rem; min-width: 8.5rem; }
+.bal-box.after { border-color: var(--teal); background: #f1faf9; }
+.bal-n { font-size: 3rem; font-weight: 700; color: var(--teal-dark); line-height: 1.1; }
+.bal-swipe { font-size: 1rem; }
+.bal-swipe .art-e { font-size: 3rem; }
+.bal-box, .bal-swipe { align-self: center; }
+.bal-pay { display: inline-flex; align-items: center; gap: 0.4rem; }
+.bal-store { font-size: 2.4rem; line-height: 1; }
+.bal-fly { animation: fly-coin 1.6s ease-out; }
+@keyframes slide-cash { from { transform: translateX(-120px); opacity: 0.4; } to { transform: none; opacity: 1; } }
+@keyframes fly-coin { from { transform: translateX(-60px); opacity: 0.3; } to { transform: none; opacity: 1; } }
+
+/* tokens to count (Dorian) */
+.token-grid { display: grid; grid-template-columns: repeat(5, auto); gap: 0.8rem; justify-content: center; }
+.token-btn { font: inherit; padding: 0.3rem; border-radius: 18px; border: 4px solid var(--line); background: #fff; cursor: pointer; line-height: 0; min-width: 100px; min-height: 100px; display: inline-flex; align-items: center; justify-content: center; }
+.token-btn:hover { background: var(--sand); }
+.token-btn.counted { background: var(--leaf); border-color: #3f9c5a; }
+.count-out { font-size: 3.4rem; font-weight: 700; color: var(--teal-dark); min-height: 1.2em; }
+
+/* Dorian's version: bigger, picture first */
+body.kid .lesson-page { max-width: 980px; }
+body.kid .lesson-text { font-size: 2rem; }
+body.kid .intro-text { font-size: 1.8rem; }
+body.kid .solo-opts { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); max-width: 900px; gap: 1.2rem; }
+body.kid .solo-opt { min-height: 170px; border-width: 5px; border-radius: 26px; }
+body.kid .solo-opt.two { min-height: 200px; }
+body.kid .solo-opt .opt-e { font-size: 5.6rem; }
+body.kid .solo-opt .opt-label { font-size: 1.3rem; }
+body.kid .btn.round.big, body.kid .btn.ask.big { min-height: 80px; font-size: 1.4rem; }
+body.kid .kid-next { font: inherit; width: 120px; height: 120px; border-radius: 50%; border: 5px solid var(--teal-dark); background: var(--teal); cursor: pointer; font-size: 3.4rem; line-height: 1; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; color: #fff; padding: 0; }
+body.kid .kid-next:disabled { opacity: 0.35; cursor: default; }
+body.kid .kid-next span { font-size: 3.4rem; }
+body.kid .token-btn { min-width: 118px; min-height: 118px; }
+body.kid .art-item, body.kid .art-e { font-size: 5rem; }
+body.kid .feedback { font-size: 1.6rem; }
+body.kid .lesson-title { font-size: 2.4rem; }
+.solo-screen.kidcard { background: #fffdf8; }
+.sticker-pop { font-size: 6rem; line-height: 1; }
+
+/* Julianna's home and Dorian's home: the money activity cards */
+.mcards { list-style: none; padding: 0; margin: 0.4rem 0 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.mcard { display: flex; align-items: center; gap: 0.9rem; padding: 1rem 1.2rem; border-radius: 20px; border: 3px solid var(--line); background: #fff; color: var(--ink); text-decoration: none; box-shadow: 0 4px 0 var(--line); height: 100%; box-sizing: border-box; }
+a.mcard:hover { background: #f3faf9; border-color: var(--teal); }
+.mcard.locked { background: var(--sand); border-style: dashed; box-shadow: none; color: #4a5560; }
+.mcard.done { background: var(--leaf); }
+.mcard .mnum { font-size: 1.8rem; min-width: 2.2rem; text-align: center; }
+.mcard .mtitle { flex: 1; font-weight: 600; }
+.mcard .mstate { font-size: 0.85rem; color: var(--soft); }
+.kid-money { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.6rem; margin-top: 0.6rem; }
+.kid-lesson { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+.kid-lesson.done { background: #dff3e3; border-color: #8fcb9c; box-shadow: 0 6px 0 #8fcb9c; }
+@media (max-width: 900px) {
+  .mcards { grid-template-columns: 1fr; }
+  .token-grid { grid-template-columns: repeat(4, auto); }
+  .lesson-screen, .solo-screen { padding: 1.2rem 0.8rem; }
+  .lesson-text { font-size: 1.35rem; }
+}
+.flags-table td, .flags-table th { white-space: nowrap; }

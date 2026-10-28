@@ -16,6 +16,8 @@
    Family lesson state (key ju_family_lessons_v1): { complete: { "<lessonId>": "<ISO time>" }, override: { "<lessonId>": "open" | "locked" } }.
    Voice settings and the last backup date are about this device, so they are shared by all profiles.
 
+   v8 adds, for every profile: flags (key ju_<profile>_flags_v1, Julianna's ju_flags_v1) and money solo results (ju_<profile>_money_v1, Julianna's ju_money_v1).
+
    Last backup date (key ju_lastbackup_v1): one ISO time, set when Save progress downloads a backup. Used only to show the backup reminder.
 
    Hint log record shape (separate from results, key ju_hints_v1; part of the Save progress backup):
@@ -36,6 +38,15 @@
   function write(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
   const isObj = v => v && typeof v === 'object' && !Array.isArray(v);
 
+  function moneyClean(v) {
+    const m = { done: {}, answers: [] };
+    if (isObj(v)) {
+      if (isObj(v.done)) for (const k in v.done) if (typeof v.done[k] === 'string') m.done[k] = v.done[k];
+      if (Array.isArray(v.answers)) m.answers = v.answers.filter(r => r && typeof r === 'object');
+    }
+    return m;
+  }
+
   /* The storage for one profile. Julianna's keys keep their old names, so her saved data still loads. */
   function make(id) {
     const mid = id === 'julianna' ? '' : id + '_';
@@ -43,11 +54,13 @@
     const STICKERS_KEY = 'ju_' + mid + 'stickers_v1';
     const HINTS_KEY = 'ju_' + mid + 'hints_v1';
     const LESSONS_KEY = 'ju_family_lessons_v1';
+    const FLAGS_KEY = 'ju_' + mid + 'flags_v1';
+    const MONEY_KEY = 'ju_' + mid + 'money_v1';
 
     const api = {
       kind: 'localStorage',
       id,
-      keys: { results: RESULTS_KEY, stickers: STICKERS_KEY, hints: HINTS_KEY },
+      keys: { results: RESULTS_KEY, stickers: STICKERS_KEY, hints: HINTS_KEY, flags: FLAGS_KEY, money: MONEY_KEY },
       async getResults() { return read(RESULTS_KEY, []); },
       async addResult(rec) {
         const all = read(RESULTS_KEY, []);
@@ -119,7 +132,69 @@
         return { added, skipped };
       },
       async clearHints() { localStorage.removeItem(HINTS_KEY); },
-      async clearStickers() { localStorage.removeItem(STICKERS_KEY); }
+      async clearStickers() { localStorage.removeItem(STICKERS_KEY); },
+
+      /* ---- "Ask a grown-up" flags (v8). Record: { id, ts, profile, kind ('lesson' | 'solo'), lesson (number), screen (number, 1-based) } ---- */
+      async getFlags() { return read(FLAGS_KEY, []); },
+      async addFlag(rec) {
+        const all = read(FLAGS_KEY, []);
+        const r = Object.assign({ id: JU.ui.uid(), ts: new Date().toISOString(), profile: id }, rec);
+        all.push(r);
+        write(FLAGS_KEY, all);
+        return r;
+      },
+      /* Merge flags from a backup without duplicating (same id, or same kind + lesson + screen + time). Returns { added, skipped }. */
+      async importFlags(list) {
+        const all = read(FLAGS_KEY, []);
+        const key = r => [r.kind, r.lesson, r.screen, r.ts].join('|');
+        const ids = new Set(all.map(r => r.id)), keys = new Set(all.map(key));
+        let added = 0, skipped = 0;
+        (Array.isArray(list) ? list : []).forEach(r => {
+          const ok = r && typeof r.ts === 'string' && (r.kind === 'lesson' || r.kind === 'solo') && isFinite(Number(r.lesson));
+          if (!ok) { skipped++; return; }
+          if ((r.id && ids.has(r.id)) || keys.has(key(r))) { skipped++; return; }
+          const rec = Object.assign({}, r, { id: r.id || JU.ui.uid(), profile: id, lesson: Number(r.lesson) });
+          all.push(rec); ids.add(rec.id); keys.add(key(rec)); added++;
+        });
+        if (added) { all.sort((a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0); write(FLAGS_KEY, all); }
+        return { added, skipped };
+      },
+      async clearFlags() { localStorage.removeItem(FLAGS_KEY); },
+
+      /* ---- Money & Economics solo activities (v8), kept apart from the spelling results ----
+         { done: { "<lessonId>": "<ISO time finished>" }, answers: [ { id, ts, session, lesson, q, kind ('choose'|'sort'|'count'), correct (right on the first try, no hint), tries, hinted } ] } */
+      async getMoney() { return moneyClean(read(MONEY_KEY, null)); },
+      async addMoneyAnswer(rec) {
+        const m = moneyClean(read(MONEY_KEY, null));
+        const r = Object.assign({ id: JU.ui.uid(), ts: new Date().toISOString() }, rec);
+        m.answers.push(r);
+        write(MONEY_KEY, m);
+        return r;
+      },
+      async setSoloDone(lessonId) {
+        const m = moneyClean(read(MONEY_KEY, null));
+        if (!m.done[String(lessonId)]) m.done[String(lessonId)] = new Date().toISOString();
+        write(MONEY_KEY, m);
+        return m;
+      },
+      /* Merge from a backup without duplicating (same id, or same session + lesson + question + time; the earliest finish time is kept). Returns { added, skipped }. */
+      async importMoney(obj) {
+        const m = moneyClean(read(MONEY_KEY, null)), inc = moneyClean(obj);
+        const key = r => [r.session, r.lesson, r.q, r.ts].join('|');
+        const ids = new Set(m.answers.map(r => r.id)), keys = new Set(m.answers.map(key));
+        let added = 0, skipped = 0, changed = false;
+        (isObj(obj) && Array.isArray(obj.answers) ? obj.answers : []).forEach(r => {
+          const ok = r && typeof r.ts === 'string' && typeof r.q === 'string' && isFinite(Number(r.lesson));
+          if (!ok) { skipped++; return; }
+          if ((r.id && ids.has(r.id)) || keys.has(key(r))) { skipped++; return; }
+          const rec = Object.assign({}, r, { id: r.id || JU.ui.uid(), lesson: Number(r.lesson), correct: !!r.correct });
+          m.answers.push(rec); ids.add(rec.id); keys.add(key(rec)); added++; changed = true;
+        });
+        for (const k in inc.done) if (!m.done[k] || inc.done[k] < m.done[k]) { if (!m.done[k]) added++; m.done[k] = inc.done[k]; changed = true; }
+        if (changed) { m.answers.sort((a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0); write(MONEY_KEY, m); }
+        return { added, skipped };
+      },
+      async clearMoney() { localStorage.removeItem(MONEY_KEY); }
     };
 
     if (id === 'family') {
@@ -150,10 +225,10 @@
       /* Merge lesson state from a backup: completions keep the earliest time; an override here wins over a backed-up one. */
       api.importLessonState = async obj => {
         const s = clean(read(LESSONS_KEY, null)), inc = clean(obj);
-        let added = 0;
-        for (const k in inc.complete) if (!s.complete[k] || inc.complete[k] < s.complete[k]) { if (!s.complete[k]) added++; s.complete[k] = inc.complete[k]; }
-        for (const k in inc.override) if (!s.override[k]) { s.override[k] = inc.override[k]; added++; }
-        if (added) write(LESSONS_KEY, s);
+        let added = 0, changed = false;
+        for (const k in inc.complete) if (!s.complete[k] || inc.complete[k] < s.complete[k]) { if (!s.complete[k]) added++; s.complete[k] = inc.complete[k]; changed = true; }
+        for (const k in inc.override) if (!s.override[k]) { s.override[k] = inc.override[k]; added++; changed = true; }
+        if (changed) write(LESSONS_KEY, s);
         return { added };
       };
       api.clearLessonState = async () => { localStorage.removeItem(LESSONS_KEY); };
@@ -178,32 +253,37 @@
     async getLastBackup() { const v = read(BACKUP_KEY, null); return typeof v === 'string' && !isNaN(new Date(v)) ? v : null; },
     async setLastBackup(iso) { write(BACKUP_KEY, iso || new Date().toISOString()); return iso; },
 
-    /* ---- the backup file (version 3) ----
+    /* ---- the backup file (version 4; versions 1 to 3 still load) ----
+       Version 4 adds "flags" (Ask a grown-up) for every profile and "money" (solo activity results) for Julianna and Dorian.
        Julianna's data stays at the top level exactly as in versions 1 and 2, so an older file loads into her
        and a version 3 file is still readable by old code. Everyone else is under "profiles":
-       { app:'ju-learning', version:3, exportedAt, results, stickers, hints,
+       { app:'ju-learning', version:4, exportedAt, results, stickers, hints, flags, money,
          profiles: { dorian: { results, stickers, hints }, family: { results, stickers, hints, lessons } } } */
     async exportAll() {
-      const out = { app: 'ju-learning', version: 3, exportedAt: new Date().toISOString(),
+      const out = { app: 'ju-learning', version: 4, exportedAt: new Date().toISOString(),
         results: await stores.julianna.getResults(), stickers: await stores.julianna.getStickers(), hints: await stores.julianna.getHints(),
+        flags: await stores.julianna.getFlags(), money: await stores.julianna.getMoney(),
         profiles: {} };
       for (const p of ['dorian', 'family']) {
-        out.profiles[p] = { results: await stores[p].getResults(), stickers: await stores[p].getStickers(), hints: await stores[p].getHints() };
+        out.profiles[p] = { results: await stores[p].getResults(), stickers: await stores[p].getStickers(), hints: await stores[p].getHints(), flags: await stores[p].getFlags() };
       }
+      out.profiles.dorian.money = await stores.dorian.getMoney();
       out.profiles.family.lessons = await stores.family.getLessonState();
       return out;
     },
-    /* True when a parsed file looks like one of our backups (version 1, 2 or 3). */
+    /* True when a parsed file looks like one of our backups (version 1, 2, 3 or 4). */
     isBackup(data) {
       return isObj(data) && data.app === 'ju-learning' && (Array.isArray(data.results) || isObj(data.profiles));
     },
     /* Merge a backup into the right profiles without duplicating anything.
-       Returns { added, skipped, hints: {added}|null, profiles: { dorian: {added, skipped}, family: {...} } }. */
+       Returns { added, skipped, hints: {added}|null, flags: {added}|null, money: {added}|null, profiles: { dorian: {added, skipped, ...}, family: {...} } }. */
     async importAll(data) {
       if (!JU.storage.isBackup(data)) throw new Error('not a backup');
       const r = await stores.julianna.importResults(data.results);
       await stores.julianna.importStickers(data.stickers);
       const hints = Array.isArray(data.hints) ? await stores.julianna.importHints(data.hints) : null;   // version 1 has no hint log
+      const flags = Array.isArray(data.flags) ? await stores.julianna.importFlags(data.flags) : null;   // versions 1 to 3 have no flags
+      const money = isObj(data.money) ? await stores.julianna.importMoney(data.money) : null;
       const profiles = {};
       for (const p of ['dorian', 'family']) {
         const blk = isObj(data.profiles) && isObj(data.profiles[p]) ? data.profiles[p] : null;
@@ -213,17 +293,22 @@
         const ph = Array.isArray(blk.hints) ? await stores[p].importHints(blk.hints) : null;
         let lessons = null;
         if (p === 'family' && blk.lessons) lessons = await stores.family.importLessonState(blk.lessons);
-        profiles[p] = { added: pr.added, skipped: pr.skipped, hints: ph, lessons };
+        const pf = Array.isArray(blk.flags) ? await stores[p].importFlags(blk.flags) : null;
+        const pm = p === 'dorian' && isObj(blk.money) ? await stores.dorian.importMoney(blk.money) : null;
+        profiles[p] = { added: pr.added, skipped: pr.skipped, hints: ph, lessons, flags: pf, money: pm };
       }
-      return { added: r.added, skipped: r.skipped, hints, profiles };
+      return { added: r.added, skipped: r.skipped, hints, flags, money, profiles };
     },
-    /* Plain counts for the progress summary: { julianna: {results, games, hints, stickers}, dorian: {...}, family: {..., lessonsDone} } */
+    /* Plain counts for the progress summary: { julianna: {results, games, hints, stickers, flags, money: {done, answers}}, dorian: {...}, family: {..., lessonsDone} } */
     async counts() {
       const out = {};
       for (const p of PROFILES) {
         const rs = await stores[p].getResults(), st = await stores[p].getStickers();
         out[p] = { results: rs.length, games: new Set(rs.map(x => x.session)).size,
-          stickers: Object.values(st).reduce((a, w) => a + Object.keys(w || {}).length, 0), hints: (await stores[p].getHints()).length };
+          stickers: Object.values(st).reduce((a, w) => a + Object.keys(w || {}).length, 0), hints: (await stores[p].getHints()).length,
+          flags: (await stores[p].getFlags()).length };
+        const m = await stores[p].getMoney();
+        out[p].money = { done: Object.keys(m.done).length, answers: m.answers.length };
       }
       out.family.lessonsDone = Object.keys((await stores.family.getLessonState()).complete).length;
       return out;

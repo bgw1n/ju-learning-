@@ -38,6 +38,8 @@
     }
     return el;
   }
+  /* "1 sticker", "2 stickers": plural(n, 'sticker') or plural(n, 'activity', 'activities') */
+  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
   function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
   function reduced() { return window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; }
@@ -80,5 +82,5 @@
     if (mount) mount.replaceChildren(bar);
   }
 
-  JU.ui = { h, svg, shuffle, uid, sleep, reduced, coloredWord, localDate, header };
+  JU.ui = { h, svg, shuffle, plural, uid, sleep, reduced, coloredWord, localDate, header };
 })();
