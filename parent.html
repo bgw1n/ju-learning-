@@ -14,30 +14,36 @@
   <div id="site-header"></div>
   <main class="page wide">
     <h1>Grown-up page</h1>
-    <section id="backup-banner" class="backup-banner" aria-labelledby="backup-banner-h" hidden></section>
-    <p class="note storage-note">Results are saved in this laptop&rsquo;s browser only. They do not sync to other devices, and clearing the browser&rsquo;s site data will erase them. Use <strong>Save progress</strong> to keep a backup file, and <strong>Load progress</strong> to put it back (or move it to another laptop).</p>
+    <nav class="profile-switch" id="profile-switch" aria-label="Choose whose page to show">
+      <button type="button" class="btn big switch-btn" id="sw-julianna" data-profile="julianna" aria-pressed="true">&#127775; Julianna</button>
+      <button type="button" class="btn big switch-btn" id="sw-dorian" data-profile="dorian" aria-pressed="false">&#128640; Dorian</button>
+      <button type="button" class="btn big switch-btn" id="sw-family" data-profile="family" aria-pressed="false">&#127968; Family</button>
+    </nav>
 
-    <section class="toolbar" aria-label="Actions">
-      <label for="week-filter">Show: </label>
-      <select id="week-filter" class="select"></select>
-      <a id="proctor" class="btn primary" href="game.html?s=spelling&amp;g=test&amp;proctor=1">Proctor mode: start the test</a>
-      <a class="btn" href="child.html">Open the games</a>
-      <button id="export" class="btn" type="button">Export results (CSV)</button>
+    <section id="backup-banner" class="backup-banner" aria-labelledby="backup-banner-h" hidden></section>
+    <p class="note storage-note">Results are saved in this laptop&rsquo;s browser only. They do not sync to other devices, and clearing the browser&rsquo;s site data will erase them. Use <strong>Save progress</strong> to keep a backup file for everyone (Julianna, Dorian and the Family lessons), and <strong>Load progress</strong> to put it back (or move it to another laptop).</p>
+
+    <section class="toolbar" aria-label="Backup for everyone">
       <button id="save-progress" class="btn" type="button">Save progress (backup file)</button>
       <button id="load-progress" class="btn" type="button">Load progress&hellip;</button>
       <input id="load-file" type="file" accept="application/json,.json" hidden aria-label="Choose a progress backup file">
-      <button id="clear" class="btn danger" type="button">Clear results</button>
     </section>
-
     <p id="backup-msg" class="note" role="status" aria-live="polite"></p>
 
-    <div id="empty" class="card" hidden><p class="lead">No results yet. Once Julianna plays a game or takes the test, her results will show up here.</p></div>
-
-    <section class="cards" id="summary" aria-label="Summary"></section>
+    <details class="card email-card" id="email-card">
+      <summary>Backup by email</summary>
+      <p class="note">Opens your email app with a short plain-text summary (counts only, no attachment). The real backup is still the file from <strong>Save progress</strong>. The address is typed here and kept only in this browser, never in the website&rsquo;s files.</p>
+      <div class="row">
+        <label for="backup-email">Send the summary to:</label>
+        <input id="backup-email" class="textbox" type="email" autocomplete="off" inputmode="email" placeholder="your email address">
+        <button id="email-backup" class="btn primary" type="button">Backup by email</button>
+      </div>
+      <p id="email-msg" class="note" role="status" aria-live="polite"></p>
+    </details>
 
     <section class="card" id="voice-card" aria-labelledby="voice-h">
       <h2 id="voice-h">Voice settings</h2>
-      <p class="note">Pick the voice that reads the words aloud on this laptop. It is saved on this device only.</p>
+      <p class="note">Pick the voice that reads aloud on this laptop (for everyone: Julianna's words and Dorian's greeting). It is saved on this device only.</p>
       <div class="voice-grid">
         <div><label for="voice-select">Voice</label><select id="voice-select" class="select"></select></div>
         <div><label for="voice-rate">Speed: <span id="voice-rate-out"></span></label>
@@ -46,6 +52,22 @@
         <p id="voice-note" class="note voice-note" hidden></p>
       </div>
     </section>
+
+    <div id="view-julianna" class="profile-view" data-view="julianna">
+    <h2 class="view-title">Julianna</h2>
+    <section class="toolbar" aria-label="Actions">
+      <label for="week-filter">Show: </label>
+      <select id="week-filter" class="select"></select>
+      <a id="proctor" class="btn primary" href="game.html?s=spelling&amp;g=test&amp;proctor=1">Proctor mode: start the test</a>
+      <a class="btn" href="child.html">Open the games</a>
+      <button id="export" class="btn" type="button">Export results (CSV)</button>
+      <button id="clear" class="btn danger" type="button">Clear results</button>
+    </section>
+
+    <div id="empty" class="card" hidden><p class="lead">No results yet. Once Julianna plays a game or takes the test, her results will show up here.</p></div>
+
+    <section class="cards" id="summary" aria-label="Summary"></section>
+
 
     <section class="card" id="trend-card" aria-labelledby="trend-h">
       <h2 id="trend-h">Week by week</h2>
@@ -77,12 +99,46 @@
     </section>
     <section class="card"><h2>Test results</h2><div class="tablewrap"><table id="tests"></table></div></section>
     <section class="card"><h2>Sticker book</h2><div class="row"><p class="note" id="stickernote"></p><button id="reset-stickers" class="btn small" type="button">Reset stickers</button></div></section>
+
+    <section class="card" id="flags-julianna" aria-labelledby="flags-julianna-h">
+      <h2 id="flags-julianna-h">Ask a grown-up flags</h2>
+      <p class="note" data-flags-empty>No flags yet. When Julianna asks for a grown-up, it will show up here.</p>
+    </section>
+    </div>
+
+    <div id="view-dorian" class="profile-view" data-view="dorian" hidden>
+      <h2 class="view-title">Dorian</h2>
+      <section class="toolbar" aria-label="Actions"><a class="btn" id="open-dorian" href="dorian.html">Open Dorian&rsquo;s home</a></section>
+      <section class="card" aria-labelledby="dorian-progress-h">
+        <h2 id="dorian-progress-h">Progress</h2>
+        <div class="cards" id="dorian-summary"></div>
+        <p class="lead" id="dorian-empty">Nothing yet. Dorian&rsquo;s games are coming soon, and his progress will show up here.</p>
+      </section>
+      <section class="card" id="flags-dorian" aria-labelledby="flags-dorian-h">
+        <h2 id="flags-dorian-h">Ask a grown-up flags</h2>
+        <p class="note" data-flags-empty>No flags yet. When Dorian asks for a grown-up, it will show up here.</p>
+      </section>
+    </div>
+
+    <div id="view-family" class="profile-view" data-view="family" hidden>
+      <h2 class="view-title">Family</h2>
+      <section class="toolbar" aria-label="Actions"><a class="btn" id="open-family" href="family.html">Open the Family home</a></section>
+      <section class="card" aria-labelledby="family-progress-h">
+        <h2 id="family-progress-h">Family progress</h2>
+        <div class="cards" id="family-summary"></div>
+      </section>
+      <section class="card" id="lessons-card" aria-labelledby="lessons-h">
+        <h2 id="lessons-h">Money &amp; Economics: unlock panel</h2>
+        <p class="note">Lesson 1 starts open. Each lesson opens when the one before it is marked complete. Here you can open a lesson early, lock it again, or mark it complete or not complete.</p>
+        <div class="tablewrap"><table id="lessons-table"></table></div>
+      </section>
+    </div>
   </main>
 
   <dialog id="confirm" aria-labelledby="confirm-title">
     <form method="dialog">
       <h2 id="confirm-title">Clear all results?</h2>
-      <p>This erases every saved game and test result, and the hint log, on this laptop. It cannot be undone. You may want to export first.</p>
+      <p>This erases every saved game and test result of Julianna&rsquo;s, and her hint log, on this laptop. Dorian&rsquo;s and the Family&rsquo;s are not touched. It cannot be undone. You may want to export first.</p>
       <div class="row">
         <button class="btn" value="cancel" id="confirm-cancel">Keep them</button>
         <button class="btn danger" value="ok" id="confirm-ok">Yes, clear results</button>
@@ -95,6 +151,7 @@
   <script src="js/backup.js"></script>
   <script src="js/speech.js"></script>
   <script src="js/weeks.js"></script>
+  <script src="js/money.js"></script>
   <script src="js/subjects.js"></script>
   <script src="js/runner.js"></script>
   <script src="js/spelling/unscramble.js"></script>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Family Money &amp; Economics</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>JU.auth.require(['family', 'parent']);</script>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main class="page">
+    <h1 id="hello">Family Money &amp; Economics</h1>
+    <p class="lead">Sixteen lessons about money, one at a time. When we finish a lesson, the next one opens.</p>
+    <div id="units"></div>
+  </main>
+  <dialog id="lesson-dialog" aria-labelledby="lesson-dialog-title">
+    <form method="dialog">
+      <h2 id="lesson-dialog-title"></h2>
+      <p>This lesson is coming soon. Check back after the next update!</p>
+      <div class="row"><button class="btn primary" value="ok">OK</button></div>
+    </form>
+  </dialog>
+  <script src="js/ui.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/money.js"></script>
+  <script src="js/pages/family.js"></script>
+</body>
+</html>

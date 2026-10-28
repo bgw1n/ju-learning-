@@ -1,6 +1,6 @@
 (async function () {
   const h = JU.ui.h;
-  JU.ui.header({ title: 'Grown-up page', showDashLink: false });
+  JU.ui.header({ title: 'Grown-up page', showDashLink: false, brand: 'Family Learning Place' });
 
   const subjectId = 'spelling';
   const weeks = await JU.weeks.loadAll(subjectId);
@@ -232,13 +232,13 @@
   const backupMsg = document.getElementById('backup-msg');
   const banner = document.getElementById('backup-banner');
   async function saveBackup() {
-    const data = { app: 'ju-learning', version: 2, exportedAt: new Date().toISOString(),
-      results: await JU.storage.getResults(), stickers: await JU.storage.getStickers(), hints: await JU.storage.getHints() };
+    const data = await JU.storage.exportAll();
     const blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
-    const a = h('a', { href: URL.createObjectURL(blob), download: 'julianna-progress-' + JU.ui.localDate(data.exportedAt) + '.json' });
+    const a = h('a', { href: URL.createObjectURL(blob), download: 'family-learning-progress-' + JU.ui.localDate(data.exportedAt) + '.json' });
     document.body.appendChild(a); a.click(); a.remove();
     await JU.storage.setLastBackup(data.exportedAt);
-    backupMsg.textContent = 'Saved a backup with ' + data.results.length + ' results. Keep the file somewhere safe.';
+    const dn = data.profiles.dorian.results.length, fl = Object.keys(data.profiles.family.lessons.complete).length;
+    backupMsg.textContent = 'Saved a backup with ' + data.results.length + ' results for Julianna, ' + dn + ' for Dorian and ' + fl + ' finished family lesson' + (fl === 1 ? '' : 's') + '. Keep the file somewhere safe.';
     await JU.backup.showBanner(banner, saveBackup);
   }
   document.getElementById('save-progress').addEventListener('click', saveBackup);
@@ -250,12 +250,11 @@
     if (!f) return;
     try {
       const data = JSON.parse(await f.text());
-      if (!data || data.app !== 'ju-learning' || !Array.isArray(data.results)) throw new Error('not a backup');
-      const r = await JU.storage.importResults(data.results);
-      await JU.storage.importStickers(data.stickers);
-      /* older backups (version 1) have no hint log */
-      const hr = Array.isArray(data.hints) ? await JU.storage.importHints(data.hints) : null;
-      backupMsg.textContent = 'Loaded: ' + r.added + ' new results added, ' + r.skipped + ' already here or skipped.' + (hr ? ' Hint log: ' + hr.added + ' added.' : '');
+      if (!JU.storage.isBackup(data)) throw new Error('not a backup');
+      const r = await JU.storage.importAll(data);
+      const others = Object.keys(r.profiles).map(k => (k === 'dorian' ? 'Dorian' : 'Family') + ': ' + r.profiles[k].added + ' new').join(', ');
+      backupMsg.textContent = 'Loaded: ' + r.added + ' new results added, ' + r.skipped + ' already here or skipped.' + (r.hints ? ' Hint log: ' + r.hints.added + ' added.' : '') + (others ? ' ' + others + '.' : '');
+      await renderOthers();
       await render();
       await JU.backup.showBanner(banner, saveBackup);
     } catch (e) {
@@ -316,5 +315,86 @@
     });
   })();
 
+
+  /* ---------- profile switch (Julianna / Dorian / Family) ---------- */
+  const VIEWS = ['julianna', 'dorian', 'family'];
+  function showView(id) {
+    if (VIEWS.indexOf(id) === -1) id = 'julianna';
+    VIEWS.forEach(v => {
+      document.getElementById('view-' + v).hidden = v !== id;
+      document.getElementById('sw-' + v).setAttribute('aria-pressed', v === id ? 'true' : 'false');
+    });
+    try { history.replaceState(null, '', id === 'julianna' ? location.pathname : '?p=' + id); } catch (e) { /* not important */ }
+  }
+  VIEWS.forEach(v => document.getElementById('sw-' + v).addEventListener('click', () => showView(v)));
+  showView(new URLSearchParams(location.search).get('p'));
+
+  /* ---------- Dorian and Family views ---------- */
+  const statCardsFor = (c, extra) => [statCard('Games played', c.games), statCard('Words and answers saved', c.results), statCard('Stickers', c.stickers)].concat(extra || []);
+  async function renderOthers() {
+    const c = await JU.storage.counts();
+    document.getElementById('dorian-summary').replaceChildren(...statCardsFor(c.dorian));
+    document.getElementById('dorian-empty').hidden = c.dorian.results > 0 || c.dorian.stickers > 0;
+    document.getElementById('family-summary').replaceChildren(statCard('Lessons finished', c.family.lessonsDone + ' of ' + (await JU.money.load()).length), statCard('Games played', c.family.games), statCard('Stickers', c.family.stickers));
+    await renderLessons();
+  }
+
+  /* Family lesson unlock panel */
+  const fam = JU.storage.profile('family');
+  async function renderLessons() {
+    const lessons = await JU.money.load();
+    const state = await fam.getLessonState();
+    const rows = JU.money.resolve(lessons, state);
+    const natural = i => i === 0 || !!state.complete[String(lessons[i - 1].id)];
+    const word = { locked: 'Locked', open: 'Open', complete: 'Complete' };
+    document.getElementById('lessons-table').replaceChildren(
+      h('thead', null, h('tr', null, ['#', 'Lesson', 'Now', 'Open or lock', 'Done?'].map(t => h('th', { scope: 'col' }, t)))),
+      h('tbody', null, rows.map((l, i) => {
+        const locked = l.state === 'locked';
+        return h('tr', { 'data-lesson': l.id, 'data-state': l.state },
+          h('td', null, String(l.id)),
+          h('td', null, h('span', { class: 'note' }, 'Unit ' + l.unit + ' \u2022 '), l.title),
+          h('td', { class: 'l-state' }, word[l.state] + (l.override === 'open' && l.state !== 'complete' ? ' (opened early)' : '') + (l.override === 'locked' ? ' (locked by a grown-up)' : '')),
+          h('td', null, h('button', { type: 'button', class: 'btn small l-lock', 'aria-label': (locked ? 'Unlock lesson ' : 'Re-lock lesson ') + l.id + ': ' + l.title,
+            onclick: async () => {
+              if (locked) await fam.setLessonOverride(l.id, natural(i) ? null : 'open');
+              else await fam.setLessonOverride(l.id, natural(i) ? 'locked' : null);
+              await renderOthers();
+            } }, locked ? 'Unlock' : 'Re-lock')),
+          h('td', null, h('button', { type: 'button', class: 'btn small l-done', 'aria-label': (l.complete ? 'Mark not complete: lesson ' : 'Mark complete: lesson ') + l.id + ': ' + l.title,
+            onclick: async () => { await fam.setLessonComplete(l.id, !l.complete); await renderOthers(); await JU.backup.showBanner(banner, saveBackup); } }, l.complete ? 'Mark not complete' : 'Mark complete')));
+      })));
+  }
+
+  /* ---------- Backup by email: a mailto: link with a plain-text summary. No attachment, no address in the site's files. ---------- */
+  const EMAIL_KEY = 'ju_backup_email_v1';          // this browser only
+  const emailBox = document.getElementById('backup-email'), emailMsg = document.getElementById('email-msg');
+  try { emailBox.value = JSON.parse(localStorage.getItem(EMAIL_KEY)) || ''; } catch (e) { /* none saved */ }
+  emailBox.addEventListener('change', () => { localStorage.setItem(EMAIL_KEY, JSON.stringify(emailBox.value.trim())); });
+  async function summaryText() {
+    const c = await JU.storage.counts(), last = await JU.storage.getLastBackup(), total = (await JU.money.load()).length;
+    const day = iso => new Date(iso).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    return ['Learning progress summary (' + day(new Date().toISOString()) + ')',
+      '',
+      'Julianna: ' + c.julianna.results + ' words practiced, ' + c.julianna.games + ' games and tests, ' + c.julianna.stickers + ' stickers, ' + c.julianna.hints + ' hint log entries',
+      'Dorian: ' + c.dorian.results + ' answers saved, ' + c.dorian.games + ' games, ' + c.dorian.stickers + ' stickers',
+      'Family: ' + c.family.lessonsDone + ' of ' + total + ' money lessons finished',
+      '',
+      'Last backup file saved: ' + (last ? day(last) : 'never'),
+      '',
+      'This is only a summary of counts. The real backup is the file from Save progress on the grown-up page.'].join('\n');
+  }
+  document.getElementById('email-backup').addEventListener('click', async () => {
+    const addr = emailBox.value.trim();
+    localStorage.setItem(EMAIL_KEY, JSON.stringify(addr));
+    if (!/^[^\s@,;?&]+@[^\s@,;?&]+\.[^\s@,;?&]+$/.test(addr)) { emailMsg.textContent = 'Type one email address first.'; emailBox.focus(); return; }
+    const url = 'mailto:' + encodeURIComponent(addr).replace(/%40/g, '@') + '?subject=' + encodeURIComponent('Learning progress summary') + '&body=' + encodeURIComponent(await summaryText());
+    const btn = document.getElementById('email-backup');
+    btn.dataset.mailto = url;
+    const a = h('a', { href: url }); document.body.appendChild(a); a.click(); a.remove();
+    emailMsg.textContent = 'Your email app should open with the summary. Nothing was sent yet.';
+  });
+
+  await renderOthers();
   await render();
 })();

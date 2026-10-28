@@ -69,13 +69,13 @@ a { color: var(--blue); }
 
 /* landing */
 .landing { display: flex; min-height: 100vh; align-items: center; justify-content: center; }
-.login { width: min(480px, 94vw); padding: 1.4rem 1.8rem 1.8rem; }
+.login { width: min(680px, 94vw); padding: 1.4rem 1.8rem 1.8rem; }
 .hello { font-size: 3rem; }
 .pin-dots { display: flex; justify-content: center; gap: 1rem; margin: 1rem 0 0.3rem; }
 .pin-dots span { width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--teal); background: #fff; }
 .pin-dots span.on { background: var(--teal); }
 .msg { min-height: 1.8em; font-weight: 600; color: var(--teal-dark); text-align: center; }
-.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-top: 0.5rem; }
+.keypad { max-width: 420px; margin-left: auto; margin-right: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-top: 0.5rem; }
 .pad { font: inherit; font-size: 1.9rem; font-weight: 700; min-height: 76px; border-radius: 18px; border: 3px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
 .pad:hover { background: var(--sand); }
 .pad:active { transform: scale(0.96); }
@@ -254,3 +254,53 @@ dialog::backdrop { background: rgba(35, 50, 63, 0.45); }
 .backup-banner .note { margin: 0.6rem 0 0; }
 .backup-banner[hidden], .backup-hint[hidden] { display: none; }
 .backup-hint { margin: 2rem 0 0; text-align: center; color: var(--soft); font-size: 0.95rem; }
+
+/* v6: who's playing, profile switch, text box, kids' home, family lessons */
+.who-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.2rem 0 0.8rem; }
+.who-btn { font: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4rem; min-height: 200px; padding: 1rem 0.6rem; border-radius: 24px; border: 4px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; box-shadow: 0 5px 0 var(--line); }
+.who-btn:hover { background: var(--sand); }
+.who-btn:active { transform: scale(0.97); }
+.who-pic { font-size: 4.2rem; line-height: 1.1; }
+.who-name { font-size: 1.5rem; font-weight: 700; }
+.who-julianna { border-color: #9fc4e3; box-shadow: 0 5px 0 #9fc4e3; }
+.who-dorian { border-color: #f0b27a; box-shadow: 0 5px 0 #f0b27a; }
+.who-family { border-color: #93c9a0; box-shadow: 0 5px 0 #93c9a0; }
+.who-grownup { margin: 0.4rem 0 0; }
+.profile-switch { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 0.5rem 0 1rem; }
+.switch-btn[aria-pressed="true"], .switch-btn[aria-pressed="true"]:hover:not(:disabled) { background: var(--teal); border-color: var(--teal-dark); color: #fff; }
+.view-title { margin-top: 0.2rem; }
+.profile-view[hidden] { display: none; }
+.textbox { font: inherit; font-size: 1.05rem; min-height: 52px; padding: 0.4rem 0.8rem; border: 3px solid var(--line); border-radius: 12px; min-width: 18rem; }
+.email-card summary { font-weight: 700; font-size: 1.15rem; cursor: pointer; }
+#lessons-table td { vertical-align: middle; }
+.parent-bar { padding: 0.5rem 1rem; }
+
+body.kid { background: #fff8ec; }
+.kid-home { min-height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; text-align: center; padding: 1rem; }
+.kid-hello { font-size: 3.4rem; margin: 0; }
+.kid-stage { font-size: 9rem; line-height: 1; cursor: pointer; }
+.kid-soon { font-size: 2rem; font-weight: 600; margin: 0; }
+.kid-buttons { display: flex; gap: 2rem; margin-top: 1rem; }
+.kid-btn { font: inherit; width: 150px; height: 150px; border-radius: 50%; border: 5px solid #f0b27a; background: #fff; cursor: pointer; box-shadow: 0 6px 0 #f0b27a; }
+.kid-btn:hover { background: #fdebd3; }
+.kid-btn:active { transform: scale(0.96); }
+.kid-pic { font-size: 5rem; line-height: 1; }
+
+.unit { margin: 1.4rem 0; }
+.lesson-grid { list-style: none; padding: 0; margin: 0.6rem 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.lcard { font: inherit; width: 100%; height: 100%; display: flex; align-items: center; gap: 0.9rem; text-align: left; padding: 1rem 1.2rem; border-radius: 20px; border: 3px solid var(--line); background: #fff; color: var(--ink); box-shadow: 0 4px 0 var(--line); }
+button.lcard { cursor: pointer; }
+button.lcard:hover { background: var(--sand); }
+.lcard.open { border-color: var(--teal); box-shadow: 0 4px 0 var(--teal); }
+.lcard.complete { background: var(--leaf); }
+.lcard.locked { background: var(--sand); border-style: dashed; color: #4a5560; box-shadow: none; }
+.lnum { font-size: 1.8rem; font-weight: 700; min-width: 2.2rem; text-align: center; }
+.ltitle { flex: 1; font-weight: 600; }
+.lstate { font-size: 0.85rem; color: var(--soft); white-space: nowrap; }
+
+@media (max-width: 900px) {
+  .who-grid { grid-template-columns: 1fr; }
+  .who-btn { min-height: 120px; flex-direction: row; justify-content: flex-start; padding-left: 1.5rem; }
+  .lesson-grid { grid-template-columns: 1fr; }
+  .kid-hello { font-size: 2.4rem; } .kid-stage { font-size: 6rem; }
+}

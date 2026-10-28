@@ -67,11 +67,11 @@
     return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
   }
 
-  /* Top bar. opts: { title, backHref, backLabel } */
+  /* Top bar. opts: { title, backHref, backLabel, brand } */
   function header(opts) {
     const role = JU.auth.role();
     const bar = h('div', { class: 'topbar' },
-      opts.backHref ? h('a', { class: 'btn small ghost', href: opts.backHref }, '\u2190 ' + (opts.backLabel || 'Back')) : h('span', { class: 'brand' }, 'Julianna\u2019s Learning Place'),
+      opts.backHref ? h('a', { class: 'btn small ghost', href: opts.backHref }, '\u2190 ' + (opts.backLabel || 'Back')) : h('span', { class: 'brand' }, opts.brand || 'Julianna\u2019s Learning Place'),
       h('span', { class: 'topbar-title' }, opts.title || ''),
       h('span', { class: 'topbar-right' },
         role === 'parent' && opts.showDashLink !== false ? h('a', { class: 'btn small ghost', href: 'parent.html' }, 'Grown-up page') : null,
