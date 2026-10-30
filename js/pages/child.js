@@ -14,7 +14,7 @@
   if (weeks.length > 1) {
     const sel = h('select', { id: 'week-select', class: 'select', 'aria-label': 'Pick a week' },
       weeks.slice().reverse().map(w => h('option', { value: w.id, selected: w.id === entry.id }, w.label)));
-    sel.addEventListener('change', () => { JU.weeks.choose(sel.value); location.reload(); });
+    sel.addEventListener('change', () => { JU.weeks.choose(sel.value, subject.id).then(() => location.reload()); });
     pick.appendChild(h('label', { for: 'week-select' }, 'Week: '));
     pick.appendChild(sel);
   } else {

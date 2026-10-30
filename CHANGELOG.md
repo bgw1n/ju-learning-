@@ -1,5 +1,8 @@
 # Changelog
 
+## v13.2
+- **Julianna opens the newest spelling week as soon as it is published.** New words go up on Friday and she starts them that evening, so the site no longer waits for the week's Monday. If she picks an older week in the menu, it stays picked until the next week is published, then she lands on the newest one again. Older weeks are still in the menu. Backup reminders are unchanged.
+
 ## v13.1
 - **Fix: recording a word no longer loses your place.** On Record sounds, every Record, Stop or Save redrew the whole list, which closed the "three-letter words" and "sight words" groups again. The page shrank under you and the Stop button disappeared. Now the list is drawn once and only the row you tapped changes, the groups stay open, the page stays where it is, and the row being recorded keeps its Stop button on screen. It still stops by itself after 4 seconds.
 

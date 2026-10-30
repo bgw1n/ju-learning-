@@ -26,18 +26,25 @@
       const l = await this.list(subject);
       return Promise.all(l.map(e => this.load(e)));
     },
-    chosenId() { return localStorage.getItem(CHOSEN_KEY); },
-    choose(id) { localStorage.setItem(CHOSEN_KEY, id); },
-    /* The week the child picked; otherwise the newest week that has started; otherwise the first. */
+    /* v13.2: ju_week holds {"id": chosen week, "newest": newest week when she chose it} (older plain-id values still read). */
+    chosenRaw() { const v = localStorage.getItem(CHOSEN_KEY); if (!v) return null; try { const o = JSON.parse(v); if (o && o.id) return o; } catch (e) { } return { id: v, newest: null }; },
+    chosenId() { const c = this.chosenRaw(); return c && c.id; },
+    async choose(id, subject) {
+      let newest = null; try { const l = await this.list(subject); newest = l.length ? l[l.length - 1].id : null; } catch (e) { }
+      localStorage.setItem(CHOSEN_KEY, JSON.stringify({ id, newest }));
+    },
+    /* v13.2: the newest published week (Juju Tutor Bot publishes on Friday and she starts the new words that evening, so there is
+       no start-date gate). A week she picked in the menu sticks only until a newer week is published, then she lands on the newest. */
     async currentEntry(subject) {
       const l = await this.list(subject);
       if (!l.length) throw new Error('No weeks found');
-      const chosen = this.chosenId();
-      const hit = l.find(w => w.id === chosen);
-      if (hit) return hit;
-      const today = JU.ui.localDate(new Date().toISOString());
-      const started = l.filter(w => w.id <= today);
-      return started.length ? started[started.length - 1] : l[0];
+      const newest = l[l.length - 1], c = this.chosenRaw();
+      if (c) {
+        const hit = l.find(w => w.id === c.id);
+        if (hit && (c.newest === newest.id || hit.id === newest.id)) return hit;
+        localStorage.removeItem(CHOSEN_KEY);
+      }
+      return newest;
     },
     async current(subject) { return this.load(await this.currentEntry(subject)); },
 
