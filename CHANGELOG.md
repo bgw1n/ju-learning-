@@ -1,5 +1,8 @@
 # Changelog
 
+## v13.1
+- **Fix: recording a word no longer loses your place.** On Record sounds, every Record, Stop or Save redrew the whole list, which closed the "three-letter words" and "sight words" groups again. The page shrank under you and the Stop button disappeared. Now the list is drawn once and only the row you tapped changes, the groups stay open, the page stays where it is, and the row being recorded keeps its Stop button on screen. It still stops by itself after 4 seconds.
+
 ## v13
 - **Record sounds in your own voice.** On the grown-up page (Dorian view) a new **Record sounds** page lists the 26 letter sounds, the 18 three-letter words and the confirmed sight words, with Record, Redo, Play, Delete, Play all and progress for each group. Either grown-up can record.
 - **What plays:** a grown-up's recording first, then the site's recorded clip, then the browser voice. "Slower" plays recordings at 0.75 speed.
