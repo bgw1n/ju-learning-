@@ -125,6 +125,26 @@
    "word": "tub",
    "e": "🛁",
    "tier": 3
+  },
+  {
+   "word": "sat",
+   "e": "🪑",
+   "tier": 1
+  },
+  {
+   "word": "mat",
+   "e": "🧘",
+   "tier": 1
+  },
+  {
+   "word": "pat",
+   "e": "🤚",
+   "tier": 1
+  },
+  {
+   "word": "sap",
+   "e": "🍁",
+   "tier": 1
   }
  ]
 }

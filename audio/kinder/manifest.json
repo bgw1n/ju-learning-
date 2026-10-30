@@ -248,6 +248,13 @@
    "dur": 0.653,
    "bytes": 8194
   },
+  "word-mat": {
+   "file": "word-mat.mp3",
+   "kind": "word",
+   "name": "mat",
+   "dur": 0.679,
+   "bytes": 8507
+  },
   "word-nap": {
    "file": "word-nap.mp3",
    "kind": "word",
@@ -261,6 +268,13 @@
    "name": "pan",
    "dur": 0.94,
    "bytes": 11642
+  },
+  "word-pat": {
+   "file": "word-pat.mp3",
+   "kind": "word",
+   "name": "pat",
+   "dur": 0.758,
+   "bytes": 9448
   },
   "word-pig": {
    "file": "word-pig.mp3",
@@ -287,6 +301,20 @@
    "file": "word-rat.mp3",
    "kind": "word",
    "name": "rat",
+   "dur": 0.836,
+   "bytes": 10388
+  },
+  "word-sap": {
+   "file": "word-sap.mp3",
+   "kind": "word",
+   "name": "sap",
+   "dur": 0.836,
+   "bytes": 10388
+  },
+  "word-sat": {
+   "file": "word-sat.mp3",
+   "kind": "word",
+   "name": "sat",
    "dur": 0.836,
    "bytes": 10388
   },

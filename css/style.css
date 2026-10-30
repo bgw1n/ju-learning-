@@ -544,6 +544,13 @@ body.kid .k-wordcard { min-height: 150px; }
 .k-obj { font: inherit; width: 88px; height: 88px; max-width: 100%; border-radius: 20px; border: 4px solid #cfe3f3; background: #fff; font-size: 3.2rem; line-height: 1; cursor: pointer; padding: 0; }
 .k-obj:hover { background: #eaf4fb; }
 .k-obj.counted { background: var(--leaf); border-color: #3f9c5a; }
+/* v13.3: tap to count: the number he reached on each picture, and the count row with "Count again" */
+.k-obj { position: relative; }
+.k-badge:empty { display: none; }
+.k-badge { position: absolute; top: -10px; right: -10px; min-width: 30px; height: 30px; padding: 0 6px; border-radius: 15px; background: #3f9c5a; color: #fff; font-size: 1.05rem; font-weight: 700; line-height: 30px; text-align: center; box-sizing: border-box; }
+.k-countrow { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; margin: .4rem 0; }
+.k-countrow .count-out { margin: 0; }
+.k-again { min-height: 56px; min-width: 56px; font-size: 1.15rem; border-radius: 16px; }
 .k-obj:focus-visible, .k-numopt:focus-visible, .k-wordcard:focus-visible { outline: 5px solid var(--teal-dark); outline-offset: 4px; }
 .k-count-out { font-size: 3rem; font-weight: 700; text-align: center; color: var(--teal-dark); min-height: 1.2em; }
 .k-numopts { grid-template-columns: repeat(3, minmax(120px, 1fr)); max-width: 760px; }
@@ -567,7 +574,7 @@ body.kid .k-numopt { min-height: 150px; }
 .k-strip-n.learning { background: #ffe3b3; color: #7a4300; }
 .k-strip-n.closed { opacity: 0.55; }
 @media (max-width: 900px) {
-  .k-word { font-size: 2.3rem; } .k-wordcard, body.kid .k-wordcard { min-height: 110px; min-width: 0; padding-left: 0.2rem; padding-right: 0.2rem; overflow-wrap: anywhere; }
+  .k-word { font-size: clamp(1.5rem, 8vw, 2.3rem); white-space: nowrap; } .k-wordcard, body.kid .k-wordcard { min-height: 110px; min-width: 0; padding-left: 0.2rem; padding-right: 0.2rem; overflow-wrap: normal; }   /* v13.3: four-letter words (make, with, like, look) stay on one line */
   .k-sentence { font-size: 1.9rem; }
   .k-objs { gap: 0.35rem; max-width: 100%; }
   .k-obj { width: calc((100% - 1.4rem) / 5); height: auto; aspect-ratio: 1 / 1; font-size: 2.2rem; border-radius: 14px; }

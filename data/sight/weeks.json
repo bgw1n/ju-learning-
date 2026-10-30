@@ -2,6 +2,11 @@
  "note": "The sight-word weeks for Dorian (Sight words game). Each week is data/sight/week-YYYY-MM-DD.json. Add one with: python3 add_sight_week.py 2026-10-30 word word word  (see README). The newest week is this week's focus words.",
  "weeks": [
   {
+   "id": "2026-10-19",
+   "label": "Learned already",
+   "file": "week-2026-10-19.json"
+  },
+  {
    "id": "2026-10-26",
    "label": "Week of Oct 26",
    "file": "week-2026-10-26.json"

@@ -220,12 +220,82 @@
    "dur": 0.94,
    "bytes": 11642
   },
+  "sight-am": {
+   "file": "sight-am.mp3",
+   "kind": "sight",
+   "text": "am",
+   "dur": 0.444,
+   "bytes": 5686
+  },
+  "sight-at": {
+   "file": "sight-at.mp3",
+   "kind": "sight",
+   "text": "at",
+   "dur": 0.575,
+   "bytes": 7253
+  },
+  "sight-i": {
+   "file": "sight-i.mp3",
+   "kind": "sight",
+   "text": "i",
+   "dur": 0.679,
+   "bytes": 8507
+  },
+  "sight-in": {
+   "file": "sight-in.mp3",
+   "kind": "sight",
+   "text": "in",
+   "dur": 0.705,
+   "bytes": 8821
+  },
+  "sight-is": {
+   "file": "sight-is.mp3",
+   "kind": "sight",
+   "text": "is",
+   "dur": 0.601,
+   "bytes": 7567
+  },
+  "sight-it": {
+   "file": "sight-it.mp3",
+   "kind": "sight",
+   "text": "it",
+   "dur": 0.47,
+   "bytes": 5999
+  },
+  "sight-like": {
+   "file": "sight-like.mp3",
+   "kind": "sight",
+   "text": "like",
+   "dur": 0.575,
+   "bytes": 7253
+  },
   "sight-look": {
    "file": "sight-look.mp3",
    "kind": "sight",
    "text": "look",
    "dur": 0.522,
    "bytes": 6626
+  },
+  "sight-make": {
+   "file": "sight-make.mp3",
+   "kind": "sight",
+   "text": "make",
+   "dur": 0.575,
+   "bytes": 7253
+  },
+  "sight-me": {
+   "file": "sight-me.mp3",
+   "kind": "sight",
+   "text": "me",
+   "dur": 0.444,
+   "bytes": 5686
+  },
+  "sight-my": {
+   "file": "sight-my.mp3",
+   "kind": "sight",
+   "text": "my",
+   "dur": 0.705,
+   "bytes": 8821
   },
   "sight-see": {
    "file": "sight-see.mp3",
@@ -240,6 +310,27 @@
    "text": "she",
    "dur": 0.679,
    "bytes": 8507
+  },
+  "sight-the": {
+   "file": "sight-the.mp3",
+   "kind": "sight",
+   "text": "the",
+   "dur": 0.444,
+   "bytes": 5686
+  },
+  "sight-we": {
+   "file": "sight-we.mp3",
+   "kind": "sight",
+   "text": "we",
+   "dur": 0.496,
+   "bytes": 6313
+  },
+  "sight-with": {
+   "file": "sight-with.mp3",
+   "kind": "sight",
+   "text": "with",
+   "dur": 0.627,
+   "bytes": 7880
   }
  }
 }

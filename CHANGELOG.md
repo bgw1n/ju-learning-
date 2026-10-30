@@ -1,5 +1,12 @@
 # Changelog
 
+## v13.3
+- **Dorian's sight words: the 13 he already knows are in.** I, am, the, like, is, me, at, make, my, we, it, with, in (from his weekly planner) are a "Learned already" week before Oct 26, so they are asked and reviewed in Sight words alongside she, see, look (still this week's focus). "I" always shows as a capital. They came out of the unconfirmed wrong-choice list, which now only has to, a, have, he, for. Each has a site clip (the clips for "am" and "the" did not pass the speech check, so recording them yourself matters most).
+- **Build a word: sat, mat, pat and sap** are new three-letter words (tap was already there), with site clips.
+- **Record sounds** lists all 16 sight words and the 22 three-letter words (64 sounds in all). Recordings you already made keep working.
+- **Count to 20 and Add it up: he counts, the game does not.** The question never says or shows how many ("Count the apples. How many in all?"). Each tap marks a picture with its number and the voice says the running count; tapping a marked picture takes it back out, and "Count again" starts over. Then he taps the number. A wrong number gently says "Let's count again" and clears the count; after two, the voice counts with him and says the answer. After a right answer the voice says the number ("Yes! Two and one more makes three."). Still no plus or equals signs.
+- On a phone, four-letter sight words (make, with, like, look) now stay on one line on their cards.
+
 ## v13.2
 - **Julianna opens the newest spelling week as soon as it is published.** New words go up on Friday and she starts them that evening, so the site no longer waits for the week's Monday. If she picks an older week in the menu, it stays picked until the next week is published, then she lands on the newest one again. Older weeks are still in the menu. Backup reminders are unchanged.
 

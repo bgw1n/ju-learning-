@@ -86,7 +86,7 @@
     const groups = [
       { key: 'letters', title: 'Letter sounds', tip: tips.letterTip, items: alpha.map(l => ({ id: 'sound-' + l, label: l, tip: (tips.letters || {})[l] || '' })) },
       { key: 'words', title: 'Three-letter words', tip: tips.wordTip, items: cvc.words.map(w => ({ id: 'word-' + w.word, label: w.word, pic: w.e, tip: '' })) },
-      { key: 'sight', title: 'Sight words', tip: tips.sightTip, items: sight.map(w => ({ id: 'sight-' + w, label: w, tip: '' })) }
+      { key: 'sight', title: 'Sight words', tip: tips.sightTip, items: sight.map(w => ({ id: 'sight-' + w, label: w === 'i' ? 'I' : w, tip: '' })) }
     ];
     (tips.extra || []).forEach(g => { if (g && g.items && g.items.length) groups.push(g); });
     return groups;

@@ -791,6 +791,54 @@
     },
     "rec": "t a b"
    }
+  },
+  "sat": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 8.5,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " sat",
+     "openai/whisper-base.en": " sat"
+    },
+    "rec": "s a t"
+   }
+  },
+  "mat": {
+   "ls": 1.25,
+   "seed": 2,
+   "score": 8.5,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " mat",
+     "openai/whisper-base.en": " mat"
+    },
+    "rec": "m a t"
+   }
+  },
+  "pat": {
+   "ls": 1.25,
+   "seed": 1,
+   "score": 8.0,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " Pat",
+     "openai/whisper-base.en": " pat"
+    },
+    "rec": "p a d"
+   }
+  },
+  "sap": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 8.0,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " SAP",
+     "openai/whisper-base.en": " sap"
+    },
+    "rec": "s a b"
+   }
   }
  }
 }

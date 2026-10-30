@@ -340,6 +340,136 @@
     "openai/whisper-small.en": "None.",
     "openai/whisper-base.en": "none"
    }
+  },
+  "sight-i": {
+   "text": "i",
+   "ls": 1.25,
+   "seed": 1,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "I",
+    "openai/whisper-base.en": "I"
+   }
+  },
+  "sight-am": {
+   "text": "am",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 0,
+   "asr": {
+    "openai/whisper-small.en": "Um.",
+    "openai/whisper-base.en": "I'm."
+   }
+  },
+  "sight-the": {
+   "text": "the",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 0,
+   "asr": {
+    "openai/whisper-small.en": "There.",
+    "openai/whisper-base.en": "There."
+   }
+  },
+  "sight-like": {
+   "text": "like",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "Like",
+    "openai/whisper-base.en": "like"
+   }
+  },
+  "sight-is": {
+   "text": "is",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "is.",
+    "openai/whisper-base.en": "is."
+   }
+  },
+  "sight-me": {
+   "text": "me",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "Me.",
+    "openai/whisper-base.en": "me"
+   }
+  },
+  "sight-at": {
+   "text": "at",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "at",
+    "openai/whisper-base.en": "at"
+   }
+  },
+  "sight-make": {
+   "text": "make",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "Make.",
+    "openai/whisper-base.en": "make"
+   }
+  },
+  "sight-my": {
+   "text": "my",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "My.",
+    "openai/whisper-base.en": "My"
+   }
+  },
+  "sight-we": {
+   "text": "we",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "We.",
+    "openai/whisper-base.en": "We"
+   }
+  },
+  "sight-it": {
+   "text": "it",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "It.",
+    "openai/whisper-base.en": "it"
+   }
+  },
+  "sight-with": {
+   "text": "with",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "With.",
+    "openai/whisper-base.en": "with."
+   }
+  },
+  "sight-in": {
+   "text": "in",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "in",
+    "openai/whisper-base.en": "in"
+   }
   }
  }
 }

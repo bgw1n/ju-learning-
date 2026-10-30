@@ -135,10 +135,6 @@
   K.countItem = function (cd, n, kind) {
     const o = pickOne(cd.objects), W = cd.words, N = i => num(i, W), many = n === 1 ? o.one : o.many;
     const base = { id: String(n), n, kind, e: o.e, one: o.one, many: o.many, words: W };
-    if (kind === 'along') {
-      return Object.assign(base, { text: 'Let\u2019s count the ' + o.many + '! Tap each one.', hint: 'Tap each one while I count. ' + K.countOut(1, Math.min(n, 5), W),
-        right: 'Yes! ' + N(n) + ' ' + many + '!', miss: 'Tap each one.' });
-    }
     if (kind === 'next') {
       const from = Math.max(1, n - 3), seq = []; for (let i = from; i < n; i++) seq.push(i);
       const options = K.shuffle([n].concat(nearNumbers(n, 2, 1, 20, x => x !== n - 1 || n < 3)).map(x => ({ n: x, right: x === n })));
@@ -146,9 +142,12 @@
       return Object.assign(base, { seq, options, text: 'What comes next? ' + say + ', and then?', hint: K.countOut(Math.max(1, n - 5), n - 1, W) + ' What comes next?',
         right: 'Yes! After ' + N(n - 1) + ' comes ' + N(n) + '.', miss: 'Listen again. ' + say + ', and then?' });
     }
+    /* v13.3: 'along' and 'how many' both: tap to count (the voice says the running count), then tap the number. Nothing says the number first. */
     const options = K.shuffle([n].concat(nearNumbers(n, 2, 1, 20)).map(x => ({ n: x, right: x === n })));
-    return Object.assign(base, { options, dots: !!cd.rules.dotsOnChoices, text: 'How many ' + o.many + '? Tap them to count, then tap the number.', hint: 'Let\u2019s count. ' + K.countOut(1, n, W),
-      right: 'Yes! There ' + (n === 1 ? 'is ' : 'are ') + N(n) + ' ' + many + '.', miss: 'Listen again. How many ' + o.many + '?' });
+    return Object.assign(base, { options, dots: !!cd.rules.dotsOnChoices, text: 'Count the ' + o.many + '. Tap each one, then tap the number.',
+      hint: 'Tap each one, and I will count with you. The last number you hear is how many.',
+      right: 'Yes! There ' + (n === 1 ? 'is ' : 'are ') + N(n) + ' ' + many + '.', miss: 'Let\u2019s count again. Tap each one.',
+      together: 'Let\u2019s count together. ' + K.countOut(1, n, W) + ' There ' + (n === 1 ? 'is ' : 'are ') + N(n) + '. Tap ' + N(n) + '.' });
   };
   K.countSummary = function (answers, cd) {
     const stats = K.countStats(answers, cd), tier = K.countTier(cd, stats), max = cd.tiers[tier - 1].to;
@@ -173,11 +172,12 @@
   K.addItem = function (ad, f) {
     const o = pickOne(ad.objects), W = ad.words, N = i => num(i, W), total = f.a + f.b;
     const options = K.shuffle([total].concat(nearNumbers(total, 2, 0, 6)).map(x => ({ n: x, right: x === total })));
-    const more = f.b === 0 ? '{{n:none|none}} more' : N(f.b) + ' more';
-    const first = N(f.a) + ' and ' + more;
-    const counted = K.countOut(1, f.a, W) + (f.b ? ' And more: ' + K.countOut(f.a + 1, total, W) : ' Nothing more.');
+    const first = N(f.a) + ' and ' + (f.b === 0 ? '{{n:none|none}} more' : N(f.b) + ' more');
+    /* v13.3: the question and the hint say no numbers (not the groups, not the total); the numbers are said only after he answers */
+    const ask = 'Count the ' + o.many + '. How many in all?';
     return { id: factId(f), a: f.a, b: f.b, total, words: W, e: o.e, one: o.one, many: o.many, tier: f.tier, options, signs: !!ad.rules.showSigns,
-      text: first + '. How many in all?', hint: 'Let\u2019s count. ' + counted, miss: 'Listen again. ' + first + '. How many in all?',
+      text: ask, hint: 'Tap each one, and I will count with you. Count this group, then keep counting the other group.', miss: 'Let\u2019s count again. ' + ask,
+      together: 'Let\u2019s count together. ' + K.countOut(1, total, W) + ' ' + first + ' makes ' + N(total) + '. Tap ' + N(total) + '.',
       right: 'Yes! ' + first + ' makes ' + N(total) + '.' };
   };
   K.addSummary = function (answers, ad) {
