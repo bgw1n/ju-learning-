@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Make a small zip of just what changed, to drag onto the GitHub repo page (Add file > Upload files).
-# Always includes data/ and audio/ (the recorded sounds, v11; skipped when there is no audio folder). Add anything else you changed by naming it (paths relative to the site folder),
+# Always includes data/ and audio/ (the recorded sounds: audio/kinder since v11 and audio/round2 since v12; skipped when there is no audio folder). Add anything else you changed by naming it (paths relative to the site folder),
 # or use --newer-than FILE to include every site file modified after FILE.
 #
 #   ./make_update_zip.sh [-o OUT.zip] [--prefix FOLDER] [--newer-than FILE] [extra files or folders...]

@@ -233,16 +233,18 @@
   const backupMsg = document.getElementById('backup-msg');
   const banner = document.getElementById('backup-banner');
   async function saveBackup() {
-    const data = await JU.storage.exportAll();
+    const incRec = document.getElementById('backup-recordings');
+    const data = await JU.storage.exportAll({ recordings: !incRec || incRec.checked });
     const blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
     const fileName = 'family-learning-progress-' + JU.ui.localDate(data.exportedAt) + '.json';
     const a = h('a', { href: URL.createObjectURL(blob), download: fileName });
     document.body.appendChild(a); a.click(); a.remove();
     await JU.storage.setLastBackup(data.exportedAt);
     const dn = data.profiles.dorian.results.length, fl = Object.keys(data.profiles.family.lessons.complete).length;
-    backupMsg.textContent = 'Saved a backup with ' + P(data.results.length, 'result') + ' for Julianna, ' + dn + ' for Dorian and ' + P(fl, 'finished family lesson') + '. Keep the file somewhere safe.';
+    const nrec = (data.recordings || []).length, mb = blob.size / 1048576;
+    backupMsg.textContent = 'Saved a backup with ' + P(data.results.length, 'result') + ' for Julianna, ' + dn + ' for Dorian and ' + P(fl, 'finished family lesson') + (nrec ? ', plus ' + P(nrec, 'sound recording') + ' (' + (mb >= 0.1 ? mb.toFixed(1) + ' MB' : Math.max(1, Math.round(blob.size / 1024)) + ' KB') + ')' : '') + '. Keep the file somewhere safe.';
     await JU.backup.showBanner(banner, saveBackup);
-    return { fileName, date: JU.ui.localDate(data.exportedAt) };
+    return { fileName, date: JU.ui.localDate(data.exportedAt), recordings: nrec, size: mb >= 0.1 ? mb.toFixed(1) + ' MB' : Math.max(1, Math.round(blob.size / 1024)) + ' KB' };
   }
   document.getElementById('save-progress').addEventListener('click', saveBackup);
   JU.backup.showBanner(banner, saveBackup);
@@ -258,7 +260,8 @@
       const others = Object.keys(r.profiles).map(k => (k === 'dorian' ? 'Dorian' : 'Family') + ': ' + r.profiles[k].added + ' new').join(', ');
       const extra = (r.flags ? r.flags.added : 0) + (r.money ? r.money.added : 0) + Object.values(r.profiles).reduce((a, x) => a + (x.flags ? x.flags.added : 0) + (x.money ? x.money.added : 0), 0);
       const kin = Object.values(r.profiles).reduce((a, x) => a + (x.kinder ? x.kinder.added : 0), 0);
-      backupMsg.textContent = 'Loaded: ' + P(r.added, 'new result') + ' added, ' + r.skipped + ' already here or skipped.' + (r.hints ? ' Hint log: ' + r.hints.added + ' added.' : '') + (others ? ' ' + others + '.' : '') + (extra ? ' Also added: ' + P(extra, 'flag or money activity record', 'flags and money activity records') + '.' : '') + (kin ? ' Kindergarten: ' + P(kin, 'record') + ' added.' : '');
+      backupMsg.textContent = 'Loaded: ' + P(r.added, 'new result') + ' added, ' + r.skipped + ' already here or skipped.' + (r.hints ? ' Hint log: ' + r.hints.added + ' added.' : '') + (others ? ' ' + others + '.' : '') + (extra ? ' Also added: ' + P(extra, 'flag or money activity record', 'flags and money activity records') + '.' : '') + (kin ? ' Kindergarten: ' + P(kin, 'record') + ' added.' : '') + (r.recordings && (r.recordings.added || r.recordings.replaced) ? ' Sound recordings: ' + r.recordings.added + ' added' + (r.recordings.replaced ? ', ' + r.recordings.replaced + ' replaced by newer ones' : '') + '.' : '');
+      if (r.recordings && JU.recordPage) await JU.recordPage.refresh();
       await renderOthers();
       await render();
       await JU.backup.showBanner(banner, saveBackup);
@@ -400,17 +403,27 @@
   async function renderKinder() {
     const box = document.getElementById('kinder-dorian');
     const store = JU.storage.profile('dorian');
-    const [letters, cvc, k, hints] = await Promise.all([JU.kinder.loadLetters(), JU.kinder.loadWords(), store.getKinder(), store.getHints()]);
+    const [letters, cvc, k, hints, sight, counting, adding] = await Promise.all([JU.kinder.loadLetters(), JU.kinder.loadWords(), store.getKinder(), store.getHints(), JU.kinder.loadSight(), JU.kinder.loadCounting(), JU.kinder.loadAdding()]);
     const sm = JU.kinder.summary({ answers: k.answers, rounds: k.rounds, hints }, letters, cvc);
+    const sg = JU.kinder.sightSummary(k.answers, sight), ct = JU.kinder.countSummary(k.answers, counting), ad = JU.kinder.addSummary(k.answers, adding);
     box.querySelector('[data-kinder-empty]').hidden = k.answers.length > 0;
     box.querySelector('[data-kinder-summary]').replaceChildren(
       statCard('Sessions', sm.sessions), statCard('Rounds finished', sm.rounds), statCard('Letters he knows', sm.known), statCard('Letters still learning', sm.learning), statCard('Letters not met yet', sm.notMet),
-      statCard('Words built', sm.wordsBuilt), statCard('Hints used', sm.hintsUsed + sm.grownupUnlocks));
+      statCard('Words built', sm.wordsBuilt), statCard('Sight words he knows', sg.known), statCard('Numbers he knows', ct.known), statCard('Adding facts he knows', ad.known), statCard('Hints used', sm.hintsUsed + sm.grownupUnlocks));
     const word = { known: 'Knows it', learning: 'Still learning', 'new': 'Not met yet' };
     fillTable(box.querySelector('[data-kinder-letters]'), ['Letter', 'Sound the voice says', 'Status', 'Clean sessions (of ' + letters.rules.knownSessions + ')', 'Times seen', 'Missed first time', 'Hints'],
       sm.letterRows.map(r => [h('strong', null, r.letter), r.say, h('span', { class: 'k-status ' + r.status, 'data-letter': r.letter, 'data-status': r.status }, word[r.status]), r.cleanSessions, r.seen, r.misses, r.hints]), 'No letters yet.');
     fillTable(box.querySelector('[data-kinder-words]'), ['Word', 'Times built', 'Right first time', 'Clean sessions (of ' + cvc.rules.knownSessions + ')', 'Hints', 'Status'],
       sm.wordRows.map(r => [h('strong', null, r.word), r.built, r.firstTry, r.cleanSessions, r.hints, r.known ? 'Knows it' : 'Still learning']), 'No words built yet.');
+    const kword = { known: 'Knows it', learning: 'Still learning', 'new': 'Not met yet' };
+    box.querySelector('[data-kinder-sight-note]').textContent = 'This week\u2019s words (' + (sight.weeks.length ? sight.weeks[sight.weeks.length - 1].label : 'none yet') + '): ' + (sg.focus.map(r => r.word).join(', ') || 'none') + '. The other Unit 1 words (never tested) only show up as wrong choices. A word is known after it was right first time, with no hint, in ' + sight.rules.knownSessions + ' different visits.';
+    fillTable(box.querySelector('[data-kinder-sight]'), ['Word', 'Week', 'Status', 'Clean visits (of ' + sight.rules.knownSessions + ')', 'Times seen', 'Missed first time', 'Hints'],
+      sg.rows.map(r => [h('strong', null, r.word), r.week + (r.focus ? ' (this week)' : ''), h('span', { class: 'k-status ' + r.status, 'data-sight-word': r.word, 'data-status': r.status }, kword[r.status]), r.cleanSessions, r.seen, r.misses, r.hints]), 'No sight words yet.');
+    box.querySelector('[data-kinder-count-note]').textContent = 'Open tier: ' + ct.tier + ' of ' + ct.tiers + ' (numbers up to ' + counting.tiers[ct.tier - 1].to + '). Green = knows it, orange = still learning, grey = not yet. Counting along is practice and is not scored' + (ct.along ? ' (' + P(ct.along, 'time') + ' so far)' : '') + '.';
+    box.querySelector('[data-kinder-count]').replaceChildren(...ct.strip.map(x => h('li', { class: 'k-strip-n ' + x.status + (x.open ? '' : ' closed'), 'data-count-n': x.n, 'data-status': x.status, title: x.n + ': ' + kword[x.status] + (x.open ? '' : ' (not open yet)') + ', seen ' + x.seen + ', missed ' + x.misses }, String(x.n))));
+    box.querySelector('[data-kinder-add-note]').textContent = 'Open tier: ' + ad.tier + ' of ' + ad.tiers + '. Shown as words, "2 and 1 more", with no plus or equals signs' + (adding.rules.showSigns ? ' (signs are ON in data/kinder/adding.json)' : '') + '.';
+    fillTable(box.querySelector('[data-kinder-add]'), ['Fact', 'Status', 'Clean visits (of ' + adding.rules.knownSessions + ')', 'Times seen', 'Missed first time', 'Hints'],
+      ad.rows.map(r => [h('strong', null, r.a + ' and ' + (r.b === 0 ? 'none' : r.b) + ' more') , h('span', { class: 'k-status ' + r.status, 'data-fact': r.id, 'data-status': r.status }, r.open ? kword[r.status] : 'Not open yet'), r.cleanSessions, r.seen, r.misses, r.hints]), 'No facts yet.');
     const kburst = burstSession(hints.filter(r => r.subject === 'kinder' && r.kind === 'rapid'));
     const slipped = Object.keys(sm.slips).sort((a, b) => sm.slips[b] - sm.slips[a]);
     box.querySelector('[data-kinder-note]').textContent = (slipped.length ? 'Letters he tapped by mistake while building: ' + slipped.map(l => l + ' (' + sm.slips[l] + ')').join(', ') + '. ' : '')
@@ -530,7 +543,8 @@
         'Step 1: attach the file just downloaded, named ' + saved.fileName + ', from your Downloads folder.',
         'Step 2: press Send.',
         'Nothing else is needed. The bot saves it. You do not need to wait for a reply.',
-        '', await summaryText()].join('\n');
+        saved.recordings ? 'The file includes ' + saved.recordings + ' sound recording(s), so it is about ' + saved.size + '.' : null,
+        '', await summaryText()].filter(x => x !== null).join('\n');
       const url = 'mailto:' + encodeURIComponent(addr).replace(/%40/g, '@') + '?subject=' + encodeURIComponent('Family Learning backup ' + saved.date) + '&body=' + encodeURIComponent(body);
       emailBtn.dataset.mailto = url;
       const a = h('a', { href: url }); document.body.appendChild(a); a.click(); a.remove();

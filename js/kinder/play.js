@@ -3,9 +3,11 @@
    The runner does everything the two activities share: a start screen, 4 items per round (plus one comeback for each item he missed, at most 2),
    the screen frame (Hear it again, a gentle voice, Ask a grown-up, a big Next picture), saving each answer under Dorian's own profile, the earned hint
    (js/hints.js, the same gate as the money activities and Julianna's games), and the sticker at the end of a round.
-   An activity (js/kinder/letters.js, js/kinder/build.js) registers itself in JU.kinderGames with:
-     { id, code (1 or 2, used by the flags), title, icon, intro (spoken on the start screen), plan(env) -> items, redo(env, item) -> item, draw(item, ctl) -> [nodes] }
-   env = { letters, cvc, answers (all saved answers plus this visit's), session }
+   An activity (js/kinder/letters.js, build.js, and in v12 sight.js, count.js, add.js) registers itself in JU.kinderGames with:
+     { id, code (1 to 5, used by the flags), title, icon, intro (spoken on the start screen), plan(env) -> items, redo(env, item) -> item, draw(item, ctl) -> [nodes],
+       and for the round 2 games: load() -> its own data (put on env), rules(env) -> { roundItems, maxRoundItems }, hintNoun }
+   An item is { id, text (spoken), hint (spoken once the hint opens), right, sound?, ... }.
+   env = { letters, cvc, answers (all saved answers plus this visit's), session, + whatever the activity's load() returned }
    ctl = { gate (the earned hint, or null), say(text), miss(guess, spoken), finish({ wrongs, extra }) }
    Rules: no timers and no progress bars; no score on his screen; a wrong tap is "Let's try again" or "Listen again", never "wrong".
    A grown-up preview (preview: true) saves nothing. */
@@ -18,7 +20,8 @@
   const games = JU.kinderGames = JU.kinderGames || {};
 
   /* the sticker picture for round n of an activity (the same every time, so it can be shown again later) */
-  JU.kinderSticker = (activity, n) => K.STICKERS[(n - 1 + (activity === 'build' ? 6 : 0)) % K.STICKERS.length];
+  const STICKER_START = { letters: 0, build: 6, sight: 3, count: 9, add: 1 };
+  JU.kinderSticker = (activity, n) => K.STICKERS[(n - 1 + (STICKER_START[activity] || 0)) % K.STICKERS.length];
 
   JU.kinderPlay = async function (activity, profileId, mount, opts) {
     opts = opts || {};
@@ -30,10 +33,11 @@
     const answers = saved.answers.slice();
     let roundsDone = saved.rounds.filter(r => r.activity === activity).length;
     const session = JU.ui.uid();
-    const env = { letters, cvc, answers, session };
-    const rules = (activity === 'letters' ? letters : cvc).rules;
+    const own = game.load ? await game.load() : {};
+    const env = Object.assign({ letters, cvc, answers, session }, own);
+    const rules = game.rules ? game.rules(env) : (activity === 'letters' ? letters : cvc).rules;
     const noStore = { addHint: async () => { } };
-    const ctx = { game: { id: 'kinder-' + activity, hintGate: true }, week: { id: 'kinder' }, subject: 'kinder', session, hintNoun: activity === 'letters' ? 'picture' : 'word', kid: true,
+    const ctx = { game: { id: 'kinder-' + activity, hintGate: true }, week: { id: 'kinder' }, subject: 'kinder', session, hintNoun: game.hintNoun || (activity === 'letters' ? 'picture' : 'word'), kid: true,
       store: preview ? noStore : store, speakButton: () => h('span'), hintCount: 0 };
     const home = opts.home || 'dorian.html';
     let queue = [], idx = 0, round = { no: roundsDone + 1, id: JU.ui.uid(), played: 0, clean: 0, comebacks: 0 };     // (a new round is planned when the start button is tapped)
@@ -90,7 +94,7 @@
       const next = h('button', { class: 'btn primary kid-next k-next', type: 'button', 'data-next': '', disabled: true, 'aria-label': 'Next (answer first)',
         onclick: () => { if (idx + 1 < queue.length) go(idx + 1); else go(queue.length); } }, h('span', { 'aria-hidden': 'true' }, NEXT));
       let gate = null, announced = false, finished = false;
-      if (JU.speech.supported) {
+      if (JU.speech.supported && !item.noHint) {         // (counting along has no wrong answer, so no hint)
         gate = JU.hints.gate(ctx, { word: item.id, say: item.hint }, 'Hear a hint');
         if (!gate.gated) gate = null;
       }

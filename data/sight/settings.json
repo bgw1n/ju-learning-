@@ -1,0 +1,28 @@
+{
+ "note": "Rules for the Sight words game, and the words that are only ever WRONG CHOICES. 'distractors' are the other words of the Savvas Unit 1 list that Son's Tutor Bot found in district charts. Bg1n has not confirmed them as Dorian's review words, so they are never spoken as the word to find and never counted: they only appear as wrong cards. When Bg1n gives a word it comes in through a weekly file (add_sight_week.py), and the script takes it out of this list.",
+ "rules": {
+  "knownSessions": 2,
+  "roundItems": 4,
+  "maxRoundItems": 6,
+  "choices": 3,
+  "gapAfterKnown": 3,
+  "focusBonus": 2
+ },
+ "distractors": [
+  "I",
+  "am",
+  "the",
+  "like",
+  "to",
+  "a",
+  "have",
+  "is",
+  "he",
+  "my",
+  "we",
+  "make",
+  "for",
+  "me",
+  "with"
+ ]
+}

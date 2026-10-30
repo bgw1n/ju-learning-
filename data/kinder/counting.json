@@ -1,0 +1,102 @@
+{
+ "note": "Count to 20. A number is KNOWN after it was right first time with no hint in 2 different visits (counted as 'how many' and 'what comes next'; counting along is just practice). Tier 2 opens when 6 numbers of tier 1 are known, tier 3 when 3 numbers of tier 2 are known. 'dotsOnChoices' puts a row of dots (groups of 5) next to each number choice; set it to false to show only the numerals.",
+ "rules": {
+  "knownSessions": 2,
+  "roundItems": 4,
+  "maxRoundItems": 6,
+  "dotsOnChoices": true,
+  "numbersToOpenNext": [
+   6,
+   3
+  ]
+ },
+ "tiers": [
+  {
+   "from": 1,
+   "to": 10
+  },
+  {
+   "from": 11,
+   "to": 15
+  },
+  {
+   "from": 16,
+   "to": 20
+  }
+ ],
+ "words": [
+  "zero",
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+  "ten",
+  "eleven",
+  "twelve",
+  "thirteen",
+  "fourteen",
+  "fifteen",
+  "sixteen",
+  "seventeen",
+  "eighteen",
+  "nineteen",
+  "twenty"
+ ],
+ "objects": [
+  {
+   "e": "🍎",
+   "one": "apple",
+   "many": "apples"
+  },
+  {
+   "e": "⭐",
+   "one": "star",
+   "many": "stars"
+  },
+  {
+   "e": "🐟",
+   "one": "fish",
+   "many": "fish"
+  },
+  {
+   "e": "🐞",
+   "one": "ladybug",
+   "many": "ladybugs"
+  },
+  {
+   "e": "🎈",
+   "one": "balloon",
+   "many": "balloons"
+  },
+  {
+   "e": "🐶",
+   "one": "puppy",
+   "many": "puppies"
+  },
+  {
+   "e": "🍓",
+   "one": "strawberry",
+   "many": "strawberries"
+  },
+  {
+   "e": "🦋",
+   "one": "butterfly",
+   "many": "butterflies"
+  },
+  {
+   "e": "🚗",
+   "one": "car",
+   "many": "cars"
+  },
+  {
+   "e": "🌼",
+   "one": "flower",
+   "many": "flowers"
+  }
+ ]
+}

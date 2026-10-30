@@ -20,7 +20,7 @@
       <button type="button" class="btn big switch-btn" id="sw-family" data-profile="family" aria-pressed="false">&#127968; Family</button>
     </nav>
     <nav class="jumpto" id="jump-julianna" data-for="julianna" aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#spelling-julianna" data-jump="spelling-julianna">Spelling</a> <a href="#money-julianna" data-jump="money-julianna">Money</a> <a href="#hints-card" data-jump="hints-card">Hints</a> <a href="#flags-julianna" data-jump="flags-julianna">Flags</a></nav>
-    <nav class="jumpto" id="jump-dorian" data-for="dorian" hidden aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#kinder-dorian" data-jump="kinder-dorian">Kindergarten</a> <a href="#money-dorian" data-jump="money-dorian">Money</a> <a href="#flags-dorian" data-jump="flags-dorian">Flags</a></nav>
+    <nav class="jumpto" id="jump-dorian" data-for="dorian" hidden aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#record-sounds" data-jump="record-sounds">Record sounds</a> <a href="#kinder-dorian" data-jump="kinder-dorian">Kindergarten</a> <a href="#money-dorian" data-jump="money-dorian">Money</a> <a href="#flags-dorian" data-jump="flags-dorian">Flags</a></nav>
     <nav class="jumpto" id="jump-family" data-for="family" hidden aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#lessons-card" data-jump="lessons-card">Lessons</a> <a href="#flags-family" data-jump="flags-family">Flags</a></nav>
 
     <section id="backup-banner" class="backup-banner" aria-labelledby="backup-banner-h" hidden></section>
@@ -29,6 +29,7 @@
     <section class="toolbar" aria-label="Backup for everyone">
       <button id="save-progress" class="btn" type="button">Save progress (backup file)</button>
       <button id="load-progress" class="btn" type="button">Load progress&hellip;</button>
+      <label class="check-inline"><input type="checkbox" id="backup-recordings" checked> Include my sound recordings</label>
       <input id="load-file" type="file" accept="application/json,.json" hidden aria-label="Choose a progress backup file">
     </section>
     <p id="backup-msg" class="note" role="status" aria-live="polite"></p>
@@ -134,19 +135,40 @@
         <div class="cards" id="dorian-summary"></div>
         <p class="lead" id="dorian-empty">Nothing yet. Dorian&rsquo;s games are coming soon, and his progress will show up here.</p>
       </section>
+      <section class="card record-card" id="record-sounds" aria-labelledby="record-h">
+        <h2 id="record-h">Record sounds</h2>
+        <p class="note">Record Dorian&rsquo;s letter sounds and words in your own voice. His games play your recording first, then the site&rsquo;s computer clip, then the browser voice. Recordings stay in <strong>this browser only</strong>: they are never put on the website, and they move to another device only inside a backup file.</p>
+        <p class="record-gate" data-record-gate role="status" aria-live="polite"></p>
+        <p class="note" data-record-total></p>
+        <p class="note record-warn" data-record-warn hidden></p>
+        <div data-record-groups></div>
+        <p class="note" data-record-msg role="status" aria-live="polite"></p>
+      </section>
       <section class="card kinder-card" id="kinder-dorian" aria-labelledby="kinder-dorian-h">
         <h2 id="kinder-dorian-h">Kindergarten</h2>
-        <p class="note">Letter sounds and Build a word, on Dorian&rsquo;s own login. A letter counts as known after it was right on the first try, with no hint, in 3 different sessions. A word counts as known after 2. Everything here is saved under Dorian&rsquo;s own profile.</p>
+        <p class="note">Letter sounds, Build a word, Sight words, Count to 20 and Add it up, on Dorian&rsquo;s own login. A letter counts as known after it was right on the first try, with no hint, in 3 different sessions. A word, a number or an adding fact counts as known after 2. Everything here is saved under Dorian&rsquo;s own profile.</p>
         <div class="row">
           <a class="btn small" id="kinder-preview-letters" href="kinder.html?a=letters">Preview Letter sounds</a>
           <a class="btn small" id="kinder-preview-build" href="kinder.html?a=build">Preview Build a word</a>
+          <a class="btn small" id="kinder-preview-sight" href="kinder.html?a=sight">Preview Sight words</a>
+          <a class="btn small" id="kinder-preview-count" href="kinder.html?a=count">Preview Count to 20</a>
+          <a class="btn small" id="kinder-preview-add" href="kinder.html?a=add">Preview Add it up</a>
         </div>
         <div class="cards" data-kinder-summary></div>
-        <p class="lead" data-kinder-empty>Nothing yet. When Dorian plays Letter sounds or Build a word, his progress will show up here.</p>
+        <p class="lead" data-kinder-empty>Nothing yet. When Dorian plays one of the kindergarten games, his progress will show up here.</p>
         <h3>Letters</h3>
         <div class="tablewrap"><table data-kinder-letters></table></div>
         <h3>Words built</h3>
         <div class="tablewrap"><table data-kinder-words></table></div>
+        <h3>Sight words</h3>
+        <p class="note" data-kinder-sight-note></p>
+        <div class="tablewrap"><table data-kinder-sight></table></div>
+        <h3>Counting to 20</h3>
+        <p class="note" data-kinder-count-note></p>
+        <ol class="k-strip" data-kinder-count aria-label="Numbers 1 to 20, colored by how well Dorian knows them"></ol>
+        <h3>Adding within 5</h3>
+        <p class="note" data-kinder-add-note></p>
+        <div class="tablewrap"><table data-kinder-add></table></div>
         <p class="hints-readout" data-kinder-note></p>
         <div class="row"><button class="btn small danger" type="button" id="kinder-clear">Clear kindergarten results</button></div>
         <p class="note" data-kinder-clear-msg role="status" aria-live="polite"></p>
@@ -203,10 +225,12 @@
   <script src="js/ui.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/backup.js"></script>
+  <script src="js/recordings.js"></script>
   <script src="js/speech.js"></script>
   <script src="js/weeks.js"></script>
   <script src="js/money.js"></script>
   <script src="js/kinder.js"></script>
+  <script src="js/kinder/round2.js"></script>
   <script src="js/subjects.js"></script>
   <script src="js/runner.js"></script>
   <script src="js/spelling/unscramble.js"></script>
@@ -217,5 +241,6 @@
   <script src="js/spelling/test.js"></script>
   <script src="js/spelling/review.js"></script>
   <script src="js/pages/parent.js"></script>
+  <script src="js/pages/record.js"></script>
 </body>
 </html>

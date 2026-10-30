@@ -49,6 +49,7 @@
     return m;
   }
 
+  const KINDER_ACTIVITIES = ['letters', 'build', 'sight', 'count', 'add'];       // (v12: round 2 adds sight, count and add; the backup version stays 5)
   function kinderClean(v) {
     const k = { answers: [], rounds: [] };
     if (isObj(v)) {
@@ -209,7 +210,7 @@
       async clearMoney() { localStorage.removeItem(MONEY_KEY); },
 
       /* ---- Kindergarten track (v9), kept apart from every other result. See js/kinder.js for the record shapes. ----
-         { answers: [ { id, ts, session, round, activity ('letters'|'build'), item, correct, tries, hinted, wrong | letters } ],
+         { answers: [ { id, ts, session, round, activity ('letters'|'build'|'sight'|'count'|'add'), item, correct, tries, hinted, wrong | letters } ],
            rounds:  [ { id, ts, session, activity, items, clean } ] } */
       async getKinder() { return kinderClean(read(KINDER_KEY, null)); },
       async addKinderAnswer(rec) {
@@ -235,14 +236,14 @@
         let added = 0, skipped = 0;
         const src = isObj(obj) ? obj : {};
         (Array.isArray(src.answers) ? src.answers : []).forEach(r => {
-          const ok = r && typeof r.ts === 'string' && typeof r.item === 'string' && (r.activity === 'letters' || r.activity === 'build');
+          const ok = r && typeof r.ts === 'string' && typeof r.item === 'string' && KINDER_ACTIVITIES.indexOf(r.activity) >= 0;
           if (!ok) { skipped++; return; }
           if ((r.id && aids.has(r.id)) || akeys.has(akey(r))) { skipped++; return; }
           const rec = Object.assign({}, r, { id: r.id || JU.ui.uid(), correct: !!r.correct });
           k.answers.push(rec); aids.add(rec.id); akeys.add(akey(rec)); added++;
         });
         (Array.isArray(src.rounds) ? src.rounds : []).forEach(r => {
-          const ok = r && typeof r.ts === 'string' && (r.activity === 'letters' || r.activity === 'build');
+          const ok = r && typeof r.ts === 'string' && KINDER_ACTIVITIES.indexOf(r.activity) >= 0;
           if (!ok) { skipped++; return; }
           if ((r.id && rids.has(r.id)) || rkeys.has(rkey(r))) { skipped++; return; }
           const rec = Object.assign({}, r, { id: r.id || JU.ui.uid() });
@@ -318,15 +319,18 @@
     async getLastBackup() { const v = read(BACKUP_KEY, null); return typeof v === 'string' && !isNaN(new Date(v)) ? v : null; },
     async setLastBackup(iso) { write(BACKUP_KEY, iso || new Date().toISOString()); return iso; },
 
-    /* ---- the backup file (version 5; versions 1 to 4 still load) ----
+    /* ---- the backup file (version 6; versions 1 to 5 still load) ----
+       Version 6 adds "recordings": the grown-up's own recordings of Dorian's sounds (js/recordings.js), each
+       { id, type, ts, dur, start, end, gain, data (base64) }. It is left out when the page has no recordings module or opts.recordings is false.
        Version 5 adds "kinder" (Dorian's kindergarten answers and rounds) under profiles.dorian.
        Version 4 adds "flags" (Ask a grown-up) for every profile and "money" (solo activity results) for Julianna and Dorian.
        Julianna's data stays at the top level exactly as in versions 1 and 2, so an older file loads into her
        and a version 3 file is still readable by old code. Everyone else is under "profiles":
        { app:'ju-learning', version:5, exportedAt, results, stickers, hints, flags, money,
          profiles: { dorian: { results, stickers, hints, flags, money, kinder }, family: { results, stickers, hints, lessons } } } */
-    async exportAll() {
-      const out = { app: 'ju-learning', version: 5, exportedAt: new Date().toISOString(),
+    async exportAll(opts) {
+      opts = opts || {};
+      const out = { app: 'ju-learning', version: 6, exportedAt: new Date().toISOString(),
         results: await stores.julianna.getResults(), stickers: await stores.julianna.getStickers(), hints: await stores.julianna.getHints(),
         flags: await stores.julianna.getFlags(), money: await stores.julianna.getMoney(),
         profiles: {} };
@@ -336,9 +340,10 @@
       out.profiles.dorian.money = await stores.dorian.getMoney();
       out.profiles.dorian.kinder = await stores.dorian.getKinder();
       out.profiles.family.lessons = await stores.family.getLessonState();
+      if (opts.recordings !== false && window.JU.recordings && JU.recordings.supported) { try { out.recordings = await JU.recordings.exportAll(); } catch (e) { out.recordings = []; } }
       return out;
     },
-    /* True when a parsed file looks like one of our backups (version 1 to 5). */
+    /* True when a parsed file looks like one of our backups (version 1 to 6). */
     isBackup(data) {
       return isObj(data) && data.app === 'ju-learning' && (Array.isArray(data.results) || isObj(data.profiles));
     },
@@ -365,7 +370,9 @@
         const pk = p === 'dorian' && isObj(blk.kinder) ? await stores.dorian.importKinder(blk.kinder) : null;     // versions 1 to 4 have no kinder part
         profiles[p] = { added: pr.added, skipped: pr.skipped, hints: ph, lessons, flags: pf, money: pm, kinder: pk };
       }
-      return { added: r.added, skipped: r.skipped, hints, flags, money, profiles };
+      let recordings = null;                                                     // versions 1 to 5 have no recordings
+      if (Array.isArray(data.recordings) && window.JU.recordings) { try { recordings = await JU.recordings.importAll(data.recordings); } catch (e) { recordings = null; } }
+      return { added: r.added, skipped: r.skipped, hints, flags, money, profiles, recordings };
     },
     /* Plain counts for the progress summary: { julianna: {results, games, hints, stickers, flags, money: {done, answers}}, dorian: {...}, family: {..., lessonsDone} } */
     async counts() {

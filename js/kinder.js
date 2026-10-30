@@ -1,10 +1,10 @@
-/* kinder.js - Dorian's kindergarten track, round 1: Letter sounds and Build a word.
+/* kinder.js - Dorian's kindergarten track, round 1: Letter sounds and Build a word. (Round 2, v12: Sight words, Count to 20, Add it up: js/kinder/round2.js.)
    Data: data/kinder/letters.json and data/kinder/cvc.json (see README, "Kindergarten track").
    This file holds the logic only (no screens): loading the data, working out what he knows from his saved answers,
    which letters and words are in play, and how the next round is picked. The screens are js/kinder/*.js.
 
    SAVED ANSWERS (Dorian's own key, ju_dorian_kinder_v1; storage.profile('dorian').getKinder()):
-     { answers: [ { id, ts, session, round, activity: 'letters' | 'build', item (the letter, or the word),
+     { answers: [ { id, ts, session, round, activity: 'letters' | 'build' | 'sight' | 'count' | 'add' (v12), item (the letter, or the word; round 2: the sight word, the number, or the fact "a-b"),
                     correct (right on the first try, no hint), tries (wrong taps + 1), hinted,
                     wrong: [ letters he tapped by mistake ]  (letters) | letters: [ { l, wrong } ] (build, one per letter box) } ],
        rounds:  [ { id, ts, session, activity, items, clean } ] }       // one record per finished round
@@ -29,7 +29,8 @@
     rng: Math.random,                       // tests replace this to get a fixed order
     loadLetters: () => fetchJson('data/kinder/letters.json'),
     loadWords: () => fetchJson('data/kinder/cvc.json'),
-    ACTIVITIES: { letters: { code: 1, title: 'Letter sounds' }, build: { code: 2, title: 'Build a word' } },
+    ACTIVITIES: { letters: { code: 1, title: 'Letter sounds' }, build: { code: 2, title: 'Build a word' },
+      sight: { code: 3, title: 'Sight words' }, count: { code: 4, title: 'Count to 20' }, add: { code: 5, title: 'Add it up' } },       // (v12: round 2)
     STICKERS: ['\uD83D\uDC36', '\uD83D\uDC31', '\uD83E\uDD84', '\uD83D\uDC22', '\uD83D\uDC20', '\uD83E\uDD8B', '\uD83D\uDC1D', '\uD83E\uDD81', '\uD83D\uDC27', '\uD83D\uDC3C', '\uD83E\uDD89', '\uD83D\uDC19']
   };
   const byTs = (a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0;
@@ -38,9 +39,9 @@
   /* Per item (a letter or a word) for one activity:
      { item, seen, firstTry (answers right first time), misses (answers not right first time), wrongTaps, hints,
        recent (last 3 answers, true = right first time, newest last), cleanSessions, sessions, known } */
-  function itemStats(answers, activity, knownSessions) {
+  function itemStats(answers, activity, knownSessions, skip) {
     const out = {};
-    (answers || []).filter(a => a && a.activity === activity && typeof a.item === 'string').sort(byTs).forEach(a => {
+    (answers || []).filter(a => a && a.activity === activity && typeof a.item === 'string' && !(skip && skip(a))).sort(byTs).forEach(a => {
       const s = out[a.item] = out[a.item] || { item: a.item, seen: 0, firstTry: 0, misses: 0, wrongTaps: 0, hints: 0, recent: [], bySession: {} };
       s.seen++;
       if (a.correct) s.firstTry++; else s.misses++;
@@ -58,6 +59,7 @@
     }
     return out;
   }
+  api.itemStats = itemStats;              // (round 2: sight words, counting and adding use it too)
   api.letterStats = (answers, data) => itemStats(answers, 'letters', data.rules.knownSessions);
   api.wordStats = (answers, cvc) => itemStats(answers, 'build', cvc.rules.knownSessions);
 

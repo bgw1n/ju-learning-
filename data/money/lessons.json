@@ -36,28 +36,32 @@
   "unit": 2,
   "unitTitle": "Using money",
   "title": "Prices and trade-offs",
-  "status": "coming-soon"
+  "status": "ready",
+  "icon": "🏷️"
  },
  {
   "id": 6,
   "unit": 2,
   "unitTitle": "Using money",
   "title": "Saving for a goal",
-  "status": "coming-soon"
+  "status": "ready",
+  "icon": "🎯"
  },
  {
   "id": 7,
   "unit": 2,
   "unitTitle": "Using money",
   "title": "Giving",
-  "status": "coming-soon"
+  "status": "ready",
+  "icon": "💝"
  },
  {
   "id": 8,
   "unit": 2,
   "unitTitle": "Using money",
   "title": "Spending wisely (budgeting)",
-  "status": "coming-soon"
+  "status": "ready",
+  "icon": "📋"
  },
  {
   "id": 9,

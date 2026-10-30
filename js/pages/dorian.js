@@ -31,6 +31,11 @@
       });
     });
   }
+  /* v13: Letter sounds and Build a word show only once every letter sound is recorded in a grown-up's voice (parent page, Record sounds) */
+  try {
+    const lp = await JU.recordings.letterProgress();
+    document.querySelectorAll('#kid-kinder [data-act="letters"], #kid-kinder [data-act="build"]').forEach(a => { a.hidden = !lp.ready; });
+  } catch (e) { document.querySelectorAll('#kid-kinder [data-act="letters"], #kid-kinder [data-act="build"]').forEach(a => { a.hidden = true; }); }
   nameButtons(document.getElementById('kid-kinder'));
 
   /* money activities that the Family has finished: one big picture button each (locked ones are not shown to him) */
@@ -54,7 +59,7 @@
     const keys = Object.keys(st).sort((a, b) => st[a] < st[b] ? -1 : 1).slice(-12);
     if (keys.length) {
       const box = document.getElementById('kid-stickers');
-      box.replaceChildren(...keys.map(k => { const m = /^(letters|build)-(\d+)$/.exec(k); return m ? h('span', { class: 'k-mini-sticker', 'data-sticker-key': k, 'aria-hidden': 'true' }, JU.kinderSticker(m[1], Number(m[2]))) : null; }));
+      box.replaceChildren(...keys.map(k => { const m = /^(letters|build|sight|count|add)-(\d+)$/.exec(k); return m ? h('span', { class: 'k-mini-sticker', 'data-sticker-key': k, 'aria-hidden': 'true' }, JU.kinderSticker(m[1], Number(m[2]))) : null; }));
       box.hidden = false;
     }
   } catch (e) { /* the home still works without the sticker row */ }

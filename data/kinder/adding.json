@@ -1,0 +1,159 @@
+{
+ "note": "Add it up (adding within 5). A fact is KNOWN after it was right first time with no hint in 2 different visits. Tier 2 opens when 3 facts of tier 1 are known, tier 3 when 3 of tier 2, the 'none more' tier when 4 of tier 3. Both parts are 1 or more and the total is 5 at most (10 facts), then 'and none more'. 'showSigns' is false: the screen shows the word 'and' and the voice says 'makes', with no plus or equals signs (set it to true only when his school writes them).",
+ "rules": {
+  "knownSessions": 2,
+  "roundItems": 4,
+  "maxRoundItems": 6,
+  "showSigns": false,
+  "factsToOpenNext": [
+   3,
+   3,
+   4
+  ]
+ },
+ "tiers": [
+  {
+   "total": 3,
+   "label": "totals up to 3"
+  },
+  {
+   "total": 4,
+   "label": "total 4"
+  },
+  {
+   "total": 5,
+   "label": "total 5"
+  },
+  {
+   "zero": true,
+   "label": "and none more"
+  }
+ ],
+ "facts": [
+  {
+   "a": 1,
+   "b": 1,
+   "tier": 1
+  },
+  {
+   "a": 1,
+   "b": 2,
+   "tier": 1
+  },
+  {
+   "a": 2,
+   "b": 1,
+   "tier": 1
+  },
+  {
+   "a": 1,
+   "b": 3,
+   "tier": 2
+  },
+  {
+   "a": 2,
+   "b": 2,
+   "tier": 2
+  },
+  {
+   "a": 3,
+   "b": 1,
+   "tier": 2
+  },
+  {
+   "a": 1,
+   "b": 4,
+   "tier": 3
+  },
+  {
+   "a": 2,
+   "b": 3,
+   "tier": 3
+  },
+  {
+   "a": 3,
+   "b": 2,
+   "tier": 3
+  },
+  {
+   "a": 4,
+   "b": 1,
+   "tier": 3
+  },
+  {
+   "a": 1,
+   "b": 0,
+   "tier": 4
+  },
+  {
+   "a": 2,
+   "b": 0,
+   "tier": 4
+  },
+  {
+   "a": 3,
+   "b": 0,
+   "tier": 4
+  },
+  {
+   "a": 4,
+   "b": 0,
+   "tier": 4
+  },
+  {
+   "a": 5,
+   "b": 0,
+   "tier": 4
+  }
+ ],
+ "words": [
+  "none",
+  "one",
+  "two",
+  "three",
+  "four",
+  "five"
+ ],
+ "objects": [
+  {
+   "e": "🍎",
+   "one": "apple",
+   "many": "apples"
+  },
+  {
+   "e": "🐟",
+   "one": "fish",
+   "many": "fish"
+  },
+  {
+   "e": "🐞",
+   "one": "ladybug",
+   "many": "ladybugs"
+  },
+  {
+   "e": "🎈",
+   "one": "balloon",
+   "many": "balloons"
+  },
+  {
+   "e": "🐶",
+   "one": "puppy",
+   "many": "puppies"
+  },
+  {
+   "e": "🍓",
+   "one": "strawberry",
+   "many": "strawberries"
+  },
+  {
+   "e": "🚗",
+   "one": "car",
+   "many": "cars"
+  },
+  {
+   "e": "🌼",
+   "one": "flower",
+   "many": "flowers"
+  }
+ ]
+}

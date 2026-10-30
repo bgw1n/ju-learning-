@@ -1,0 +1,30 @@
+{
+ "note": "ONE FILE for every family-specific number in Money lessons 5 to 8. Edit it here, then run  python3 tools/build_money_unit2.py  to rewrite data/money/lesson-5.json to lesson-8.json (never edit those by hand: the script overwrites them). 'confirmed' = told by Bg1n (Oct 30, 2026) or already taught in Lesson 3. 'placeholders' = NOT confirmed, used only as clearly-marked examples. 'storeExamples' are real-world STORE prices in dollars, used only as store examples (cash vs swipe, a store balance); they are NOT family token prices. The family does not price games or toys in tokens; the only family price is the special treat.",
+ "confirmed": {
+  "_status": "told by Bg1n on Oct 30, 2026 (and Lesson 3)",
+  "tokensPerDollar": 5,
+  "weeklyTokens": 50,
+  "weeklyDollars": 10,
+  "tokensPerDay": 10,
+  "treasureTokens": 100,
+  "treasureDollars": 20,
+  "specialTreatTokens": 10,
+  "familyGivesYet": false,
+  "waitADayRule": false,
+  "_later": "giving and the wait-a-day rule are later topics; lesson 7 presents giving only as an idea for later, with no family amount"
+ },
+ "placeholders": {
+  "_status": "NOT CONFIRMED by Bg1n: an example split of the weekly tokens, used only in Lesson 8 and called an example there",
+  "weeklySplit": {
+   "treasure": 30,
+   "treats": 20
+  }
+ },
+ "storeExamples": {
+  "_status": "real-world store prices in dollars, only for store examples (not family prices)",
+  "startBalanceDollars": 20,
+  "snack": {"label": "snack", "emoji": "🍪", "dollars": 4},
+  "book": {"label": "book", "emoji": "📚", "dollars": 5},
+  "pencilCase": {"label": "pencil case", "emoji": "✏️", "dollars": 6}
+ }
+}

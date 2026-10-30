@@ -8,6 +8,12 @@
        {{w:cat|cat}} the clip for the word cat (audio/kinder/word-cat.mp3)
    JU.speech.say(text) plays the clips with HTMLAudio and speaks the rest of the sentence with the browser voice, in order. If a clip is not in
    audio/kinder/manifest.json, cannot load, or the browser refuses to play it, the fallback text is spoken instead.
+   v12: round 2 clips live in audio/round2/ (its own manifest.json, loaded only when a text uses one of these markers):
+       {{g:she|she}}        a sight word (audio/round2/sight-she.mp3)
+       {{t:she-full|...}}   a sentence clip: sent-she-full (whole sentence), sent-she-pre (the part before the word), sent-she-post (the part after it)
+       {{n:7|seven}}        a number word (num-7.mp3, num-none.mp3)
+       {{m:blank|blank}}    a small extra clip (misc-blank.mp3)
+   v13: a recording made on the parent page (js/recordings.js, IndexedDB, this browser only) with the same clip name plays before the site's clip.
    JU.speech.plain(text) turns markers into their fallback text, for anything shown on screen. Slower (factor under 0.8) plays clips at 0.75. */
 (function () {
   const supported = 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
@@ -70,18 +76,21 @@
 
 
   /* ---- recorded clips (v11) ---- */
-  const CLIP_DIR = 'audio/kinder/';
-  const MARK = /\{\{([sw]):([a-z]+)\|([^}]*)\}\}/g;
-  let manifest = null, manifestP = null;
+  const KINDER_DIR = 'audio/kinder/', ROUND2_DIR = 'audio/round2/';
+  const KINDS = { s: ['sound-', KINDER_DIR], w: ['word-', KINDER_DIR], g: ['sight-', ROUND2_DIR], t: ['sent-', ROUND2_DIR], n: ['num-', ROUND2_DIR], m: ['misc-', ROUND2_DIR] };
+  const MARK = /\{\{([swgtnm]):([a-z0-9-]+)\|([^}]*)\}\}/g;
+  const manifests = {};                                          // folder -> promise of { clipId: entry }, each entry knows its folder (entry.dir)
   const clipLog = [];
   let current = null;                                            // { audio, done } of the clip that is playing
-  function loadManifest() {
-    if (manifestP) return manifestP;
-    manifestP = (typeof fetch === 'function' ? fetch(CLIP_DIR + 'manifest.json') : Promise.reject(new Error('no fetch')))
-      .then(r => r.ok ? r.json() : null).then(m => { manifest = (m && m.clips) || {}; return manifest; }).catch(() => { manifest = {}; return manifest; });
-    return manifestP;
+  const dirOf = id => (/^(sight|sent|num|misc)-/.test(id) ? ROUND2_DIR : KINDER_DIR);
+  function loadManifest(dir) {
+    dir = dir || KINDER_DIR;
+    if (manifests[dir]) return manifests[dir];
+    manifests[dir] = (typeof fetch === 'function' ? fetch(dir + 'manifest.json') : Promise.reject(new Error('no fetch')))
+      .then(r => r.ok ? r.json() : null).then(m => { const out = {}, c = (m && m.clips) || {}; for (const k in c) out[k] = Object.assign({ dir }, c[k]); return out; }).catch(() => ({}));
+    return manifests[dir];
   }
-  const clipId = (kind, name) => (kind === 's' ? 'sound-' : 'word-') + name;
+  const clipId = (kind, name) => KINDS[kind][0] + name;
   function hasMarkers(text) { MARK.lastIndex = 0; const r = MARK.test(String(text)); MARK.lastIndex = 0; return r; }
   /* the text with every marker replaced by its fallback words (what is shown on screen) */
   function plain(text) { return String(text == null ? '' : text).replace(MARK, (m, k, name, fb) => fb); }
@@ -100,8 +109,21 @@
   }
   const canAudio = typeof Audio !== 'undefined';
   /* plays one clip; resolves true when it played to the end, false when it could not (missing, failed, blocked) */
+  /* v13: a grown-up's own recording (js/recordings.js, this browser only) plays first; then the site's clip; then the browser voice */
   function playClip(id, rate) {
-    return loadManifest().then(man => new Promise(resolve => {
+    const R = window.JU && JU.recordings;
+    if (!R || !R.supported) return playSiteClip(id, rate);
+    let handle = null, cancelled = false;
+    return R.play(id, rate, hd => { handle = hd; current = { audio: hd.audio, cancel: () => { cancelled = true; hd.cancel(); } }; }).then(ok => {
+      if (handle && current && current.audio === handle.audio) current = null;
+      if (cancelled) { clipLog.push({ id, rate, ok: false, why: 'cancelled', src: 'mine' }); return false; }
+      if (ok === null) return playSiteClip(id, rate);                  // nothing recorded for this one
+      clipLog.push({ id, rate, ok, why: ok ? '' : 'recording failed', src: 'mine' }); api.lastClip = { id, rate, ok, src: 'mine' };
+      return ok ? true : playSiteClip(id, rate);
+    }, () => playSiteClip(id, rate));
+  }
+  function playSiteClip(id, rate) {
+    return loadManifest(dirOf(id)).then(man => new Promise(resolve => {
       const entry = man[id];
       if (!canAudio || !entry) { clipLog.push({ id, rate, ok: false, why: entry ? 'no audio' : 'not in manifest' }); resolve(false); return; }
       let settled = false, timer = null;
@@ -116,7 +138,7 @@
       audio.addEventListener('ended', () => finish(true));
       audio.addEventListener('error', () => finish(false, 'error'));
       current = { audio, cancel: () => { try { audio.pause(); } catch (e) { } finish(false, 'cancelled'); } };
-      audio.src = CLIP_DIR + entry.file;
+      audio.src = entry.dir + entry.file;
       audio.playbackRate = rate;
       timer = setTimeout(() => { try { audio.pause(); } catch (e) { } finish(false, 'timeout'); }, Math.max(2500, ((entry.dur || 1) / rate) * 1000 + 3000));
       let p; try { p = audio.play(); } catch (e) { finish(false, 'blocked'); return; }
@@ -196,14 +218,15 @@
   /* Warm the browser cache for the clips a screen is about to use (the site's own files only). */
   api.preload = function (text) {
     if (!canAudio) return Promise.resolve();
-    return loadManifest().then(man => {
-      parts(text).forEach(p => { if (p.clip && man[p.clip] && !api._warm[p.clip]) { api._warm[p.clip] = 1; const a = new Audio(); a.preload = 'auto'; a.src = CLIP_DIR + man[p.clip].file; } });
-    });
+    const want = parts(text).filter(p => p.clip), dirs = Array.from(new Set(want.map(p => dirOf(p.clip))));
+    return Promise.all(dirs.map(d => loadManifest(d).then(man => {
+      want.forEach(p => { const e = man[p.clip]; if (e && !api._warm[p.clip]) { api._warm[p.clip] = 1; const a = new Audio(); a.preload = 'auto'; a.src = e.dir + e.file; } });
+    })));
   };
   api._warm = {};
   api.plain = plain;
   api.hasMarkers = hasMarkers;
-  api.clipsReady = () => loadManifest().then(m => Object.keys(m).length > 0);
+  api.clipsReady = () => loadManifest(KINDER_DIR).then(m => Object.keys(m).length > 0);
   /* Dictation: the word, a short pause, the sentence (if there is one), a short pause, the word again. */
   api.dictate = async function (word, sentence, opts) {
     opts = opts || {};

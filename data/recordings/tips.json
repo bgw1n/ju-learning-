@@ -1,0 +1,15 @@
+{
+ "note": "Tips shown on the parent page's Record sounds list. The list itself is built from data/kinder/letters.json (letter sounds), data/kinder/cvc.json (words) and data/sight/ (confirmed sight words), so a new letter, word or sight week shows up to record automatically. 'extra' can add more groups later (each item: id = the clip name the games use, e.g. num-7, label, tip).",
+ "letters": {
+  "a": "\"a\" as in apple", "b": "a quick \"b\", not \"buh\"", "c": "a quick \"k\", as in cat", "d": "a quick \"d\", not \"duh\"",
+  "e": "\"e\" as in egg", "f": "\"fff\", just air", "g": "a hard \"g\" as in goat, not \"juh\"", "h": "a breathy \"h\", just air",
+  "i": "\"i\" as in itch", "j": "\"j\" as in jam", "k": "a quick \"k\"", "l": "\"lll\"", "m": "\"mmm\", not \"em\"", "n": "\"nnn\", not \"en\"",
+  "o": "\"o\" as in octopus", "p": "a quick \"p\", just a puff", "qu": "\"kw\" as in queen", "r": "\"rrr\", not \"ar\"", "s": "\"sss\", not \"es\"",
+  "t": "a quick \"t\", just a tap", "u": "\"u\" as in up", "v": "\"vvv\", let it buzz", "w": "\"w\" as in wet, not \"double-u\"",
+  "x": "\"ks\" as in box", "y": "\"y\" as in yes, not \"why\"", "z": "\"zzz\", let it buzz"
+ },
+ "letterTip": "Say the sound, not the letter name. Short, with no \"uh\" on the end.",
+ "wordTip": "Say the word once, clearly, at a normal speed.",
+ "sightTip": "Say the word once, clearly.",
+ "extra": []
+}

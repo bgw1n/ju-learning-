@@ -1,0 +1,345 @@
+{
+ "voice": "en_US-kristin-medium",
+ "clips": {
+  "sight-she": {
+   "text": "she",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "She",
+    "openai/whisper-base.en": "she"
+   }
+  },
+  "sent-she-full": {
+   "text": "She can jump.",
+   "ls": 1.2,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "She can jump.",
+    "openai/whisper-base.en": "She can jump."
+   }
+  },
+  "sent-she-post": {
+   "text": "can jump.",
+   "ls": 1.2,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "Can jump",
+    "openai/whisper-base.en": "can jump"
+   }
+  },
+  "sight-see": {
+   "text": "see",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 1,
+   "asr": {
+    "openai/whisper-small.en": "See",
+    "openai/whisper-base.en": "c"
+   }
+  },
+  "sent-see-full": {
+   "text": "I see a bird.",
+   "ls": 1.2,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "I see a bird.",
+    "openai/whisper-base.en": "I see a bird."
+   }
+  },
+  "sent-see-pre": {
+   "text": "I",
+   "ls": 1.2,
+   "seed": 1,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "I",
+    "openai/whisper-base.en": "I"
+   }
+  },
+  "sent-see-post": {
+   "text": "a bird.",
+   "ls": 1.2,
+   "seed": 1,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "A bird.",
+    "openai/whisper-base.en": "A bird."
+   }
+  },
+  "sight-look": {
+   "text": "look",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "Look.",
+    "openai/whisper-base.en": "Look."
+   }
+  },
+  "sent-look-full": {
+   "text": "I look at the dog.",
+   "ls": 1.2,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "I look at the dog.",
+    "openai/whisper-base.en": "I look at the dog."
+   }
+  },
+  "sent-look-pre": {
+   "text": "I",
+   "ls": 1.2,
+   "seed": 1,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "I",
+    "openai/whisper-base.en": "I"
+   }
+  },
+  "sent-look-post": {
+   "text": "at the dog.",
+   "ls": 1.2,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "at the dog.",
+    "openai/whisper-base.en": "at the dog."
+   }
+  },
+  "misc-blank": {
+   "text": "blank",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "blank",
+    "openai/whisper-base.en": "blank"
+   }
+  },
+  "num-0": {
+   "text": "zero",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "0.",
+    "openai/whisper-base.en": "0"
+   }
+  },
+  "num-1": {
+   "text": "one",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "1.",
+    "openai/whisper-base.en": "1."
+   }
+  },
+  "num-2": {
+   "text": "two",
+   "ls": 1.25,
+   "seed": 2,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "2.",
+    "openai/whisper-base.en": "2"
+   }
+  },
+  "num-3": {
+   "text": "three",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "3",
+    "openai/whisper-base.en": "3"
+   }
+  },
+  "num-4": {
+   "text": "four",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "4.",
+    "openai/whisper-base.en": "4"
+   }
+  },
+  "num-5": {
+   "text": "five",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "5.",
+    "openai/whisper-base.en": "5"
+   }
+  },
+  "num-6": {
+   "text": "six",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "Six.",
+    "openai/whisper-base.en": "6"
+   }
+  },
+  "num-7": {
+   "text": "seven",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "7.",
+    "openai/whisper-base.en": "7"
+   }
+  },
+  "num-8": {
+   "text": "eight",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "8.",
+    "openai/whisper-base.en": "8"
+   }
+  },
+  "num-9": {
+   "text": "nine",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "9.",
+    "openai/whisper-base.en": "9"
+   }
+  },
+  "num-10": {
+   "text": "ten",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "10",
+    "openai/whisper-base.en": "10"
+   }
+  },
+  "num-11": {
+   "text": "eleven",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "11.",
+    "openai/whisper-base.en": "11"
+   }
+  },
+  "num-12": {
+   "text": "twelve",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "12",
+    "openai/whisper-base.en": "12"
+   }
+  },
+  "num-13": {
+   "text": "thirteen",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "Thirteen",
+    "openai/whisper-base.en": "13"
+   }
+  },
+  "num-14": {
+   "text": "fourteen",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "14.",
+    "openai/whisper-base.en": "14"
+   }
+  },
+  "num-15": {
+   "text": "fifteen",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "15",
+    "openai/whisper-base.en": "15"
+   }
+  },
+  "num-16": {
+   "text": "sixteen",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "16.",
+    "openai/whisper-base.en": "16"
+   }
+  },
+  "num-17": {
+   "text": "seventeen",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "17",
+    "openai/whisper-base.en": "17"
+   }
+  },
+  "num-18": {
+   "text": "eighteen",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "18.",
+    "openai/whisper-base.en": "18"
+   }
+  },
+  "num-19": {
+   "text": "nineteen",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "19.",
+    "openai/whisper-base.en": "19"
+   }
+  },
+  "num-20": {
+   "text": "twenty",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "20",
+    "openai/whisper-base.en": "20."
+   }
+  },
+  "num-none": {
+   "text": "none",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "None.",
+    "openai/whisper-base.en": "none"
+   }
+  }
+ }
+}

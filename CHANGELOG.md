@@ -1,5 +1,18 @@
 # Changelog
 
+## v13
+- **Record sounds in your own voice.** On the grown-up page (Dorian view) a new **Record sounds** page lists the 26 letter sounds, the 18 three-letter words and the confirmed sight words, with Record, Redo, Play, Delete, Play all and progress for each group. Either grown-up can record.
+- **What plays:** a grown-up's recording first, then the site's recorded clip, then the browser voice. "Slower" plays recordings at 0.75 speed.
+- **Letter sounds and Build a word stay hidden** on Dorian's home until all 26 letter sounds are recorded (a grown-up can still preview them).
+- Recordings stay in this browser only (IndexedDB), never on GitHub. **Backup file version 6** can include them; versions 1 to 5 still load, loading never duplicates, and a newer take replaces an older one.
+
+## v12
+- **Dorian's round 2: Sight words, Count to twenty and Add it up.** Three new picture buttons on his home page. Sight words use this week's words (she, see, look); the other words from the Savvas Unit 1 list are only ever wrong choices, never tested, until a grown-up confirms them with `add_sight_week.py`. Counting goes from 1 to 20 in three steps. Adding stays within 5 and uses the words "and" and "makes" (no + or = signs).
+- **34 new recorded clips** in `audio/round2/` (the words, three short sentences, the numbers 0 to 20, "none" and "blank"), made with the same voice as v11.
+- **Grown-up page:** sight word table, a 1 to 20 strip, the adding facts in words, Preview links and flags for the new games.
+- **Money lessons 5 to 8** (Prices and trade-offs, Saving for a goal, Giving, Spending wisely): a family lesson plus Julianna's and Dorian's own follow-ons, each locked until the one before is finished. They use the family's real numbers: about 50 tokens a week (about $10), roughly 10 a day, 100 tokens for a treasure (about 2 weeks), and a special treat at 10 tokens. Dollar prices appear only as store examples. Lesson 7 (Giving) is a gentle idea for later with no family amount. There is no wait-a-day rule yet. Only the example weekly plan in Lesson 8 (30 for the treasure, 20 for treats) is a placeholder. All the numbers are in `data/money/family-numbers.json`; after changing one, run `python3 tools/build_money_unit2.py`.
+- Backup files stay at version 5. Not checked by ear yet: listen to `sight-see` first.
+
 ## Spelling week of Nov 2
 - Added a new spelling week (12 words, r-controlled vowel patterns or / ore-oar / ar) with `add_week.py`. No code changes.
 

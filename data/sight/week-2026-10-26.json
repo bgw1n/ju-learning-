@@ -1,0 +1,43 @@
+{
+ "id": "2026-10-26",
+ "label": "Week of Oct 26",
+ "source": "Savvas myView Literacy K, Unit 1 Going Places: the weekly words Bg1n gave (packet printed Oct 23)",
+ "words": [
+  {
+   "word": "she",
+   "sentence": "She can jump.",
+   "pre": "",
+   "post": "can jump.",
+   "pic": "👧",
+   "wrong": [
+    "the",
+    "to",
+    "a"
+   ]
+  },
+  {
+   "word": "see",
+   "sentence": "I see a bird.",
+   "pre": "I",
+   "post": "a bird.",
+   "pic": "🐦",
+   "wrong": [
+    "the",
+    "to",
+    "my"
+   ]
+  },
+  {
+   "word": "look",
+   "sentence": "I look at the dog.",
+   "pre": "I",
+   "post": "at the dog.",
+   "pic": "🐶",
+   "wrong": [
+    "the",
+    "to",
+    "my"
+   ]
+  }
+ ]
+}

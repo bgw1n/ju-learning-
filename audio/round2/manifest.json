@@ -1,0 +1,245 @@
+{
+ "version": 1,
+ "voice": "en_US-kristin-medium",
+ "license": "Piper voice en_US-kristin-medium: public domain (LibriVox recordings). Generated with Piper TTS.",
+ "clips": {
+  "misc-blank": {
+   "file": "misc-blank.mp3",
+   "kind": "misc",
+   "text": "blank",
+   "dur": 0.653,
+   "bytes": 8194
+  },
+  "num-0": {
+   "file": "num-0.mp3",
+   "kind": "number",
+   "text": "zero",
+   "dur": 0.967,
+   "bytes": 11955
+  },
+  "num-1": {
+   "file": "num-1.mp3",
+   "kind": "number",
+   "text": "one",
+   "dur": 0.836,
+   "bytes": 10388
+  },
+  "num-10": {
+   "file": "num-10.mp3",
+   "kind": "number",
+   "text": "ten",
+   "dur": 0.914,
+   "bytes": 11328
+  },
+  "num-11": {
+   "file": "num-11.mp3",
+   "kind": "number",
+   "text": "eleven",
+   "dur": 0.888,
+   "bytes": 11015
+  },
+  "num-12": {
+   "file": "num-12.mp3",
+   "kind": "number",
+   "text": "twelve",
+   "dur": 0.967,
+   "bytes": 11955
+  },
+  "num-13": {
+   "file": "num-13.mp3",
+   "kind": "number",
+   "text": "thirteen",
+   "dur": 1.176,
+   "bytes": 14463
+  },
+  "num-14": {
+   "file": "num-14.mp3",
+   "kind": "number",
+   "text": "fourteen",
+   "dur": 1.149,
+   "bytes": 14150
+  },
+  "num-15": {
+   "file": "num-15.mp3",
+   "kind": "number",
+   "text": "fifteen",
+   "dur": 1.228,
+   "bytes": 15090
+  },
+  "num-16": {
+   "file": "num-16.mp3",
+   "kind": "number",
+   "text": "sixteen",
+   "dur": 1.176,
+   "bytes": 14463
+  },
+  "num-17": {
+   "file": "num-17.mp3",
+   "kind": "number",
+   "text": "seventeen",
+   "dur": 1.254,
+   "bytes": 15404
+  },
+  "num-18": {
+   "file": "num-18.mp3",
+   "kind": "number",
+   "text": "eighteen",
+   "dur": 1.097,
+   "bytes": 13523
+  },
+  "num-19": {
+   "file": "num-19.mp3",
+   "kind": "number",
+   "text": "nineteen",
+   "dur": 1.254,
+   "bytes": 15404
+  },
+  "num-2": {
+   "file": "num-2.mp3",
+   "kind": "number",
+   "text": "two",
+   "dur": 0.705,
+   "bytes": 8821
+  },
+  "num-20": {
+   "file": "num-20.mp3",
+   "kind": "number",
+   "text": "twenty",
+   "dur": 0.967,
+   "bytes": 11955
+  },
+  "num-3": {
+   "file": "num-3.mp3",
+   "kind": "number",
+   "text": "three",
+   "dur": 0.836,
+   "bytes": 10388
+  },
+  "num-4": {
+   "file": "num-4.mp3",
+   "kind": "number",
+   "text": "four",
+   "dur": 0.914,
+   "bytes": 11328
+  },
+  "num-5": {
+   "file": "num-5.mp3",
+   "kind": "number",
+   "text": "five",
+   "dur": 1.045,
+   "bytes": 12896
+  },
+  "num-6": {
+   "file": "num-6.mp3",
+   "kind": "number",
+   "text": "six",
+   "dur": 0.967,
+   "bytes": 11955
+  },
+  "num-7": {
+   "file": "num-7.mp3",
+   "kind": "number",
+   "text": "seven",
+   "dur": 0.888,
+   "bytes": 11015
+  },
+  "num-8": {
+   "file": "num-8.mp3",
+   "kind": "number",
+   "text": "eight",
+   "dur": 0.81,
+   "bytes": 10075
+  },
+  "num-9": {
+   "file": "num-9.mp3",
+   "kind": "number",
+   "text": "nine",
+   "dur": 0.888,
+   "bytes": 11015
+  },
+  "num-none": {
+   "file": "num-none.mp3",
+   "kind": "number",
+   "text": "none",
+   "dur": 0.993,
+   "bytes": 12269
+  },
+  "sent-look-full": {
+   "file": "sent-look-full.mp3",
+   "kind": "sentence",
+   "text": "I look at the dog.",
+   "dur": 1.202,
+   "bytes": 14777
+  },
+  "sent-look-post": {
+   "file": "sent-look-post.mp3",
+   "kind": "sentence",
+   "text": "at the dog.",
+   "dur": 0.94,
+   "bytes": 11642
+  },
+  "sent-look-pre": {
+   "file": "sent-look-pre.mp3",
+   "kind": "sentence",
+   "text": "I",
+   "dur": 0.653,
+   "bytes": 8194
+  },
+  "sent-see-full": {
+   "file": "sent-see-full.mp3",
+   "kind": "sentence",
+   "text": "I see a bird.",
+   "dur": 1.306,
+   "bytes": 16030
+  },
+  "sent-see-post": {
+   "file": "sent-see-post.mp3",
+   "kind": "sentence",
+   "text": "a bird.",
+   "dur": 0.81,
+   "bytes": 10075
+  },
+  "sent-see-pre": {
+   "file": "sent-see-pre.mp3",
+   "kind": "sentence",
+   "text": "I",
+   "dur": 0.653,
+   "bytes": 8194
+  },
+  "sent-she-full": {
+   "file": "sent-she-full.mp3",
+   "kind": "sentence",
+   "text": "She can jump.",
+   "dur": 1.149,
+   "bytes": 14150
+  },
+  "sent-she-post": {
+   "file": "sent-she-post.mp3",
+   "kind": "sentence",
+   "text": "can jump.",
+   "dur": 0.94,
+   "bytes": 11642
+  },
+  "sight-look": {
+   "file": "sight-look.mp3",
+   "kind": "sight",
+   "text": "look",
+   "dur": 0.522,
+   "bytes": 6626
+  },
+  "sight-see": {
+   "file": "sight-see.mp3",
+   "kind": "sight",
+   "text": "see",
+   "dur": 0.705,
+   "bytes": 8821
+  },
+  "sight-she": {
+   "file": "sight-she.mp3",
+   "kind": "sight",
+   "text": "she",
+   "dur": 0.679,
+   "bytes": 8507
+  }
+ }
+}
