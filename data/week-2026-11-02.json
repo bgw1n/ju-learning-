@@ -1,0 +1,155 @@
+{
+ "id": "2026-11-02",
+ "subject": "spelling",
+ "title": "Spelling Words",
+ "label": "Week of Nov 2",
+ "source": "Savvas MyView Literacy Spelling, Grade 3, Unit 2 Lesson 2",
+ "syllableColors": [],
+ "patterns": [
+  {
+   "label": "ore / oar",
+   "letters": [
+    "ore",
+    "oar"
+   ],
+   "color": "#7b2fc9"
+  },
+  {
+   "label": "or",
+   "letters": [
+    "or"
+   ],
+   "color": "#1663d6"
+  },
+  {
+   "label": "ar",
+   "letters": [
+    "ar"
+   ],
+   "color": "#e06c00"
+  }
+ ],
+ "bonus": "Finally, the alarm rang in the morning.",
+ "words": [
+  {
+   "word": "morning",
+   "clue": "Start of the day",
+   "riddle": "The sun comes up in the ___.",
+   "sentence": "We eat breakfast every morning.",
+   "syllables": [
+    "mor",
+    "ning"
+   ]
+  },
+  {
+   "word": "format",
+   "clue": "How something is set up",
+   "riddle": "A book, a video, a poster: each is a different ___.",
+   "sentence": "The story came in a picture book format.",
+   "syllables": [
+    "for",
+    "mat"
+   ]
+  },
+  {
+   "word": "explore",
+   "clue": "Go find new places",
+   "riddle": "Pirates love to ___ new islands.",
+   "sentence": "We love to explore the woods.",
+   "syllables": [
+    "ex",
+    "plore"
+   ]
+  },
+  {
+   "word": "cardboard",
+   "clue": "Boxes are made of it",
+   "riddle": "Pokemon card boxes are made of ___.",
+   "sentence": "The cat sat in a cardboard box.",
+   "syllables": [
+    "card",
+    "board"
+   ]
+  },
+  {
+   "word": "soared",
+   "clue": "Flew up high",
+   "riddle": "The eagle ___ over the trees.",
+   "sentence": "The kite soared high in the sky.",
+   "syllables": [
+    "soared"
+   ]
+  },
+  {
+   "word": "darkness",
+   "clue": "No light at all",
+   "riddle": "Turn off the lights and you are in ___.",
+   "sentence": "The owl hunts in the darkness.",
+   "syllables": [
+    "dark",
+    "ness"
+   ]
+  },
+  {
+   "word": "alarm",
+   "clue": "Rings to wake you up",
+   "riddle": "Beep beep! Time to get up! It's the ___.",
+   "sentence": "The loud alarm woke me up.",
+   "syllables": [
+    "a",
+    "larm"
+   ]
+  },
+  {
+   "word": "adore",
+   "clue": "Love it a lot",
+   "riddle": "I ___ my puppy. I love her so much!",
+   "sentence": "I adore my fluffy puppy.",
+   "syllables": [
+    "a",
+    "dore"
+   ]
+  },
+  {
+   "word": "target",
+   "clue": "Aim for the middle",
+   "riddle": "The arrow hit the middle of the ___.",
+   "sentence": "The arrow hit the target.",
+   "syllables": [
+    "tar",
+    "get"
+   ]
+  },
+  {
+   "word": "absorb",
+   "clue": "Soak it up",
+   "riddle": "A sponge can ___ water.",
+   "sentence": "A towel will absorb the water.",
+   "syllables": [
+    "ab",
+    "sorb"
+   ]
+  },
+  {
+   "word": "finally",
+   "clue": "At last!",
+   "riddle": "We waited and waited. ___ it was my turn!",
+   "sentence": "After a long wait, it was finally my turn.",
+   "syllables": [
+    "fi",
+    "nal",
+    "ly"
+   ]
+  },
+  {
+   "word": "money",
+   "clue": "Tokens, coins, and cash",
+   "riddle": "You pay for things with ___.",
+   "sentence": "She saved her money for a toy.",
+   "syllables": [
+    "mon",
+    "ey"
+   ]
+  }
+ ]
+}

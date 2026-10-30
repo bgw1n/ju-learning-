@@ -1,5 +1,8 @@
 # Changelog
 
+## Spelling week of Nov 2
+- Added a new spelling week (12 words, r-controlled vowel patterns or / ore-oar / ar) with `add_week.py`. No code changes.
+
 ## v11
 - **Dorian's letter sounds and words are recordings now.** The browser voice read "mmm" as "em em em" and "tuh" as a word, so the 26 letter sounds and the 18 three-letter words are bundled audio clips in `audio/kinder/` (about 287 KB in all, no network needed beyond this site's own files). Made offline with Piper TTS, voice en_US-kristin-medium (public domain). Hear it again and the ear button play the clip, the turtle plays it at 75% speed, and Build a word's tiles and finished word play clips too. Instructions and sentences stay on the browser voice. If a clip is missing, fails to load or the browser blocks it, the browser voice says the fallback words instead.
 - `make_update_zip.sh` now always includes `audio/`. The generator and a listening page builder are in `tools/`.
