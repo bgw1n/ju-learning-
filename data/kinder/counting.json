@@ -1,14 +1,18 @@
 {
- "note": "Count to 20. A number is KNOWN after it was right first time with no hint in 2 different visits (counted as 'how many' and 'what comes next'; counting along is just practice). Tier 2 opens when 6 numbers of tier 1 are known, tier 3 when 3 numbers of tier 2 are known. 'dotsOnChoices' puts a row of dots (groups of 5) next to each number choice; set it to false to show only the numerals.",
+ "note": "Count to 30 (v14). A number is KNOWN after it was right first time with no hint in 2 different visits. v14: the next tier (level) opens only when he earns a star (3 good rounds in a row, see data/kinder/levels.json) or a grown-up opens it on the parent page. Pictures are scattered (not in rows); a tapped picture gets a check mark. 'dotsOnChoices' puts a row of dots (groups of 5) next to each number choice.",
  "rules": {
   "knownSessions": 2,
-  "roundItems": 4,
-  "maxRoundItems": 6,
+  "roundItems": 6,
+  "maxRoundItems": 8,
   "dotsOnChoices": true,
   "numbersToOpenNext": [
    6,
+   3,
+   3,
    3
-  ]
+  ],
+  "scatter": true,
+  "starLevels": true
  },
  "tiers": [
   {
@@ -22,6 +26,14 @@
   {
    "from": 16,
    "to": 20
+  },
+  {
+   "from": 21,
+   "to": 25
+  },
+  {
+   "from": 26,
+   "to": 30
   }
  ],
  "words": [
@@ -45,7 +57,17 @@
   "seventeen",
   "eighteen",
   "nineteen",
-  "twenty"
+  "twenty",
+  "twenty-one",
+  "twenty-two",
+  "twenty-three",
+  "twenty-four",
+  "twenty-five",
+  "twenty-six",
+  "twenty-seven",
+  "twenty-eight",
+  "twenty-nine",
+  "thirty"
  ],
  "objects": [
   {

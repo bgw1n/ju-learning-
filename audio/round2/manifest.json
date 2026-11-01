@@ -108,12 +108,82 @@
    "dur": 0.967,
    "bytes": 11955
   },
+  "num-21": {
+   "file": "num-21.mp3",
+   "kind": "number",
+   "text": "twenty-one",
+   "dur": 1.176,
+   "bytes": 14463
+  },
+  "num-22": {
+   "file": "num-22.mp3",
+   "kind": "number",
+   "text": "twenty-two",
+   "dur": 1.176,
+   "bytes": 14463
+  },
+  "num-23": {
+   "file": "num-23.mp3",
+   "kind": "number",
+   "text": "twenty-three",
+   "dur": 1.332,
+   "bytes": 16344
+  },
+  "num-24": {
+   "file": "num-24.mp3",
+   "kind": "number",
+   "text": "twenty-four",
+   "dur": 1.149,
+   "bytes": 14150
+  },
+  "num-25": {
+   "file": "num-25.mp3",
+   "kind": "number",
+   "text": "twenty-five",
+   "dur": 1.306,
+   "bytes": 16030
+  },
+  "num-26": {
+   "file": "num-26.mp3",
+   "kind": "number",
+   "text": "twenty-six",
+   "dur": 1.28,
+   "bytes": 15717
+  },
+  "num-27": {
+   "file": "num-27.mp3",
+   "kind": "number",
+   "text": "twenty-seven",
+   "dur": 1.332,
+   "bytes": 16344
+  },
+  "num-28": {
+   "file": "num-28.mp3",
+   "kind": "number",
+   "text": "twenty-eight",
+   "dur": 1.097,
+   "bytes": 13523
+  },
+  "num-29": {
+   "file": "num-29.mp3",
+   "kind": "number",
+   "text": "twenty-nine",
+   "dur": 1.306,
+   "bytes": 16030
+  },
   "num-3": {
    "file": "num-3.mp3",
    "kind": "number",
    "text": "three",
    "dur": 0.836,
    "bytes": 10388
+  },
+  "num-30": {
+   "file": "num-30.mp3",
+   "kind": "number",
+   "text": "thirty",
+   "dur": 0.784,
+   "bytes": 9761
   },
   "num-4": {
    "file": "num-4.mp3",

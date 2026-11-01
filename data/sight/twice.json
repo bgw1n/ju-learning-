@@ -1,0 +1,99 @@
+{
+ "note": "'Find it twice' (v14): a short sentence read aloud with a picture. He taps the target word every time it shows. Use only Dorian's confirmed sight words as targets; other words in a sentence are said by the voice and shown, but are never asked for.",
+ "sentences": [
+  {
+   "pic": "🐶",
+   "text": "I see the dog. I like the dog.",
+   "targets": [
+    "i",
+    "the"
+   ]
+  },
+  {
+   "pic": "🐱",
+   "text": "Look at me. Look at my cat.",
+   "targets": [
+    "look",
+    "at"
+   ]
+  },
+  {
+   "pic": "🍎",
+   "text": "We like the apple. We see the apple.",
+   "targets": [
+    "we",
+    "the"
+   ]
+  },
+  {
+   "pic": "🛁",
+   "text": "She is in the tub. She is with me.",
+   "targets": [
+    "she",
+    "is"
+   ]
+  },
+  {
+   "pic": "⚽",
+   "text": "It is my ball. I like it.",
+   "targets": [
+    "it"
+   ]
+  },
+  {
+   "pic": "🧁",
+   "text": "Make it with me. Make it with my dad.",
+   "targets": [
+    "make",
+    "with"
+   ]
+  },
+  {
+   "pic": "📦",
+   "text": "I am in the box. Look in the box.",
+   "targets": [
+    "in",
+    "the"
+   ]
+  },
+  {
+   "pic": "🐸",
+   "text": "See me jump. See me go.",
+   "targets": [
+    "see",
+    "me"
+   ]
+  },
+  {
+   "pic": "🦁",
+   "text": "I am big. I am strong.",
+   "targets": [
+    "am",
+    "i"
+   ]
+  },
+  {
+   "pic": "🎨",
+   "text": "We make art. We like it.",
+   "targets": [
+    "we"
+   ]
+  },
+  {
+   "pic": "👀",
+   "text": "Look at it. Look at the cat.",
+   "targets": [
+    "look",
+    "at"
+   ]
+  },
+  {
+   "pic": "👩",
+   "text": "She is with me. She is my mom.",
+   "targets": [
+    "she",
+    "is"
+   ]
+  }
+ ]
+}

@@ -11,7 +11,7 @@ The voice and its seeding are the same as for the letter sounds (see gen_kinder_
 What is made (the list comes from the site's own data, so a new week only needs data/sight/week-*.json):
   sight-<word>      each focus word of every week in data/sight/weeks.json, said in the carrier "Say the word, ..." and cut out (like the 3-letter words)
   sent-<word>-full  that word's sentence; sent-<word>-pre and sent-<word>-post: the part before and after the word (the game plays pre, "blank", post)
-  num-0 .. num-20, num-none   the number words (about 0.12 s of silence is added at the end so counting has a steady beat)
+  num-0 .. num-30 (v14: up to thirty), num-none   the number words (about 0.12 s of silence is added at the end so counting has a steady beat)
   misc-blank        the word "blank"
 Every clip is checked by two speech recognizers when the search libraries are available (the text must come back exactly). Listening is still up to a person.
 Output: audio/round2/<id>.mp3 and audio/round2/manifest.json (a clip that is not asked for any more is left alone)."""
@@ -21,7 +21,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); SITE = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 import gen_kinder_audio as g
 
-NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"]
+NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "twenty-one", "twenty-two", "twenty-three", "twenty-four", "twenty-five", "twenty-six", "twenty-seven", "twenty-eight", "twenty-nine", "thirty"]
 DIGITS = {str(i): w for i, w in enumerate(NUMBER_WORDS)}
 SEEDS = 6
 PAD_NUM = 0.12          # seconds of silence after a number word

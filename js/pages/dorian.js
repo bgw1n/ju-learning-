@@ -37,6 +37,43 @@
     document.querySelectorAll('#kid-kinder [data-act="letters"], #kid-kinder [data-act="build"]').forEach(a => { a.hidden = !lp.ready; });
   } catch (e) { document.querySelectorAll('#kid-kinder [data-act="letters"], #kid-kinder [data-act="build"]').forEach(a => { a.hidden = true; }); }
   nameButtons(document.getElementById('kid-kinder'));
+  nameButtons(document.getElementById('kid-warmup'));
+
+  /* v14: the daily warm-up gets a check mark once he has done it today (it still works as a button) */
+  let kin = null;
+  try {
+    kin = await JU.storage.profile('dorian').getKinder();
+    const today = new Date().toDateString();
+    const doneToday = kin.rounds.some(r => r.activity === 'warmup' && new Date(r.ts).toDateString() === today);
+    const w = document.querySelector('#kid-warmup [data-act="warmup"]');
+    w.dataset.state = doneToday ? 'done' : 'open';
+    if (doneToday) { w.classList.add('done'); w.appendChild(h('span', { class: 'kid-check', 'aria-hidden': 'true', 'data-check': '' }, '\u2705')); w.dataset.say = 'Warm-up. You did it today! Tap to play again.'; }
+  } catch (e) { /* the home still works without it */ }
+
+  /* v14: the star path. One row per game: its picture, then one stop per level (a star once earned, a glowing circle for where he is, with dots
+     for his good rounds in a row, a lock for what comes later). Pictures only; tapping a row says how he is doing. */
+  try {
+    const lv = await JU.kinder.loadLevels();
+    const ICON = { letters: '\uD83D\uDD24', build: '\uD83E\uDDF1', sight: '\uD83D\uDC40', count: '\uD83D\uDD22', add: '\uD83E\uDDEE' };
+    const NUMW = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+    const shown = a => { const b = document.querySelector('#kid-kinder [data-act="' + a + '"]'); return b && !b.hidden; };
+    const rows = JU.kinder.starPath(kin || { rounds: [], stars: [], levels: {} }, lv).filter(r => shown(r.activity) && (r.started || r.activity === 'sight' || r.activity === 'count' || r.activity === 'add'));
+    if (rows.length) {
+      const box = document.getElementById('kid-starpath');
+      box.replaceChildren(...rows.map(r => {
+        const stops = [];
+        for (let i = 1; i <= r.max + r.extra; i++) {
+          const earned = i < r.level || i > r.max, here = i === r.level && i <= r.max;      // (past the last level, each new star is one more star on the path)
+          stops.push(h('span', { class: 'k-stop ' + (earned ? 'earned' : here ? 'here' : 'later'), 'data-stop': i, 'aria-hidden': 'true' },
+            earned ? '\u2B50' : here ? h('span', { class: 'k-streak' }, ...Array.from({ length: r.need }, (_, j) => h('span', { class: 'k-sdot' + (j < r.streak ? ' on' : '') }))) : '\uD83D\uDD12'));
+        }
+        const said = r.title + '. You have ' + NUMW[Math.min(r.stars, 10)] + (r.stars === 1 ? ' star' : ' stars') + '!' + (r.streak ? ' Keep going!' : '');
+        return h('button', { class: 'k-pathrow', type: 'button', 'data-path': r.activity, 'data-stars': r.stars, 'data-level': r.level, 'aria-label': said, onclick: () => { try { JU.speech.say(said); } catch (e) { } } },
+          h('span', { class: 'k-pathicon', 'aria-hidden': 'true' }, ICON[r.activity]), h('span', { class: 'k-stops' }, stops));
+      }));
+      box.hidden = false;
+    }
+  } catch (e) { /* the home still works without the star path */ }
 
   /* money activities that the Family has finished: one big picture button each (locked ones are not shown to him) */
   try {
@@ -59,7 +96,7 @@
     const keys = Object.keys(st).sort((a, b) => st[a] < st[b] ? -1 : 1).slice(-12);
     if (keys.length) {
       const box = document.getElementById('kid-stickers');
-      box.replaceChildren(...keys.map(k => { const m = /^(letters|build|sight|count|add)-(\d+)$/.exec(k); return m ? h('span', { class: 'k-mini-sticker', 'data-sticker-key': k, 'aria-hidden': 'true' }, JU.kinderSticker(m[1], Number(m[2]))) : null; }));
+      box.replaceChildren(...keys.map(k => { const m = /^(letters|build|sight|count|add|warmup)-(\d+)$/.exec(k); return m ? h('span', { class: 'k-mini-sticker', 'data-sticker-key': k, 'aria-hidden': 'true' }, JU.kinderSticker(m[1], Number(m[2]))) : null; }));
       box.hidden = false;
     }
   } catch (e) { /* the home still works without the sticker row */ }

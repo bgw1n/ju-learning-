@@ -16,14 +16,18 @@
     <h1 class="kid-hello"><span id="kid-star" aria-hidden="true">&#128075;</span> Hi, Dorian!</h1>
     <div class="kid-stage" id="kid-stage" role="button" tabindex="0" aria-label="Hi Dorian">&#128640;</div>
     <p class="kid-soon">Tap a picture to play! <span aria-hidden="true">&#127880;</span></p>
+    <div id="kid-warmup" class="kid-money kid-warmup" role="group" aria-label="Warm-up">
+      <a class="kid-btn kid-act kid-warm" href="kinder.html?a=warmup" data-act="warmup" data-say="Warm-up! A little bit of everything." aria-label="Warm-up"><span class="kid-pic" aria-hidden="true">&#9728;&#65039;</span></a>
+    </div>
     <div id="kid-kinder" class="kid-money kid-kinder" role="group" aria-label="Letters, words and numbers">
       <a class="kid-btn kid-act" href="kinder.html?a=letters" data-act="letters" data-say="Letter sounds" aria-label="Letter sounds"><span class="kid-pic" aria-hidden="true">&#128292;</span></a>
       <a class="kid-btn kid-act" href="kinder.html?a=build" data-act="build" data-say="Build a word" aria-label="Build a word"><span class="kid-pic" aria-hidden="true">&#129521;</span></a>
       <a class="kid-btn kid-act" href="kinder.html?a=sight" data-act="sight" data-say="Sight words" aria-label="Sight words"><span class="kid-pic" aria-hidden="true">&#128064;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=count" data-act="count" data-say="Count to twenty" aria-label="Count to twenty"><span class="kid-pic" aria-hidden="true">&#128290;</span></a>
+      <a class="kid-btn kid-act" href="kinder.html?a=count" data-act="count" data-say="Count to thirty" aria-label="Count to thirty"><span class="kid-pic" aria-hidden="true">&#128290;</span></a>
       <a class="kid-btn kid-act" href="kinder.html?a=add" data-act="add" data-say="Add it up" aria-label="Add it up"><span class="kid-pic" aria-hidden="true">&#129518;</span></a>
     </div>
     <div id="kid-money" class="kid-money" role="group" aria-label="Money activities" hidden></div>
+    <div id="kid-starpath" class="k-starpath" role="group" aria-label="Your star path" hidden></div>
     <div id="kid-stickers" class="kid-stickers" role="group" aria-label="Your stickers" hidden></div>
     <div class="kid-buttons">
       <button type="button" class="kid-btn" id="hear" aria-label="Hear it again">
@@ -41,6 +45,7 @@
   <script src="js/money.js"></script>
   <script src="js/kinder.js"></script>
   <script src="js/kinder/play.js"></script>
+  <script src="js/kinder/levels.js"></script>
   <script src="js/pages/dorian.js"></script>
 </body>
 </html>

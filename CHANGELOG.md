@@ -1,5 +1,14 @@
 # Changelog
 
+## v14 (local, not published)
+- **Sight words are harder:** 4 word cards instead of 3, and the wrong cards look like the right word (me/my, it/is, at/am, see/she). Only Dorian's 16 confirmed words are used. New **Find it twice**: a picture and a short sentence read aloud; he taps the word every time it shows (each one found gets a check mark). Sentences are in `data/sight/twice.json`.
+- **Count to 30:** two new levels (21-25, 26-30, with recorded number clips), pictures scattered instead of in rows, a check mark on each tapped picture. The total is still never said or shown before he answers.
+- **Add it up within 10, with + and = signs** (the voice says "plus" and "equals" after he answers). The last two levels are **how many are left**: some pictures fly away, he counts the rest. No minus sign.
+- **Slower pacing:** Sight words, counting and adding have 6 questions a round. **3 good rounds in a row** (at least 80% right first try) earn a **big star**, and a star opens the next level. A grown-up can open the next level on the parent page (Levels and stars). Tapping before the question has been said gently says "Listen first" and does not count.
+- **Daily warm-up** (sun button, first on his home): 5 mixed questions (a letter sound once the letters are recorded, sight words, counting). It gets a check mark once done today and never counts toward a star.
+- **Star path** on his home: one row per game, a star for each level passed, a glowing circle where he is (with dots for good rounds in a row), locks after.
+- His saved progress keeps working: the first v14 visit to each game starts at the level the old rules had already opened. **Backup file version 7** adds his levels and stars; versions 1 to 6 still load and never lower a level.
+
 ## v13.3
 - **Dorian's sight words: the 13 he already knows are in.** I, am, the, like, is, me, at, make, my, we, it, with, in (from his weekly planner) are a "Learned already" week before Oct 26, so they are asked and reviewed in Sight words alongside she, see, look (still this week's focus). "I" always shows as a capital. They came out of the unconfirmed wrong-choice list, which now only has to, a, have, he, for. Each has a site clip (the clips for "am" and "the" did not pass the speech check, so recording them yourself matters most).
 - **Build a word: sat, mat, pat and sap** are new three-letter words (tap was already there), with site clips.

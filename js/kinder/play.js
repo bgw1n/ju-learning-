@@ -20,7 +20,7 @@
   const games = JU.kinderGames = JU.kinderGames || {};
 
   /* the sticker picture for round n of an activity (the same every time, so it can be shown again later) */
-  const STICKER_START = { letters: 0, build: 6, sight: 3, count: 9, add: 1 };
+  const STICKER_START = { letters: 0, build: 6, sight: 3, count: 9, add: 1, warmup: 5 };
   JU.kinderSticker = (activity, n) => K.STICKERS[(n - 1 + (STICKER_START[activity] || 0)) % K.STICKERS.length];
 
   JU.kinderPlay = async function (activity, profileId, mount, opts) {
@@ -35,6 +35,18 @@
     const session = JU.ui.uid();
     const own = game.load ? await game.load() : {};
     const env = Object.assign({ letters, cvc, answers, session }, own);
+    /* v14: the game's level. The first v14 visit seeds it from his saved answers (the old rule), so nothing already open closes. */
+    const lv = await K.loadLevels();
+    const leveled = K.LEVELED.indexOf(activity) >= 0;
+    let kstate = saved;
+    if (leveled) {
+      if (!(saved.levels && saved.levels[activity])) {
+        const seed = Math.max(1, Math.min(K.maxLevel(activity, lv), K.legacyLevel(activity, env)));
+        if (!preview) { await store.setKinderLevel(activity, seed); kstate = await store.getKinder(); } else kstate = Object.assign({}, saved, { levels: Object.assign({}, saved.levels, { [activity]: seed }) });
+      }
+      env.level = K.levelOf(kstate, activity);
+    }
+    env.lv = lv;
     const rules = game.rules ? game.rules(env) : (activity === 'letters' ? letters : cvc).rules;
     const noStore = { addHint: async () => { } };
     const ctx = { game: { id: 'kinder-' + activity, hintGate: true }, week: { id: 'kinder' }, subject: 'kinder', session, hintNoun: game.hintNoun || (activity === 'letters' ? 'picture' : 'word'), kid: true,
@@ -115,7 +127,8 @@
           o = o || {};
           const hinted = !!(gate && gate.used());
           const wrongs = o.wrongs || 0;
-          const rec = Object.assign({ session, round: round.no, activity, item: item.id, correct: wrongs === 0 && !hinted, tries: wrongs + 1, hinted }, o.extra || {});
+          const rec = Object.assign({ session, round: round.no, activity: item.activity || activity, item: item.id, correct: wrongs === 0 && !hinted, tries: wrongs + 1, hinted }, o.extra || {});
+          if (activity === 'warmup') rec.warmup = true;          // (v14: a warm-up answer, saved under its own game)
           if (!preview) { const r = await store.addKinderAnswer(rec); answers.push(r); } else answers.push(Object.assign({ ts: new Date().toISOString(), id: JU.ui.uid() }, rec));
           round.played++; if (rec.correct) round.clean++;
           /* a missed item comes back once, two screens later (at most 2 comebacks, so a round is 4 to 6 items) */
@@ -132,6 +145,16 @@
           JU.moneyUI.reveal(feedback, next);
         }
       };
+      /* v14: listen first. While the question is still being said, a tap on an answer (a card, a picture, a word) does not count:
+         the voice gently says "Listen first" and says the question again. (Tests turn this off with window.__JU_LISTEN_FIRST = false.) */
+      let talking = false, talkToken = 0;
+      let rootEl = null;
+      const sayPrompt = (f, pre) => { const my = ++talkToken; talking = true; if (rootEl) rootEl.setAttribute('data-talking', '1');
+        const done = () => { if (my === talkToken) { talking = false; if (rootEl) rootEl.setAttribute('data-talking', '0'); } };
+        const p = Promise.resolve(say((pre || '') + item.text, f)).then(done, done);
+        if (!ctl.firstPrompt) ctl.firstPrompt = p;
+        return p; };
+      ctl.sayPrompt = sayPrompt;
       const nodes = game.draw(item, ctl);
       const root = frame(number, item.id, [
         homeLink(),
@@ -139,9 +162,24 @@
         ...nodes, gate ? gate.el : null, feedback,
         h('div', { class: 'lesson-nav solo-nav' }, ask.el, next)], ask);
       root.setAttribute('data-comeback', item.comeback ? '1' : '0');
+      rootEl = root; root.setAttribute('data-talking', talking ? '1' : '0');
+      if (item.warmupOf) root.setAttribute('data-warmup-of', item.warmupOf);
+      root.addEventListener('click', e => {
+        if (!talking || window.__JU_LISTEN_FIRST === false || finished) return;
+        if ((Number(root.getAttribute('data-listen-first')) || 0) >= 3) return;      // (never more than 3 nudges on one screen, in case the voice gets stuck)
+        const t = e.target.closest('[data-opt], [data-obj], [data-tile], [data-word-tile]');
+        if (!t || !root.contains(t)) return;
+        e.preventDefault(); e.stopImmediatePropagation(); e.stopPropagation();
+        root.setAttribute('data-listen-first', String((Number(root.getAttribute('data-listen-first')) || 0) + 1));
+        feedback.textContent = 'Listen first.';
+        JU.moneyUI.stop(); sayPrompt(SPEED, 'Listen first. ');
+      }, true);
+      root.querySelectorAll('[data-hear]').forEach(b => { b.onclick = () => sayPrompt(SPEED); });
+      root.querySelectorAll('[data-slower]').forEach(b => { b.onclick = () => sayPrompt(SLOW); });
       mount.replaceChildren(root);
       const f = root.querySelector('.k-focus'); if (f) f.focus({ preventScroll: true });
-      say(item.text);
+      sayPrompt(SPEED);
+      if (game.afterDraw) game.afterDraw(item, root, ctl);
     }
 
     /* ---- end of a round: save the round, give the sticker ---- */
@@ -149,19 +187,34 @@
     async function drawDone() {
       JU.moneyUI.stop();
       const number = queue.length + 2;
-      let isNew = false;
+      let isNew = false, star = null;
       const pic = JU.kinderSticker(activity, round.no);
       if (!preview && !doneSaved) {
         doneSaved = true;
-        await store.addKinderRound({ session, activity, items: round.played, clean: round.clean });
+        const rrec = { session, activity, items: round.played, clean: round.clean };
+        if (leveled) { rrec.level = env.level; rrec.good = K.roundGood(rrec, lv); }
+        if (activity === 'warmup') rrec.warmup = true;
+        await store.addKinderRound(rrec);
         isNew = await store.earnSticker('kinder', activity + '-' + round.no);
         roundsDone++;
+        /* v14: a star after enough good rounds in a row at this level; it opens the next level */
+        if (leveled) {
+          const k = await store.getKinder();
+          if (K.streak(k, activity, env.level, lv) >= lv.roundsForStar) {
+            const from = env.level, max = K.maxLevel(activity, lv);
+            await store.addKinderStar({ activity, level: from, by: 'rounds' });
+            if (from < max) { await store.setKinderLevel(activity, from + 1); env.level = from + 1; }
+            star = { level: from, opened: from < max };
+          }
+        }
       }
-      const msg = 'You did it! ' + (preview ? 'This was a preview, so nothing was saved.' : 'You earned a sticker!');
+      const good = leveled && K.roundGood({ items: round.played, clean: round.clean }, lv);
+      const msg = 'You did it! ' + (preview ? 'This was a preview, so nothing was saved.' : star ? (star.opened ? 'You earned a big star! A new level is open!' : 'You earned a big star!') : 'You earned a sticker!' + (good ? ' Great listening!' : ''));
       const ask = askFor(number, null);
       const again = h('button', { class: 'btn primary kid-next k-again', type: 'button', 'data-again': '', 'aria-label': 'Play one more round', onclick: () => { doneSaved = false; newRound(); go(0); } }, h('span', { 'aria-hidden': 'true' }, AGAIN));
       const root = frame(number, null, [
         h('div', { class: 'sticker-pop k-sticker', 'aria-hidden': 'true', 'data-sticker': pic }, pic),
+        star ? h('div', { class: 'k-bigstar', 'aria-hidden': 'true', 'data-star': star.level, 'data-opened': star.opened ? '1' : '0' }, '\u2B50') : null,
         h('h2', { class: 'lesson-title', tabindex: '-1', 'data-done-title': '' }, 'You did it!'),
         preview ? h('p', { class: 'note preview-note' }, 'Grown-up preview: nothing was saved.') : null,
         h('div', { class: 'row center k-donebtns' }, again, h('a', { class: 'btn primary kid-next k-gohome', href: home, 'data-home': '', 'aria-label': 'Go home' }, h('span', { 'aria-hidden': 'true' }, HOME))),

@@ -609,3 +609,51 @@ body.kid .k-numopt { min-height: 150px; }
   .rec-btns { grid-column: 1 / -1; }
   .rec-btns .btn { flex: 1; min-height: 44px; }
 }
+
+/* ---------- v14: Dorian's harder games ---------- */
+body.kid .k-opts.k-opts4, .k-opts.k-opts4 { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 960px; }
+@media (max-width: 600px) { body.kid .k-opts.k-opts4, .k-opts.k-opts4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } body.kid .k-opts4 .k-wordcard { min-height: 110px; } }
+/* scattered pictures (Count to 30) */
+.k-objs.k-scatter { display: block; position: relative; width: 100%; max-width: 520px; margin: 0.4rem auto; }
+.k-scatter .k-obj { position: absolute; width: 58px; height: 58px; font-size: 2.1rem; border-radius: 16px; transform: translate(-50%, -50%); }
+.k-scatter .k-obj:active { transform: translate(-50%, -50%) scale(0.95); }
+@media (max-width: 600px) { .k-scatter .k-obj { width: 52px; height: 52px; font-size: 1.85rem; } }
+.k-badge { font-size: 1.2rem; }
+/* + and = */
+.k-sign { font-size: 2.8rem; font-weight: 800; color: var(--teal-dark); min-width: 1.2em; text-align: center; }
+.k-q { color: #b06a00; }
+/* take-away: pictures fly away */
+.k-obj.k-fly { animation: k-flyaway 1.1s ease-in forwards; pointer-events: none; }
+@keyframes k-flyaway { 0% { transform: none; opacity: 1; } 30% { transform: translateY(-12px) rotate(-8deg); } 100% { transform: translate(60px, -260px) rotate(25deg) scale(0.5); opacity: 0; visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .k-obj.k-fly { animation: none; opacity: 0; visibility: hidden; } }
+/* Find it twice */
+.k-twice { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; max-width: 900px; margin: 0.6rem auto; }
+.k-twice:focus { outline: none; }
+.k-wtile { font: inherit; position: relative; font-size: 2.1rem; font-weight: 700; padding: 0.5rem 0.9rem; min-width: 70px; min-height: 74px; border-radius: 18px; border: 4px solid #cfe3f3; background: #fff; cursor: pointer; }
+.k-wtile.found { background: var(--leaf); border-color: #3f9c5a; }
+.k-wtile.tried { opacity: 0.45; }
+.k-wcheck:empty { display: none; }
+.k-wcheck { position: absolute; top: -10px; right: -10px; width: 30px; height: 30px; border-radius: 15px; background: #3f9c5a; color: #fff; font-size: 1.1rem; line-height: 30px; text-align: center; }
+@media (max-width: 600px) { .k-wtile { font-size: 1.6rem; min-width: 56px; min-height: 62px; padding: 0.35rem 0.6rem; } }
+/* the big star at the end of a round */
+.k-bigstar { font-size: 5rem; text-align: center; animation: k-starpop 0.9s ease-out; }
+@keyframes k-starpop { 0% { transform: scale(0.2) rotate(-40deg); } 70% { transform: scale(1.25) rotate(8deg); } 100% { transform: none; } }
+/* the warm-up button and the star path on his home */
+.kid-warm { border-color: #f5c242; box-shadow: 0 6px 0 #e0a800; background: #fff8dc; }
+.kid-warmup { margin-top: 0.4rem; }
+.k-starpath { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 640px; margin: 1rem auto 0; }
+.k-starpath[hidden] { display: none; }
+.k-pathrow { font: inherit; display: flex; align-items: center; gap: 0.6rem; background: #fff; border: 3px solid #f0d9b5; border-radius: 22px; padding: 0.4rem 0.7rem; cursor: pointer; }
+.k-pathicon { font-size: 2.2rem; }
+.k-stops { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; position: relative; }
+.k-stop { width: 42px; height: 42px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.6rem; background: #f3f3f3; }
+.k-stop.later { font-size: 1rem; opacity: 0.55; }
+.k-stop.earned { background: #fff3c4; }
+.k-stop.here { background: #e7f6ec; border: 3px solid #3f9c5a; box-shadow: 0 0 0 4px rgba(63, 156, 90, 0.2); }
+.k-streak { display: inline-flex; gap: 3px; }
+.k-sdot { width: 8px; height: 8px; border-radius: 50%; background: #c9d9cf; }
+.k-sdot.on { background: #3f9c5a; }
+@media (max-width: 600px) { .k-stop { width: 34px; height: 34px; font-size: 1.25rem; } .k-pathicon { font-size: 1.8rem; } }
+.k-eqq { white-space: nowrap; display: inline-flex; gap: 0.4rem; align-items: center; }
+.k-screen [data-kind], .k-screen .k-take { width: 100%; align-self: stretch; }
+.k-objs.k-scatter { width: min(520px, 100%); }

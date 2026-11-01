@@ -49,13 +49,19 @@
     return m;
   }
 
-  const KINDER_ACTIVITIES = ['letters', 'build', 'sight', 'count', 'add'];       // (v12: round 2 adds sight, count and add; the backup version stays 5)
+  const KINDER_ACTIVITIES = ['letters', 'build', 'sight', 'count', 'add', 'warmup'];       // (v14: 'warmup' is the daily mixed warm-up round)
+  const KINDER_LEVELED = ['letters', 'build', 'sight', 'count', 'add'];       // (v12: round 2 adds sight, count and add; the backup version stays 5)
   function kinderClean(v) {
     const k = { answers: [], rounds: [] };
     if (isObj(v)) {
       if (Array.isArray(v.answers)) k.answers = v.answers.filter(r => r && typeof r === 'object');
       if (Array.isArray(v.rounds)) k.rounds = v.rounds.filter(r => r && typeof r === 'object');
+      /* v14: levels { activity: number } and stars [ { id, ts, activity, level, by: 'rounds' | 'grownup' } ]. Older saved data has neither (it is seeded on the first v14 visit). */
+      if (isObj(v.levels)) { k.levels = {}; KINDER_LEVELED.forEach(a => { const n = Number(v.levels[a]); if (isFinite(n) && n >= 1) k.levels[a] = Math.floor(n); }); }
+      if (Array.isArray(v.stars)) k.stars = v.stars.filter(r => r && typeof r === 'object' && typeof r.activity === 'string');
     }
+    if (!k.levels) k.levels = {};
+    if (!k.stars) k.stars = [];
     return k;
   }
 
@@ -190,6 +196,21 @@
         write(MONEY_KEY, m);
         return m;
       },
+      /* v14: set a game's level (it never goes down here; a grown-up's "open next level" and an earned star both raise it) */
+      async setKinderLevel(activity, level) {
+        const k = kinderClean(read(KINDER_KEY, null));
+        if (KINDER_LEVELED.indexOf(activity) < 0) return k.levels;
+        k.levels[activity] = Math.max(k.levels[activity] || 1, Math.floor(level));
+        write(KINDER_KEY, k);
+        return k.levels;
+      },
+      async addKinderStar(rec) {
+        const k = kinderClean(read(KINDER_KEY, null));
+        const r = Object.assign({ id: JU.ui.uid(), ts: new Date().toISOString() }, rec);
+        k.stars.push(r);
+        write(KINDER_KEY, k);
+        return r;
+      },
       /* Merge from a backup without duplicating (same id, or same session + lesson + question + time; the earliest finish time is kept). Returns { added, skipped }. */
       async importMoney(obj) {
         const m = moneyClean(read(MONEY_KEY, null)), inc = moneyClean(obj);
@@ -249,7 +270,16 @@
           const rec = Object.assign({}, r, { id: r.id || JU.ui.uid() });
           k.rounds.push(rec); rids.add(rec.id); rkeys.add(rkey(rec)); added++;
         });
-        if (added) { k.answers.sort((a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0); k.rounds.sort((a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0); write(KINDER_KEY, k); }
+        /* v14: stars (same id or same activity + level + time is a repeat) and levels (the higher one wins). Files before version 7 have neither. */
+        const sids = new Set(k.stars.map(r => r.id)), skey = r => [r.activity, r.level, r.ts].join('|'), skeys = new Set(k.stars.map(skey));
+        (Array.isArray(src.stars) ? src.stars : []).forEach(r => {
+          if (!r || typeof r.ts !== 'string' || KINDER_LEVELED.indexOf(r.activity) < 0) { skipped++; return; }
+          if ((r.id && sids.has(r.id)) || skeys.has(skey(r))) { skipped++; return; }
+          const rec = Object.assign({}, r, { id: r.id || JU.ui.uid() }); k.stars.push(rec); sids.add(rec.id); skeys.add(skey(rec)); added++;
+        });
+        let raised = false;
+        if (isObj(src.levels)) KINDER_LEVELED.forEach(a => { const n = Math.floor(Number(src.levels[a])); if (isFinite(n) && n > (k.levels[a] || 0)) { k.levels[a] = n; raised = true; } });
+        if (added || raised) { k.stars.sort((a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0); k.answers.sort((a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0); k.rounds.sort((a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0); write(KINDER_KEY, k); }
         return { added, skipped };
       },
       /* Clears this profile's kindergarten answers and rounds, plus its kindergarten stickers and kindergarten hint log. Nothing else. */
@@ -319,7 +349,8 @@
     async getLastBackup() { const v = read(BACKUP_KEY, null); return typeof v === 'string' && !isNaN(new Date(v)) ? v : null; },
     async setLastBackup(iso) { write(BACKUP_KEY, iso || new Date().toISOString()); return iso; },
 
-    /* ---- the backup file (version 6; versions 1 to 5 still load) ----
+    /* ---- the backup file (version 7; versions 1 to 6 still load) ----
+       Version 7 (v14) adds "levels" and "stars" inside profiles.dorian.kinder (Dorian's game levels and the stars that opened them).
        Version 6 adds "recordings": the grown-up's own recordings of Dorian's sounds (js/recordings.js), each
        { id, type, ts, dur, start, end, gain, data (base64) }. It is left out when the page has no recordings module or opts.recordings is false.
        Version 5 adds "kinder" (Dorian's kindergarten answers and rounds) under profiles.dorian.
@@ -330,7 +361,7 @@
          profiles: { dorian: { results, stickers, hints, flags, money, kinder }, family: { results, stickers, hints, lessons } } } */
     async exportAll(opts) {
       opts = opts || {};
-      const out = { app: 'ju-learning', version: 6, exportedAt: new Date().toISOString(),
+      const out = { app: 'ju-learning', version: 7, exportedAt: new Date().toISOString(),
         results: await stores.julianna.getResults(), stickers: await stores.julianna.getStickers(), hints: await stores.julianna.getHints(),
         flags: await stores.julianna.getFlags(), money: await stores.julianna.getMoney(),
         profiles: {} };

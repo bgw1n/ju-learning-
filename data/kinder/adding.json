@@ -1,15 +1,21 @@
 {
- "note": "Add it up (adding within 5). A fact is KNOWN after it was right first time with no hint in 2 different visits. Tier 2 opens when 3 facts of tier 1 are known, tier 3 when 3 of tier 2, the 'none more' tier when 4 of tier 3. Both parts are 1 or more and the total is 5 at most (10 facts), then 'and none more'. 'showSigns' is false: the screen shows the word 'and' and the voice says 'makes', with no plus or equals signs (set it to true only when his school writes them).",
+ "note": "Add it up (v14: adding within 10, then take-away). The screen shows the picture groups with + and = signs between them (no numbers until he answers). The voice says 'plus' and 'makes'. Tiers 1-4 are the v12 facts (within 5, then 'and none more'); tiers 5-8 go up to 10; tiers 9-10 are 'how many are left' take-away pictures (some fly away, no minus sign). v14: the next tier opens only after a star (data/kinder/levels.json) or when a grown-up opens it.",
  "rules": {
   "knownSessions": 2,
-  "roundItems": 4,
-  "maxRoundItems": 6,
-  "showSigns": false,
+  "roundItems": 6,
+  "maxRoundItems": 8,
+  "showSigns": true,
   "factsToOpenNext": [
    3,
    3,
+   4,
+   4,
+   4,
+   4,
+   4,
    4
-  ]
+  ],
+  "starLevels": true
  },
  "tiers": [
   {
@@ -27,6 +33,30 @@
   {
    "zero": true,
    "label": "and none more"
+  },
+  {
+   "total": 6,
+   "label": "total 6"
+  },
+  {
+   "total": 7,
+   "label": "total 7"
+  },
+  {
+   "total": 8,
+   "label": "total 8"
+  },
+  {
+   "total": 10,
+   "label": "totals 9 and 10"
+  },
+  {
+   "take": 5,
+   "label": "how many are left (from 5 or less)"
+  },
+  {
+   "take": 10,
+   "label": "how many are left (from 6 to 10)"
   }
  ],
  "facts": [
@@ -104,6 +134,361 @@
    "a": 5,
    "b": 0,
    "tier": 4
+  },
+  {
+   "a": 1,
+   "b": 5,
+   "tier": 5
+  },
+  {
+   "a": 2,
+   "b": 4,
+   "tier": 5
+  },
+  {
+   "a": 3,
+   "b": 3,
+   "tier": 5
+  },
+  {
+   "a": 4,
+   "b": 2,
+   "tier": 5
+  },
+  {
+   "a": 5,
+   "b": 1,
+   "tier": 5
+  },
+  {
+   "a": 1,
+   "b": 6,
+   "tier": 6
+  },
+  {
+   "a": 2,
+   "b": 5,
+   "tier": 6
+  },
+  {
+   "a": 3,
+   "b": 4,
+   "tier": 6
+  },
+  {
+   "a": 4,
+   "b": 3,
+   "tier": 6
+  },
+  {
+   "a": 5,
+   "b": 2,
+   "tier": 6
+  },
+  {
+   "a": 6,
+   "b": 1,
+   "tier": 6
+  },
+  {
+   "a": 1,
+   "b": 7,
+   "tier": 7
+  },
+  {
+   "a": 2,
+   "b": 6,
+   "tier": 7
+  },
+  {
+   "a": 3,
+   "b": 5,
+   "tier": 7
+  },
+  {
+   "a": 4,
+   "b": 4,
+   "tier": 7
+  },
+  {
+   "a": 5,
+   "b": 3,
+   "tier": 7
+  },
+  {
+   "a": 6,
+   "b": 2,
+   "tier": 7
+  },
+  {
+   "a": 7,
+   "b": 1,
+   "tier": 7
+  },
+  {
+   "a": 1,
+   "b": 8,
+   "tier": 8
+  },
+  {
+   "a": 2,
+   "b": 7,
+   "tier": 8
+  },
+  {
+   "a": 3,
+   "b": 6,
+   "tier": 8
+  },
+  {
+   "a": 4,
+   "b": 5,
+   "tier": 8
+  },
+  {
+   "a": 5,
+   "b": 4,
+   "tier": 8
+  },
+  {
+   "a": 6,
+   "b": 3,
+   "tier": 8
+  },
+  {
+   "a": 7,
+   "b": 2,
+   "tier": 8
+  },
+  {
+   "a": 8,
+   "b": 1,
+   "tier": 8
+  },
+  {
+   "a": 1,
+   "b": 9,
+   "tier": 8
+  },
+  {
+   "a": 2,
+   "b": 8,
+   "tier": 8
+  },
+  {
+   "a": 3,
+   "b": 7,
+   "tier": 8
+  },
+  {
+   "a": 4,
+   "b": 6,
+   "tier": 8
+  },
+  {
+   "a": 5,
+   "b": 5,
+   "tier": 8
+  },
+  {
+   "a": 6,
+   "b": 4,
+   "tier": 8
+  },
+  {
+   "a": 7,
+   "b": 3,
+   "tier": 8
+  },
+  {
+   "a": 8,
+   "b": 2,
+   "tier": 8
+  },
+  {
+   "a": 9,
+   "b": 1,
+   "tier": 8
+  },
+  {
+   "a": 2,
+   "b": 1,
+   "tier": 9,
+   "take": true
+  },
+  {
+   "a": 3,
+   "b": 1,
+   "tier": 9,
+   "take": true
+  },
+  {
+   "a": 3,
+   "b": 2,
+   "tier": 9,
+   "take": true
+  },
+  {
+   "a": 4,
+   "b": 1,
+   "tier": 9,
+   "take": true
+  },
+  {
+   "a": 4,
+   "b": 2,
+   "tier": 9,
+   "take": true
+  },
+  {
+   "a": 4,
+   "b": 3,
+   "tier": 9,
+   "take": true
+  },
+  {
+   "a": 5,
+   "b": 1,
+   "tier": 9,
+   "take": true
+  },
+  {
+   "a": 5,
+   "b": 2,
+   "tier": 9,
+   "take": true
+  },
+  {
+   "a": 5,
+   "b": 3,
+   "tier": 9,
+   "take": true
+  },
+  {
+   "a": 5,
+   "b": 4,
+   "tier": 9,
+   "take": true
+  },
+  {
+   "a": 6,
+   "b": 1,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 6,
+   "b": 2,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 6,
+   "b": 3,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 6,
+   "b": 4,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 7,
+   "b": 1,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 7,
+   "b": 2,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 7,
+   "b": 3,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 7,
+   "b": 4,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 8,
+   "b": 1,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 8,
+   "b": 2,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 8,
+   "b": 3,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 8,
+   "b": 4,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 9,
+   "b": 1,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 9,
+   "b": 2,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 9,
+   "b": 3,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 9,
+   "b": 4,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 10,
+   "b": 1,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 10,
+   "b": 2,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 10,
+   "b": 3,
+   "tier": 10,
+   "take": true
+  },
+  {
+   "a": 10,
+   "b": 4,
+   "tier": 10,
+   "take": true
   }
  ],
  "words": [
@@ -112,7 +497,12 @@
   "two",
   "three",
   "four",
-  "five"
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+  "ten"
  ],
  "objects": [
   {

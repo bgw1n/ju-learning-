@@ -146,15 +146,20 @@
       </section>
       <section class="card kinder-card" id="kinder-dorian" aria-labelledby="kinder-dorian-h">
         <h2 id="kinder-dorian-h">Kindergarten</h2>
-        <p class="note">Letter sounds, Build a word, Sight words, Count to 20 and Add it up, on Dorian&rsquo;s own login. A letter counts as known after it was right on the first try, with no hint, in 3 different sessions. A word, a number or an adding fact counts as known after 2. Everything here is saved under Dorian&rsquo;s own profile.</p>
+        <p class="note">Warm-up, Letter sounds, Build a word, Sight words, Count to 30 and Add it up, on Dorian&rsquo;s own login. A letter counts as known after it was right on the first try, with no hint, in 3 different sessions. A word, a number or an adding fact counts as known after 2. Everything here is saved under Dorian&rsquo;s own profile.</p>
         <div class="row">
           <a class="btn small" id="kinder-preview-letters" href="kinder.html?a=letters">Preview Letter sounds</a>
           <a class="btn small" id="kinder-preview-build" href="kinder.html?a=build">Preview Build a word</a>
           <a class="btn small" id="kinder-preview-sight" href="kinder.html?a=sight">Preview Sight words</a>
-          <a class="btn small" id="kinder-preview-count" href="kinder.html?a=count">Preview Count to 20</a>
+          <a class="btn small" id="kinder-preview-warmup" href="kinder.html?a=warmup">Preview Warm-up</a>
+          <a class="btn small" id="kinder-preview-count" href="kinder.html?a=count">Preview Count to 30</a>
           <a class="btn small" id="kinder-preview-add" href="kinder.html?a=add">Preview Add it up</a>
         </div>
         <div class="cards" data-kinder-summary></div>
+        <h3>Levels and stars</h3>
+        <p class="note" data-kinder-levels-note></p>
+        <div class="tablewrap"><table data-kinder-levels></table></div>
+        <p class="note" data-kinder-levels-msg role="status" aria-live="polite"></p>
         <p class="lead" data-kinder-empty>Nothing yet. When Dorian plays one of the kindergarten games, his progress will show up here.</p>
         <h3>Letters</h3>
         <div class="tablewrap"><table data-kinder-letters></table></div>
@@ -163,10 +168,10 @@
         <h3>Sight words</h3>
         <p class="note" data-kinder-sight-note></p>
         <div class="tablewrap"><table data-kinder-sight></table></div>
-        <h3>Counting to 20</h3>
+        <h3>Counting to 30</h3>
         <p class="note" data-kinder-count-note></p>
-        <ol class="k-strip" data-kinder-count aria-label="Numbers 1 to 20, colored by how well Dorian knows them"></ol>
-        <h3>Adding within 5</h3>
+        <ol class="k-strip" data-kinder-count aria-label="Numbers 1 to 30, colored by how well Dorian knows them"></ol>
+        <h3>Adding within 10, and how many are left</h3>
         <p class="note" data-kinder-add-note></p>
         <div class="tablewrap"><table data-kinder-add></table></div>
         <p class="hints-readout" data-kinder-note></p>
@@ -231,6 +236,7 @@
   <script src="js/money.js"></script>
   <script src="js/kinder.js"></script>
   <script src="js/kinder/round2.js"></script>
+  <script src="js/kinder/levels.js"></script>
   <script src="js/subjects.js"></script>
   <script src="js/runner.js"></script>
   <script src="js/spelling/unscramble.js"></script>

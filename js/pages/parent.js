@@ -405,7 +405,21 @@
     const store = JU.storage.profile('dorian');
     const [letters, cvc, k, hints, sight, counting, adding] = await Promise.all([JU.kinder.loadLetters(), JU.kinder.loadWords(), store.getKinder(), store.getHints(), JU.kinder.loadSight(), JU.kinder.loadCounting(), JU.kinder.loadAdding()]);
     const sm = JU.kinder.summary({ answers: k.answers, rounds: k.rounds, hints }, letters, cvc);
-    const sg = JU.kinder.sightSummary(k.answers, sight), ct = JU.kinder.countSummary(k.answers, counting), ad = JU.kinder.addSummary(k.answers, adding);
+    const lv = await JU.kinder.loadLevels();
+    const env = { answers: k.answers, cvc, sight, counting, adding };
+    /* v14: a game he has not opened since v14 shows the level its first v14 visit will start at (the old rule) */
+    const levelOf = a => (k.levels && k.levels[a]) || Math.max(1, Math.min(JU.kinder.maxLevel(a, lv), JU.kinder.legacyLevel(a, env)));
+    const sg = JU.kinder.sightSummary(k.answers, sight), ct = JU.kinder.countSummary(k.answers, counting, levelOf('count')), ad = JU.kinder.addSummary(k.answers, adding, levelOf('add'));
+    const path = JU.kinder.starPath(Object.assign({}, k, { levels: Object.assign({}, ...JU.kinder.LEVELED.map(a => ({ [a]: levelOf(a) }))) }), lv);
+    box.querySelector('[data-kinder-levels-note]').textContent = 'A round is good when at least ' + Math.round(lv.goodShare * 100) + '% of it was right on the first try with no hint. ' + lv.roundsForStar + ' good rounds in a row at one level earn a star, and the star opens the next level. Warm-up rounds do not count. If he is stuck or bored, you can open the next level yourself.';
+    fillTable(box.querySelector('[data-kinder-levels]'), ['Game', 'Level', 'Stars', 'Good rounds in a row (of ' + lv.roundsForStar + ')', ''],
+      path.map(r => [h('strong', null, r.title), h('span', { 'data-level-of': r.activity }, r.level + ' of ' + r.max + (lv.games[r.activity].labels ? ' (' + lv.games[r.activity].labels[r.level - 1] + ')' : '')), h('span', { 'data-stars-of': r.activity }, String(r.stars)), r.streak,
+        r.level < r.max ? h('button', { class: 'btn small', type: 'button', 'data-unlock': r.activity, onclick: async () => {
+          if (!window.confirm('Open level ' + (r.level + 1) + ' of ' + r.title + ' for Dorian now?')) return;
+          await store.setKinderLevel(r.activity, r.level + 1);
+          await renderKinder();
+          box.querySelector('[data-kinder-levels-msg]').textContent = r.title + ': level ' + (r.level + 1) + ' is open.';
+        } }, 'Open level ' + (r.level + 1)) : 'Top level']), 'No games yet.');
     box.querySelector('[data-kinder-empty]').hidden = k.answers.length > 0;
     box.querySelector('[data-kinder-summary]').replaceChildren(
       statCard('Sessions', sm.sessions), statCard('Rounds finished', sm.rounds), statCard('Letters he knows', sm.known), statCard('Letters still learning', sm.learning), statCard('Letters not met yet', sm.notMet),
@@ -416,14 +430,14 @@
     fillTable(box.querySelector('[data-kinder-words]'), ['Word', 'Times built', 'Right first time', 'Clean sessions (of ' + cvc.rules.knownSessions + ')', 'Hints', 'Status'],
       sm.wordRows.map(r => [h('strong', null, r.word), r.built, r.firstTry, r.cleanSessions, r.hints, r.known ? 'Knows it' : 'Still learning']), 'No words built yet.');
     const kword = { known: 'Knows it', learning: 'Still learning', 'new': 'Not met yet' };
-    box.querySelector('[data-kinder-sight-note]').textContent = 'This week\u2019s words (' + (sight.weeks.length ? sight.weeks[sight.weeks.length - 1].label : 'none yet') + '): ' + (sg.focus.map(r => r.word).join(', ') || 'none') + '. The other Unit 1 words (never tested) only show up as wrong choices. A word is known after it was right first time, with no hint, in ' + sight.rules.knownSessions + ' different visits.';
+    box.querySelector('[data-kinder-sight-note]').textContent = 'This week\u2019s words (' + (sight.weeks.length ? sight.weeks[sight.weeks.length - 1].label : 'none yet') + '): ' + (sg.focus.map(r => r.word).join(', ') || 'none') + '. ' + (sight.rules.confirmedOnly ? 'Only his confirmed words are used, also as the wrong cards (4 cards, look-alikes such as me/my, it/is, at/am, see/she).' : 'The other Unit 1 words (never tested) only show up as wrong choices.') + ' A word is known after it was right first time, with no hint, in ' + sight.rules.knownSessions + ' different visits.';
     fillTable(box.querySelector('[data-kinder-sight]'), ['Word', 'Week', 'Status', 'Clean visits (of ' + sight.rules.knownSessions + ')', 'Times seen', 'Missed first time', 'Hints'],
       sg.rows.map(r => [h('strong', null, r.word), r.week + (r.focus ? ' (this week)' : ''), h('span', { class: 'k-status ' + r.status, 'data-sight-word': r.word, 'data-status': r.status }, kword[r.status]), r.cleanSessions, r.seen, r.misses, r.hints]), 'No sight words yet.');
     box.querySelector('[data-kinder-count-note]').textContent = 'Open tier: ' + ct.tier + ' of ' + ct.tiers + ' (numbers up to ' + counting.tiers[ct.tier - 1].to + '). Green = knows it, orange = still learning, grey = not yet. Counting along is practice and is not scored' + (ct.along ? ' (' + P(ct.along, 'time') + ' so far)' : '') + '.';
     box.querySelector('[data-kinder-count]').replaceChildren(...ct.strip.map(x => h('li', { class: 'k-strip-n ' + x.status + (x.open ? '' : ' closed'), 'data-count-n': x.n, 'data-status': x.status, title: x.n + ': ' + kword[x.status] + (x.open ? '' : ' (not open yet)') + ', seen ' + x.seen + ', missed ' + x.misses }, String(x.n))));
-    box.querySelector('[data-kinder-add-note]').textContent = 'Open tier: ' + ad.tier + ' of ' + ad.tiers + '. Shown as words, "2 and 1 more", with no plus or equals signs' + (adding.rules.showSigns ? ' (signs are ON in data/kinder/adding.json)' : '') + '.';
+    box.querySelector('[data-kinder-add-note]').textContent = 'Open tier: ' + ad.tier + ' of ' + ad.tiers + (adding.rules.showSigns ? '. The screen shows the picture groups with + and = signs (no numbers until he answers), and the voice says "plus" and "equals". The last two tiers are "how many are left": some pictures fly away (no minus sign).' : '. Shown as words, "2 and 1 more", with no plus or equals signs.');
     fillTable(box.querySelector('[data-kinder-add]'), ['Fact', 'Status', 'Clean visits (of ' + adding.rules.knownSessions + ')', 'Times seen', 'Missed first time', 'Hints'],
-      ad.rows.map(r => [h('strong', null, r.a + ' and ' + (r.b === 0 ? 'none' : r.b) + ' more') , h('span', { class: 'k-status ' + r.status, 'data-fact': r.id, 'data-status': r.status }, r.open ? kword[r.status] : 'Not open yet'), r.cleanSessions, r.seen, r.misses, r.hints]), 'No facts yet.');
+      ad.rows.map(r => [h('strong', null, r.take ? r.a + ', ' + r.b + ' fly away' : adding.rules.showSigns ? r.a + ' + ' + r.b : r.a + ' and ' + (r.b === 0 ? 'none' : r.b) + ' more') , h('span', { class: 'k-status ' + r.status, 'data-fact': r.id, 'data-status': r.status }, r.open ? kword[r.status] : 'Not open yet'), r.cleanSessions, r.seen, r.misses, r.hints]), 'No facts yet.');
     const kburst = burstSession(hints.filter(r => r.subject === 'kinder' && r.kind === 'rapid'));
     const slipped = Object.keys(sm.slips).sort((a, b) => sm.slips[b] - sm.slips[a]);
     box.querySelector('[data-kinder-note]').textContent = (slipped.length ? 'Letters he tapped by mistake while building: ' + slipped.map(l => l + ' (' + sm.slips[l] + ')').join(', ') + '. ' : '')

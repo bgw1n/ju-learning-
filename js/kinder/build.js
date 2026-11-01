@@ -8,7 +8,7 @@
     id: 'build', code: 2, title: 'Build a word', icon: '\uD83E\uDDF1',
     intro: 'Build a word! I will say a word. Tap the sounds in order to build it. Tap the green button to start.',
     plan(env) {
-      const p = K.planWords(env.cvc, env.answers);
+      const p = K.planWords(env.cvc, env.answers, env.level);
       env.tier = p.tier;
       return p.words.map(w => K.wordItem(env.cvc, env.letters, w, env.answers));
     },

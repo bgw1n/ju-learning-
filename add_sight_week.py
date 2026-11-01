@@ -42,6 +42,7 @@ def main():
     ap.add_argument("--sentence", action="append")
     ap.add_argument("--pic", action="append")
     ap.add_argument("--wrong", action="append")
+    ap.add_argument("--fits", action="append", help='v14: word=w1,w2 words that WOULD also fit the gap (never shown as wrong cards)')
     ap.add_argument("--label")
     ap.add_argument("--source", default="Weekly sight words (from Dorian's teacher, through Son's Tutor Bot)")
     ap.add_argument("--no-audio", action="store_true")
@@ -57,6 +58,7 @@ def main():
         warnings.append("%s is not a Monday (the existing weeks use the Monday date)" % a.week)
 
     sentences, pics, wrongs = kv(a.sentence, "--sentence"), kv(a.pic, "--pic"), kv(a.wrong, "--wrong")
+    fits = kv(a.fits, "--fits")
     words = []
     for w in a.words:
         if "=" in w:
@@ -119,6 +121,9 @@ def main():
             if len(wr) < 2:
                 die("--wrong for %r needs 2 or more words that do not fit the gap" % w)
             entry["wrong"] = wr
+            ft = [x.strip().lower() for x in fits[w].split(",")] if w in fits else o.get("fits")
+            if ft is not None:
+                entry["fits"] = [x for x in ft if x and x != w]          # v14: look-alike wrong cards skip these
             if w not in wrongs and not o.get("wrong"):
                 warnings.append("wrong words for %r are the default %s: check that none of them fits in %r" % (w, "/".join(wr), s))
         else:

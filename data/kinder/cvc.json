@@ -5,7 +5,8 @@
   "wordsToOpenNext": 4,
   "trayExtraAfter": 5,
   "roundItems": 4,
-  "maxRoundItems": 6
+  "maxRoundItems": 6,
+  "starLevels": true
  },
  "tiers": [
   {
