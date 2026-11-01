@@ -657,3 +657,41 @@ body.kid .k-opts.k-opts4, .k-opts.k-opts4 { grid-template-columns: repeat(4, min
 .k-eqq { white-space: nowrap; display: inline-flex; gap: 0.4rem; align-items: center; }
 .k-screen [data-kind], .k-screen .k-take { width: 100%; align-self: stretch; }
 .k-objs.k-scatter { width: min(520px, 100%); }
+
+/* ---------- v15: the ready cue ---------- */
+.k-cue { position: relative; height: 0; }
+.k-wait-spk { display: none; position: absolute; right: 4px; top: -6px; z-index: 3; width: 56px; height: 56px; border-radius: 50%; border: 3px solid #cfe3f3; background: #fff; font-size: 1.7rem; cursor: pointer; animation: k-pulse 1.2s ease-in-out infinite; }
+.k-waiting .k-wait-spk { display: inline-flex; align-items: center; justify-content: center; }
+.k-go { display: none; position: absolute; right: 8px; top: -4px; z-index: 3; background: #3f9c5a; color: #fff; font-weight: 800; font-size: 1.4rem; padding: 0.2rem 0.8rem; border-radius: 999px; }
+.k-ready .k-go { display: inline-block; animation: k-go 1.6s ease-out forwards; }
+@keyframes k-go { 0% { transform: scale(0.4); opacity: 0; } 15% { transform: scale(1.15); opacity: 1; } 75% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+@keyframes k-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+.k-waiting [data-opt], .k-waiting [data-obj], .k-waiting [data-word-tile], .k-waiting [data-tile], .k-waiting [data-side], .k-waiting [data-pick] { opacity: 0.4; filter: grayscale(0.6); transition: opacity 0.2s; }
+.k-ready [data-opt], .k-ready [data-word-tile], .k-ready [data-pick], .k-ready [data-side] { animation: k-bounce 0.45s ease-out; }
+@keyframes k-bounce { 0% { transform: scale(0.92); } 60% { transform: scale(1.06); } 100% { transform: none; } }
+.k-ready .k-scatter [data-obj] { animation: none; }
+@media (prefers-reduced-motion: reduce) { .k-ready [data-opt], .k-ready [data-word-tile], .k-ready [data-pick], .k-ready [data-side], .k-wait-spk { animation: none; } .k-ready .k-go { animation: none; opacity: 1; } }
+/* ten frames */
+.k-frames { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+.k-objs.k-frame { display: grid; grid-template-columns: repeat(5, 56px); gap: 4px; padding: 6px; border: 4px solid #3a6e8f; border-radius: 10px; background: #fff; max-width: none; margin: 0 auto; }
+.k-frame .k-obj, .k-frame .k-cell { width: 56px; height: 56px; font-size: 2rem; border-radius: 8px; }
+.k-frame .k-cell { display: block; border: 2px dashed #cfe3f3; box-sizing: border-box; }
+@media (max-width: 600px) { .k-objs.k-frame { grid-template-columns: repeat(5, 50px); } .k-frame .k-obj, .k-frame .k-cell { width: 50px; height: 50px; font-size: 1.7rem; } }
+/* Which has more? */
+.k-sides { display: flex; gap: 0.6rem; justify-content: center; width: 100%; }
+.k-side { flex: 1 1 0; max-width: 420px; border-radius: 18px; padding: 0.4rem; border: 4px solid; }
+.k-side-blue { border-color: #4a90d9; background: #eef5fd; }
+.k-side-orange { border-color: #f0a040; background: #fff4e6; }
+.k-side .k-objs { gap: 0.3rem; }
+.k-side .k-obj { width: 52px; height: 52px; font-size: 1.8rem; }
+.k-picks { display: flex; gap: 0.8rem; justify-content: center; margin: 0.6rem 0; }
+.k-pickbtn { min-width: 96px; min-height: 96px; font-size: 2.6rem; border-width: 5px; }
+.k-pick-blue { border-color: #4a90d9 !important; background: #eef5fd; }
+.k-pick-orange { border-color: #f0a040 !important; background: #fff4e6; }
+/* Look and tap */
+.k-looks { display: flex; gap: 0.8rem; justify-content: center; align-items: flex-end; flex-wrap: wrap; width: 100%; }
+.k-lookopt { min-width: 110px; min-height: 140px; display: inline-flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.2rem; padding: 0.5rem; }
+.k-lpic { font-size: 3rem; line-height: 1; }
+.k-lpic.k-s1 { font-size: 1.6rem; } .k-lpic.k-s2 { font-size: 3rem; } .k-lpic.k-s3 { font-size: 5rem; }
+.k-plural { min-width: 140px; } .k-plural .k-lpic { font-size: 2.4rem; }
+@media (max-width: 600px) { .k-lookopt { min-width: 92px; min-height: 120px; } .k-lpic.k-s3 { font-size: 4rem; } .k-side .k-obj { width: 44px; height: 44px; font-size: 1.5rem; } .k-pickbtn { min-width: 84px; min-height: 84px; } }

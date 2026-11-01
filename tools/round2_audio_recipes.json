@@ -570,6 +570,126 @@
     "openai/whisper-small.en": "30",
     "openai/whisper-base.en": "30."
    }
+  },
+  "sight-are": {
+   "text": "are",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 0,
+   "asr": {
+    "openai/whisper-small.en": "Ah.",
+    "openai/whisper-base.en": "Ah."
+   }
+  },
+  "sent-are-full": {
+   "text": "We are big.",
+   "ls": 1.2,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "We are big.",
+    "openai/whisper-base.en": "We are big!"
+   }
+  },
+  "sent-are-pre": {
+   "text": "We",
+   "ls": 1.2,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "We",
+    "openai/whisper-base.en": "We"
+   }
+  },
+  "sent-are-post": {
+   "text": "big.",
+   "ls": 1.2,
+   "seed": 1,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "big",
+    "openai/whisper-base.en": "Big"
+   }
+  },
+  "sight-that": {
+   "text": "that",
+   "ls": 1.25,
+   "seed": 2,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "That.",
+    "openai/whisper-base.en": "that"
+   }
+  },
+  "sent-that-full": {
+   "text": "I like that dog.",
+   "ls": 1.2,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "I like that dog.",
+    "openai/whisper-base.en": "I like that dog."
+   }
+  },
+  "sent-that-pre": {
+   "text": "I like",
+   "ls": 1.2,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "I like",
+    "openai/whisper-base.en": "I like."
+   }
+  },
+  "sent-that-post": {
+   "text": "dog.",
+   "ls": 1.2,
+   "seed": 2,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "dog",
+    "openai/whisper-base.en": "dog"
+   }
+  },
+  "sight-of": {
+   "text": "of",
+   "ls": 1.25,
+   "seed": 0,
+   "asr_ok": 0,
+   "asr": {
+    "openai/whisper-small.en": "health.",
+    "openai/whisper-base.en": "Earth."
+   }
+  },
+  "sent-of-full": {
+   "text": "I see a lot of cats.",
+   "ls": 1.2,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "I see a lot of cats.",
+    "openai/whisper-base.en": "I see a lot of cats."
+   }
+  },
+  "sent-of-pre": {
+   "text": "I see a lot",
+   "ls": 1.2,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "I see a lot.",
+    "openai/whisper-base.en": "I see a lot"
+   }
+  },
+  "sent-of-post": {
+   "text": "cats.",
+   "ls": 1.2,
+   "seed": 0,
+   "asr_ok": 2,
+   "asr": {
+    "openai/whisper-small.en": "Cats",
+    "openai/whisper-base.en": "cats"
+   }
   }
  }
 }

@@ -839,6 +839,78 @@
     },
     "rec": "s a b"
    }
+  },
+  "dot": {
+   "ls": 1.25,
+   "seed": 5,
+   "score": 5.5,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " .",
+     "openai/whisper-base.en": " dot"
+    },
+    "rec": "d ɑː t"
+   }
+  },
+  "mop": {
+   "ls": 1.25,
+   "seed": 1,
+   "score": 7.0,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " mop",
+     "openai/whisper-base.en": " mop"
+    },
+    "rec": "m aː p"
+   }
+  },
+  "pot": {
+   "ls": 1.25,
+   "seed": 4,
+   "score": 8.5,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " pot",
+     "openai/whisper-base.en": " pot"
+    },
+    "rec": "p ɑː t"
+   }
+  },
+  "bed": {
+   "ls": 1.25,
+   "seed": 2,
+   "score": 8.5,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " bed.",
+     "openai/whisper-base.en": " bed"
+    },
+    "rec": "b ɛ d"
+   }
+  },
+  "fed": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 8.5,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " Fed",
+     "openai/whisper-base.en": " Fed"
+    },
+    "rec": "f ɛ d"
+   }
+  },
+  "red": {
+   "ls": 1.25,
+   "seed": 0,
+   "score": 8.5,
+   "check": {
+    "asr": {
+     "openai/whisper-small.en": " red",
+     "openai/whisper-base.en": " red"
+    },
+    "rec": "ɹ ɛ d"
+   }
   }
  }
 }

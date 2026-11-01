@@ -12,7 +12,8 @@
    3
   ],
   "scatter": true,
-  "starLevels": true
+  "starLevels": true,
+  "tenFrames": true
  },
  "tiers": [
   {

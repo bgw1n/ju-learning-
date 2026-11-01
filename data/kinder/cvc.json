@@ -6,7 +6,8 @@
   "trayExtraAfter": 5,
   "roundItems": 4,
   "maxRoundItems": 6,
-  "starLevels": true
+  "starLevels": true,
+  "pluralRound": true
  },
  "tiers": [
   {
@@ -33,6 +34,12 @@
     "d",
     "u",
     "b"
+   ]
+  },
+  {
+   "add": [
+    "e",
+    "f"
    ]
   }
  ],
@@ -146,6 +153,36 @@
    "word": "sap",
    "e": "🍁",
    "tier": 1
+  },
+  {
+   "word": "dot",
+   "tier": 3,
+   "e": "⚫"
+  },
+  {
+   "word": "mop",
+   "tier": 3,
+   "e": "🧹"
+  },
+  {
+   "word": "pot",
+   "tier": 3,
+   "e": "🍲"
+  },
+  {
+   "word": "bed",
+   "tier": 4,
+   "e": "🛏️"
+  },
+  {
+   "word": "fed",
+   "tier": 4,
+   "e": "🍼"
+  },
+  {
+   "word": "red",
+   "tier": 4,
+   "e": "🔴"
   }
  ]
 }

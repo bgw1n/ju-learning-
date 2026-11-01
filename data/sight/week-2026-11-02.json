@@ -1,0 +1,49 @@
+{
+ "id": "2026-11-02",
+ "label": "Week of Nov 2",
+ "source": "Weekly sight words (from Dorian's teacher, through DJ Tutor Bot)",
+ "words": [
+  {
+   "word": "are",
+   "sentence": "We are big.",
+   "pre": "We",
+   "post": "big.",
+   "pic": "🦁",
+   "wrong": [
+    "me",
+    "my",
+    "it"
+   ],
+   "fits": []
+  },
+  {
+   "word": "that",
+   "sentence": "I like that dog.",
+   "pre": "I like",
+   "post": "dog.",
+   "pic": "🐕",
+   "wrong": [
+    "am",
+    "is",
+    "we"
+   ],
+   "fits": [
+    "the",
+    "my"
+   ]
+  },
+  {
+   "word": "of",
+   "sentence": "I see a lot of cats.",
+   "pre": "I see a lot",
+   "post": "cats.",
+   "pic": "🐈",
+   "wrong": [
+    "me",
+    "my",
+    "am"
+   ],
+   "fits": []
+  }
+ ]
+}

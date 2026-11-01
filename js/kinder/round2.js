@@ -73,7 +73,8 @@
   /* v14: words that are easy to mix up with each word (all from his confirmed list). The wrong cards come from here first. */
   K.LOOKS = { me: ['my', 'we', 'make'], my: ['me', 'make', 'am'], it: ['is', 'in', 'at'], is: ['it', 'in', 'i'], in: ['is', 'it', 'i'], at: ['am', 'it', 'the'],
     am: ['at', 'make', 'me'], see: ['she', 'we', 'me'], she: ['see', 'the', 'we'], the: ['she', 'see', 'with'], i: ['is', 'it', 'in'], like: ['look', 'make', 'me'],
-    look: ['like', 'see', 'we'], make: ['me', 'my', 'like'], we: ['me', 'with', 'see'], with: ['we', 'it', 'the'] };
+    look: ['like', 'see', 'we'], make: ['me', 'my', 'like'], we: ['me', 'with', 'see'], with: ['we', 'it', 'the'],
+    are: ['at', 'am', 'the'], that: ['the', 'at', 'with'], of: ['it', 'is', 'in'] };       // (v15: the week of Nov 2)
   /* The wrong cards for finding `word` (v14): LOOK-ALIKES first (me/my, it/is, at/am, see/she ...), then other words that share a letter pattern, then any other word.
      Only words in play (confirmed) are used; `skip` lists words that must not be cards (for a sentence: words that would also fit). */
   K.sightWrong = function (data, word, n, skip) {
@@ -172,7 +173,10 @@
     if (tier > 1 && picks.length > 2) { const T = cd.tiers[tier - 1]; let have = picks.filter(n => n >= T.from).length;
       for (let i = picks.length - 1; i >= 0 && have < 2; i--) if (picks[i] < T.from) { let x, g = 0; do { x = T.from + Math.floor(K.rng() * (T.to - T.from + 1)); } while (picks.indexOf(x) >= 0 && g++ < 20); picks[i] = x; have++; } }
     const KINDS = ['along', 'howmany', 'next', 'howmany', 'howmany', 'next'];
-    return { stats, tier, max, items: picks.map((n, i) => ({ n, kind: KINDS[i % KINDS.length] === 'next' && n < 2 ? 'howmany' : KINDS[i % KINDS.length] })) };
+    const items = picks.map((n, i) => ({ n, kind: KINDS[i % KINDS.length] === 'next' && n < 2 ? 'howmany' : KINDS[i % KINDS.length] }));
+    /* v15: ten and some more. A "how many" with 11 to 20 pictures is often shown as a full ten frame and the rest (with rules.tenFrames) */
+    if (cd.rules.tenFrames) items.forEach((x, i) => { if (x.kind === 'howmany' && x.n >= 11 && x.n <= 20 && (i === 4 || K.rng() < 0.5)) x.kind = 'tenframe'; });
+    return { stats, tier, max, items };
   };
   /* Near numbers for the wrong choices (never the right one, never more than 20 or less than 1) */
   function nearNumbers(n, k, lo, hi, prefer) {
@@ -192,6 +196,13 @@
       const say = seq.map(N).join(', ');
       return Object.assign(base, { seq, options, text: 'What comes next? ' + say + ', and then?', hint: K.countOut(Math.max(1, n - 5), n - 1, W) + ' What comes next?',
         right: 'Yes! After ' + N(n - 1) + ' comes ' + N(n) + '.', miss: 'Listen again. ' + say + ', and then?' });
+    }
+    if (kind === 'tenframe') {
+      const options = K.shuffle([n].concat(nearNumbers(n, 2, 1, K.COUNT_MAX(cd))).map(x => ({ n: x, right: x === n })));
+      return Object.assign(base, { options, dots: false, frame: true, text: 'Here is a full ten frame, and some more ' + o.many + '. Count them all, then tap the number.',
+        hint: 'A full ten frame is ten. Keep counting the rest: eleven, twelve, and on.',
+        right: 'Yes! Ten and ' + N(n - 10) + ' more makes ' + N(n) + '.', miss: 'Let\u2019s count again. A full frame is ten. Keep counting.',
+        together: 'Let\u2019s count together. ' + K.countOut(1, n, W) + ' Ten and ' + N(n - 10) + ' more is ' + N(n) + '. Tap ' + N(n) + '.' });
     }
     /* v13.3: 'along' and 'how many' both: tap to count (the voice says the running count), then tap the number. Nothing says the number first. */
     const options = K.shuffle([n].concat(nearNumbers(n, 2, 1, K.COUNT_MAX(cd))).map(x => ({ n: x, right: x === n })));

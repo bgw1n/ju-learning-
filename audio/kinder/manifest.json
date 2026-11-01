@@ -192,6 +192,13 @@
    "dur": 0.601,
    "bytes": 7567
   },
+  "word-bed": {
+   "file": "word-bed.mp3",
+   "kind": "word",
+   "name": "bed",
+   "dur": 0.522,
+   "bytes": 6626
+  },
   "word-bug": {
    "file": "word-bug.mp3",
    "kind": "word",
@@ -234,6 +241,20 @@
    "dur": 0.758,
    "bytes": 9448
   },
+  "word-dot": {
+   "file": "word-dot.mp3",
+   "kind": "word",
+   "name": "dot",
+   "dur": 0.705,
+   "bytes": 8821
+  },
+  "word-fed": {
+   "file": "word-fed.mp3",
+   "kind": "word",
+   "name": "fed",
+   "dur": 0.758,
+   "bytes": 9448
+  },
   "word-man": {
    "file": "word-man.mp3",
    "kind": "word",
@@ -254,6 +275,13 @@
    "name": "mat",
    "dur": 0.679,
    "bytes": 8507
+  },
+  "word-mop": {
+   "file": "word-mop.mp3",
+   "kind": "word",
+   "name": "mop",
+   "dur": 0.705,
+   "bytes": 8821
   },
   "word-nap": {
    "file": "word-nap.mp3",
@@ -290,6 +318,13 @@
    "dur": 0.731,
    "bytes": 9134
   },
+  "word-pot": {
+   "file": "word-pot.mp3",
+   "kind": "word",
+   "name": "pot",
+   "dur": 0.758,
+   "bytes": 9448
+  },
   "word-ran": {
    "file": "word-ran.mp3",
    "kind": "word",
@@ -303,6 +338,13 @@
    "name": "rat",
    "dur": 0.836,
    "bytes": 10388
+  },
+  "word-red": {
+   "file": "word-red.mp3",
+   "kind": "word",
+   "name": "red",
+   "dur": 0.731,
+   "bytes": 9134
   },
   "word-sap": {
    "file": "word-sap.mp3",

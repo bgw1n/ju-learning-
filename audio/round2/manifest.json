@@ -234,6 +234,27 @@
    "dur": 0.993,
    "bytes": 12269
   },
+  "sent-are-full": {
+   "file": "sent-are-full.mp3",
+   "kind": "sentence",
+   "text": "We are big.",
+   "dur": 1.019,
+   "bytes": 12582
+  },
+  "sent-are-post": {
+   "file": "sent-are-post.mp3",
+   "kind": "sentence",
+   "text": "big.",
+   "dur": 0.522,
+   "bytes": 6626
+  },
+  "sent-are-pre": {
+   "file": "sent-are-pre.mp3",
+   "kind": "sentence",
+   "text": "We",
+   "dur": 0.627,
+   "bytes": 7880
+  },
   "sent-look-full": {
    "file": "sent-look-full.mp3",
    "kind": "sentence",
@@ -254,6 +275,27 @@
    "text": "I",
    "dur": 0.653,
    "bytes": 8194
+  },
+  "sent-of-full": {
+   "file": "sent-of-full.mp3",
+   "kind": "sentence",
+   "text": "I see a lot of cats.",
+   "dur": 1.62,
+   "bytes": 19792
+  },
+  "sent-of-post": {
+   "file": "sent-of-post.mp3",
+   "kind": "sentence",
+   "text": "cats.",
+   "dur": 0.81,
+   "bytes": 10075
+  },
+  "sent-of-pre": {
+   "file": "sent-of-pre.mp3",
+   "kind": "sentence",
+   "text": "I see a lot",
+   "dur": 1.228,
+   "bytes": 15090
   },
   "sent-see-full": {
    "file": "sent-see-full.mp3",
@@ -290,12 +332,40 @@
    "dur": 0.94,
    "bytes": 11642
   },
+  "sent-that-full": {
+   "file": "sent-that-full.mp3",
+   "kind": "sentence",
+   "text": "I like that dog.",
+   "dur": 1.358,
+   "bytes": 16657
+  },
+  "sent-that-post": {
+   "file": "sent-that-post.mp3",
+   "kind": "sentence",
+   "text": "dog.",
+   "dur": 0.705,
+   "bytes": 8821
+  },
+  "sent-that-pre": {
+   "file": "sent-that-pre.mp3",
+   "kind": "sentence",
+   "text": "I like",
+   "dur": 0.758,
+   "bytes": 9448
+  },
   "sight-am": {
    "file": "sight-am.mp3",
    "kind": "sight",
    "text": "am",
    "dur": 0.444,
    "bytes": 5686
+  },
+  "sight-are": {
+   "file": "sight-are.mp3",
+   "kind": "sight",
+   "text": "are",
+   "dur": 0.549,
+   "bytes": 6940
   },
   "sight-at": {
    "file": "sight-at.mp3",
@@ -367,6 +437,13 @@
    "dur": 0.705,
    "bytes": 8821
   },
+  "sight-of": {
+   "file": "sight-of.mp3",
+   "kind": "sight",
+   "text": "of",
+   "dur": 0.444,
+   "bytes": 5686
+  },
   "sight-see": {
    "file": "sight-see.mp3",
    "kind": "sight",
@@ -380,6 +457,13 @@
    "text": "she",
    "dur": 0.679,
    "bytes": 8507
+  },
+  "sight-that": {
+   "file": "sight-that.mp3",
+   "kind": "sight",
+   "text": "that",
+   "dur": 0.627,
+   "bytes": 7880
   },
   "sight-the": {
    "file": "sight-the.mp3",

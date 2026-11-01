@@ -20,9 +20,20 @@
   const games = JU.kinderGames = JU.kinderGames || {};
 
   /* the sticker picture for round n of an activity (the same every time, so it can be shown again later) */
-  const STICKER_START = { letters: 0, build: 6, sight: 3, count: 9, add: 1, warmup: 5 };
+  const STICKER_START = { letters: 0, build: 6, sight: 3, count: 9, add: 1, warmup: 5, more: 7, look: 10 };
   JU.kinderSticker = (activity, n) => K.STICKERS[(n - 1 + (STICKER_START[activity] || 0)) % K.STICKERS.length];
 
+  /* v15: a soft two-note chime when the answers light up (Web Audio, about a quarter second; silent where there is no audio) */
+  JU.kinderChime = function () {
+    window.__juChimes = (window.__juChimes || 0) + 1;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      const ac = JU.kinderChime.ac || (JU.kinderChime.ac = new AC()), t = ac.currentTime;
+      [880, 1318.5].forEach((f, i) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, t + i * 0.09); g.gain.exponentialRampToValueAtTime(0.12, t + i * 0.09 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.09 + 0.25);
+        o.connect(g); g.connect(ac.destination); o.start(t + i * 0.09); o.stop(t + i * 0.09 + 0.27); });
+    } catch (e) { /* no sound: the light-up and the Go! badge still show */ }
+  };
   JU.kinderPlay = async function (activity, profileId, mount, opts) {
     opts = opts || {};
     const preview = !!opts.preview, game = games[activity];
@@ -145,34 +156,44 @@
           JU.moneyUI.reveal(feedback, next);
         }
       };
-      /* v14: listen first. While the question is still being said, a tap on an answer (a card, a picture, a word) does not count:
-         the voice gently says "Listen first" and says the question again. (Tests turn this off with window.__JU_LISTEN_FIRST = false.) */
+      /* v15 READY CUE (replaces v14 "Listen first"). While the voice asks the question, the answers are dimmed with a small speaker on them;
+         a tap on an answer then is simply ignored (nothing is said, nothing counts). When the voice finishes, the answers light up with a short bounce,
+         a soft chime and a "Go!" badge. Tapping the small speaker says the question again. No clock: it follows the voice.
+         (Older tests turn the cue off with window.__JU_LISTEN_FIRST = false or window.__JU_READY_CUE = false.) */
+      const cueOn = () => window.__JU_LISTEN_FIRST !== false && window.__JU_READY_CUE !== false;
       let talking = false, talkToken = 0;
       let rootEl = null;
-      const sayPrompt = (f, pre) => { const my = ++talkToken; talking = true; if (rootEl) rootEl.setAttribute('data-talking', '1');
-        const done = () => { if (my === talkToken) { talking = false; if (rootEl) rootEl.setAttribute('data-talking', '0'); } };
+      const setWaiting = on => { if (!rootEl) return; rootEl.setAttribute('data-talking', on ? '1' : '0');
+        if (!cueOn()) return;
+        rootEl.classList.toggle('k-waiting', on);
+        if (on) rootEl.classList.remove('k-ready');
+        else if (!finished) { rootEl.classList.remove('k-ready'); void rootEl.offsetWidth; rootEl.classList.add('k-ready'); rootEl.setAttribute('data-ready', String((Number(rootEl.getAttribute('data-ready')) || 0) + 1)); JU.kinderChime(); } };
+      const sayPrompt = (f, pre) => { const my = ++talkToken; talking = true; setWaiting(true);
+        const done = () => { if (my === talkToken) { talking = false; setWaiting(false); } };
         const p = Promise.resolve(say((pre || '') + item.text, f)).then(done, done);
         if (!ctl.firstPrompt) ctl.firstPrompt = p;
         return p; };
       ctl.sayPrompt = sayPrompt;
       const nodes = game.draw(item, ctl);
+      const waitSpk = h('button', { class: 'k-wait-spk', type: 'button', 'data-ready-speaker': '', 'aria-label': 'Hear the question again', onclick: () => sayPrompt(SPEED) }, h('span', { 'aria-hidden': 'true' }, SPEAKER));
+      const goBadge = h('span', { class: 'k-go', 'data-go': '', 'aria-hidden': 'true' }, 'Go!');
       const root = frame(number, item.id, [
         homeLink(),
         h('div', { class: 'speakrow' }, speakRow(() => item.text, item.sound)),
+        h('div', { class: 'k-cue' }, waitSpk, goBadge),
         ...nodes, gate ? gate.el : null, feedback,
         h('div', { class: 'lesson-nav solo-nav' }, ask.el, next)], ask);
       root.setAttribute('data-comeback', item.comeback ? '1' : '0');
-      rootEl = root; root.setAttribute('data-talking', talking ? '1' : '0');
+      rootEl = root; setWaiting(talking);
       if (item.warmupOf) root.setAttribute('data-warmup-of', item.warmupOf);
       root.addEventListener('click', e => {
-        if (!talking || window.__JU_LISTEN_FIRST === false || finished) return;
-        if ((Number(root.getAttribute('data-listen-first')) || 0) >= 3) return;      // (never more than 3 nudges on one screen, in case the voice gets stuck)
-        const t = e.target.closest('[data-opt], [data-obj], [data-tile], [data-word-tile]');
+        if (!talking || !cueOn() || finished) return;
+        const t = e.target.closest('[data-opt], [data-obj], [data-tile], [data-word-tile], [data-side], [data-pick]');
         if (!t || !root.contains(t)) return;
-        e.preventDefault(); e.stopImmediatePropagation(); e.stopPropagation();
-        root.setAttribute('data-listen-first', String((Number(root.getAttribute('data-listen-first')) || 0) + 1));
-        feedback.textContent = 'Listen first.';
-        JU.moneyUI.stop(); sayPrompt(SPEED, 'Listen first. ');
+        const n = (Number(root.getAttribute('data-early')) || 0) + 1;
+        root.setAttribute('data-early', String(n));
+        if (n > 6) return;               // (in case the voice ever gets stuck, the 7th tap goes through)
+        e.preventDefault(); e.stopImmediatePropagation(); e.stopPropagation();       // ignored silently: no nag
       }, true);
       root.querySelectorAll('[data-hear]').forEach(b => { b.onclick = () => sayPrompt(SPEED); });
       root.querySelectorAll('[data-slower]').forEach(b => { b.onclick = () => sayPrompt(SLOW); });

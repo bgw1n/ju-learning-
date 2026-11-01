@@ -49,8 +49,8 @@
     return m;
   }
 
-  const KINDER_ACTIVITIES = ['letters', 'build', 'sight', 'count', 'add', 'warmup'];       // (v14: 'warmup' is the daily mixed warm-up round)
-  const KINDER_LEVELED = ['letters', 'build', 'sight', 'count', 'add'];       // (v12: round 2 adds sight, count and add; the backup version stays 5)
+  const KINDER_ACTIVITIES = ['letters', 'build', 'sight', 'count', 'add', 'warmup', 'more', 'look'];       // (v15: Which has more?, Look and tap)       // (v14: 'warmup' is the daily mixed warm-up round)
+  const KINDER_LEVELED = ['letters', 'build', 'sight', 'count', 'add', 'more', 'look'];       // (v12: round 2 adds sight, count and add; the backup version stays 5)
   function kinderClean(v) {
     const k = { answers: [], rounds: [] };
     if (isObj(v)) {

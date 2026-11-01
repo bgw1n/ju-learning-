@@ -8,7 +8,7 @@
   const K = JU.kinder;
   let cache = null;
   K.loadLevels = () => cache || (cache = fetch('data/kinder/levels.json').then(r => { if (!r.ok) throw new Error('could not load levels'); return r.json(); }));
-  K.LEVELED = ['letters', 'build', 'sight', 'count', 'add'];
+  K.LEVELED = ['letters', 'build', 'sight', 'count', 'add', 'more', 'look'];
 
   K.roundGood = (round, lv) => !!round && Number(round.items) > 0 && Number(round.clean) / Number(round.items) >= lv.goodShare - 1e-9;
 

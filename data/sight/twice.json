@@ -94,6 +94,36 @@
     "she",
     "is"
    ]
+  },
+  {
+   "pic": "🐯",
+   "text": "We are big. We are fast.",
+   "targets": [
+    "are",
+    "we"
+   ]
+  },
+  {
+   "pic": "🐕",
+   "text": "That is my dog. I like that dog.",
+   "targets": [
+    "that"
+   ]
+  },
+  {
+   "pic": "🍪",
+   "text": "Some of the cats ate one of the cookies.",
+   "targets": [
+    "of",
+    "the"
+   ]
+  },
+  {
+   "pic": "🎈",
+   "text": "Look at that! That is a red ball.",
+   "targets": [
+    "that"
+   ]
   }
  ]
 }

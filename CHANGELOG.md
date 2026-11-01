@@ -1,5 +1,14 @@
 # Changelog
 
+## v15 (local, not published)
+- **New sight words for the week of Nov 2: are, that, of.** They are in Sight words with look-alike cards (are/at/am, that/the/at, of/it/is), short sentences ("We are big.", "I like that dog.", "I see a lot of cats."), 4 new Find it twice sentences, and Record sounds. Site clips are in the Piper kristin voice.
+- **Build a word:** new words dot, mop, pot (with o) and bed, fed, red (a new level with e and f), with clips and pictures. dog was already there. Each round ends with one **"one or many?"** picture question (dog / dogs, bed / beds, ...).
+- **New game: Which has more?** Two picture boxes, blue and orange. He taps to count each box, then taps the blue box, the orange box, or "the same" (a balance). Star levels: up to 5, then up to 10 with "which has fewer?", then up to 15. Nothing says or shows how many before he answers.
+- **New game: Look and tap.** "Tap the big one", "Tap the little one", "One or many? Find: dogs." Level 2 adds colors ("Tap the red one"). These prompts use the browser voice.
+- **Count: ten and some more.** At 11 to 20, some "how many" questions show a full ten frame plus a second frame with the rest. A right answer says "Ten and 2 more makes 12."
+- **Warm-up letters are O, T or D** (still only once all the letter sounds are recorded).
+- **Ready cue instead of "Listen first":** while the voice talks, the answer cards are dimmed with a small speaker (tap it to hear the question again). When the voice finishes, the cards light up with a little bounce, a soft chime and a "Go!" badge. Taps before that are ignored silently, and there is no countdown.
+
 ## v14 (local, not published)
 - **Sight words are harder:** 4 word cards instead of 3, and the wrong cards look like the right word (me/my, it/is, at/am, see/she). Only Dorian's 16 confirmed words are used. New **Find it twice**: a picture and a short sentence read aloud; he taps the word every time it shows (each one found gets a check mark). Sentences are in `data/sight/twice.json`.
 - **Count to 30:** two new levels (21-25, 26-30, with recorded number clips), pictures scattered instead of in rows, a check mark on each tapped picture. The total is still never said or shown before he answers.

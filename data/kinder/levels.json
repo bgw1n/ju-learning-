@@ -9,7 +9,7 @@
    "note": "Letter sounds opens new letters by itself as he learns them (6 at a time), so it has one level; stars still show on his star path."
   },
   "build": {
-   "levels": 3,
+   "levels": 4,
    "title": "Build a word"
   },
   "sight": {
@@ -28,6 +28,23 @@
   "add": {
    "levels": 10,
    "title": "Add it up"
+  },
+  "more": {
+   "levels": 3,
+   "title": "Which has more?",
+   "labels": [
+    "groups of 1 to 5",
+    "groups up to 10, and fewer",
+    "groups up to 15"
+   ]
+  },
+  "look": {
+   "levels": 2,
+   "title": "Look and tap",
+   "labels": [
+    "big and little, one or many",
+    "+ colors"
+   ]
   }
  }
 }

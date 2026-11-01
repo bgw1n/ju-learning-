@@ -10,11 +10,15 @@
     plan(env) {
       const p = K.planWords(env.cvc, env.answers, env.level);
       env.tier = p.tier;
-      return p.words.map(w => K.wordItem(env.cvc, env.letters, w, env.answers));
+      const items = p.words.map(w => K.wordItem(env.cvc, env.letters, w, env.answers));
+      /* v15: each round ends with one short "one or many?" picture question (dog / dogs), saved under Look and tap */
+      if (env.cvc.rules.pluralRound && window.__JU_BUILD_PLURAL !== false && K.lookItem) items.push(Object.assign(K.lookItem('plural'), { activity: 'look', other: 'look' }));
+      return items;
     },
     /* a missed word comes back once with a fresh tray */
-    redo(env, item) { return K.wordItem(env.cvc, env.letters, env.cvc.words.find(w => w.word === item.word), env.answers); },
+    redo(env, item) { if (item.other) return Object.assign(K.lookItem('plural'), { activity: 'look', other: 'look' }); return K.wordItem(env.cvc, env.letters, env.cvc.words.find(w => w.word === item.word), env.answers); },
     draw(item, ctl) {
+      if (item.other) return JU.kinderGames[item.other].draw(item, ctl);
       let next = 0, answered = false, wrongs = 0;
       const per = item.need.map(() => 0);
       const slots = item.need.map((l, i) => h('span', { class: 'k-slot', 'data-slot': i, 'aria-label': 'box ' + (i + 1) + ' of ' + item.need.length }));

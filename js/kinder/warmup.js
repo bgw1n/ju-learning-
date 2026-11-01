@@ -19,7 +19,10 @@
     plan(env) {
       const lvl = a => env.levels[a] || 1, out = [];
       const sub = (a, extra) => Object.assign({}, env, { level: lvl(a) }, extra || {});
-      if (env.lettersReady) { const se = sub('letters'), l = G().letters.plan(se); env.active = se.active; if (l.length) out.push(tag('letters', l[0])); }
+      /* v15: the letter is O, T or D (this week's letters), still only once every letter sound is recorded */
+      if (env.lettersReady) { const se = sub('letters'); G().letters.plan(se); env.active = se.active;
+        const pool = ['o', 't', 'd'].filter(l => env.letters.letters[l]), l = pool[Math.floor(K.rng() * pool.length)];
+        if (l) { const act = Array.from(new Set(se.active.concat(pool))); env.active = act; out.push(tag('letters', G().letters.redo(Object.assign({}, env, { active: act }), { letter: l }))); } }
       /* sight words: plain "find the word" questions (4 look-alike cards) */
       const sp = K.planSight(env.sight, env.answers, 1).items.filter(i => i.type !== 'twice');
       sp.slice(0, out.length ? 2 : 3).forEach(i => out.push(tag('sight', K.sightItem(env.sight, i.w, 'hunt'))));

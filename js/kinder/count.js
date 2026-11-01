@@ -71,6 +71,10 @@
         } }, h('span', { 'aria-hidden': 'true' }, item.e), h('span', { class: 'k-badge', 'aria-hidden': 'true' }, ''));
         btns.push(b); all.push(b);
       }
+      if (opts.frame) {         // v15: a ten frame: 2 rows of 5 cells; empty cells stay empty
+        const cells = btns.slice(); while (cells.length < 10) cells.push(h('span', { class: 'k-cell', 'aria-hidden': 'true' }));
+        return h('div', { class: 'k-group k-objs k-frame', 'data-group': g.key, 'data-frame': '', role: 'group', 'aria-label': g.label }, cells);
+      }
       if (opts.scatter) {
         const sp = K.scatterSpots(btns.length);
         btns.forEach((b, i) => { b.style.left = sp.spots[i].left.toFixed(1) + '%'; b.style.top = sp.spots[i].top.toFixed(1) + '%'; });
@@ -127,6 +131,11 @@
         seqEnd = h('span', { class: 'k-seqtile k-seqq', 'data-seq-q': '', 'aria-label': 'the next number' }, '?');
         const tiles = item.seq.map(n => h('span', { class: 'k-seqtile', 'data-seq': n }, String(n)));
         return [h('div', { class: 'k-seq k-focus', tabindex: '-1', role: 'group', 'aria-label': 'Numbers in order, then a question mark' }, tiles.concat([seqEnd])), ch.box];
+      }
+      if (item.kind === 'tenframe') {
+        const fc = K.tapCounter(item, ctl, W, [{ n: 10, key: 'a', label: item.many + ', a full ten frame' }, { n: item.n - 10, key: 'b', label: item.many + ', some more' }], { frame: true });
+        const fch = K.numberChoices(item, ctl, fc, { kind: item.kind, n: item.n }, item.together);
+        return [h('div', { class: 'k-focus k-frames', tabindex: '-1', 'data-kind': item.kind }, fc.boxes), h('div', { class: 'k-countrow' }, fc.out, fc.again), fch.box];
       }
       const c = K.tapCounter(item, ctl, W, [{ n: item.n, key: 'a', label: item.many }], { scatter: !!item.scatter });
       const ch = K.numberChoices(item, ctl, c, { kind: item.kind, n: item.n }, item.together);

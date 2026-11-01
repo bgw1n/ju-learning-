@@ -30,7 +30,7 @@
     loadLetters: () => fetchJson('data/kinder/letters.json'),
     loadWords: () => fetchJson('data/kinder/cvc.json'),
     ACTIVITIES: { letters: { code: 1, title: 'Letter sounds' }, build: { code: 2, title: 'Build a word' },
-      sight: { code: 3, title: 'Sight words' }, count: { code: 4, title: 'Count to 30' }, add: { code: 5, title: 'Add it up' }, warmup: { code: 6, title: 'Warm-up' } },       // (v14: Count to 30, the daily warm-up)       // (v12: round 2)
+      sight: { code: 3, title: 'Sight words' }, count: { code: 4, title: 'Count to 30' }, add: { code: 5, title: 'Add it up' }, warmup: { code: 6, title: 'Warm-up' }, more: { code: 7, title: 'Which has more?' }, look: { code: 8, title: 'Look and tap' } },       // (v14: Count to 30, the daily warm-up)       // (v12: round 2)
     STICKERS: ['\uD83D\uDC36', '\uD83D\uDC31', '\uD83E\uDD84', '\uD83D\uDC22', '\uD83D\uDC20', '\uD83E\uDD8B', '\uD83D\uDC1D', '\uD83E\uDD81', '\uD83D\uDC27', '\uD83D\uDC3C', '\uD83E\uDD89', '\uD83D\uDC19']
   };
   const byTs = (a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0;
