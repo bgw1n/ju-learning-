@@ -1,5 +1,8 @@
 # Changelog
 
+## Spelling label Nov 2–13 (published 2026-11-06)
+- Menu label for Unit 2 Lesson 2 (id `2026-11-02`) changed from "Week of Nov 2" to "Nov 2–13" so the same word list covers the repeat week of Nov 9. Week id unchanged so saved scores stay. Words unchanged.
+
 ## v15 (local, not published)
 - **New sight words for the week of Nov 2: are, that, of.** They are in Sight words with look-alike cards (are/at/am, that/the/at, of/it/is), short sentences ("We are big.", "I like that dog.", "I see a lot of cats."), 4 new Find it twice sentences, and Record sounds. Site clips are in the Piper kristin voice.
 - **Build a word:** new words dot, mop, pot (with o) and bed, fed, red (a new level with e and f), with clips and pictures. dog was already there. Each round ends with one **"one or many?"** picture question (dog / dogs, bed / beds, ...).
