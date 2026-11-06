@@ -59,7 +59,7 @@
       h('p', { class: 'lead', id: 'backup-why' }, WHY[s.reason]),
       h('div', { class: 'row' }, btn),
       h('p', { class: 'note', id: 'backup-last' }, s.last ? 'Last backup: ' + fmt(s.last) : 'No backup has been saved on this device yet.'),
-      h('p', { class: 'note', id: 'backup-or' }, 'Or use Back up to Grok Bot below to save the file and email it in one click.'));
+      h('p', { class: 'note', id: 'backup-or' }, 'Or use Back up to Grok Bot below to save a zip and email or share it in one click.'));
     el.hidden = false;
     return s;
   }

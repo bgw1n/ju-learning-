@@ -232,19 +232,44 @@
   /* save / load progress (a JSON backup file) */
   const backupMsg = document.getElementById('backup-msg');
   const banner = document.getElementById('backup-banner');
-  async function saveBackup() {
+  async function makeBackup() {
     const incRec = document.getElementById('backup-recordings');
     const data = await JU.storage.exportAll({ recordings: !incRec || incRec.checked });
     const blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
     const fileName = 'family-learning-progress-' + JU.ui.localDate(data.exportedAt) + '.json';
-    const a = h('a', { href: URL.createObjectURL(blob), download: fileName });
-    document.body.appendChild(a); a.click(); a.remove();
     await JU.storage.setLastBackup(data.exportedAt);
     const dn = data.profiles.dorian.results.length, fl = Object.keys(data.profiles.family.lessons.complete).length;
     const nrec = (data.recordings || []).length, mb = blob.size / 1048576;
-    backupMsg.textContent = 'Saved a backup with ' + P(data.results.length, 'result') + ' for Julianna, ' + dn + ' for Dorian and ' + P(fl, 'finished family lesson') + (nrec ? ', plus ' + P(nrec, 'sound recording') + ' (' + (mb >= 0.1 ? mb.toFixed(1) + ' MB' : Math.max(1, Math.round(blob.size / 1024)) + ' KB') + ')' : '') + '. Keep the file somewhere safe.';
+    const size = mb >= 0.1 ? mb.toFixed(1) + ' MB' : Math.max(1, Math.round(blob.size / 1024)) + ' KB';
+    backupMsg.textContent = 'Saved a backup with ' + P(data.results.length, 'result') + ' for Julianna, ' + dn + ' for Dorian and ' + P(fl, 'finished family lesson') + (nrec ? ', plus ' + P(nrec, 'sound recording') + ' (' + size + ')' : '') + '. Keep the file somewhere safe.';
     await JU.backup.showBanner(banner, saveBackup);
-    return { fileName, date: JU.ui.localDate(data.exportedAt), recordings: nrec, size: mb >= 0.1 ? mb.toFixed(1) + ' MB' : Math.max(1, Math.round(blob.size / 1024)) + ' KB' };
+    return { blob, fileName, date: JU.ui.localDate(data.exportedAt), recordings: nrec, size, exportedAt: data.exportedAt };
+  }
+  function downloadBlob(blob, fileName) {
+    const a = h('a', { href: URL.createObjectURL(blob), download: fileName });
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  async function saveBackup() {
+    const saved = await makeBackup();
+    downloadBlob(saved.blob, saved.fileName);
+    return saved;
+  }
+  /* Email/share path: wrap the same JSON in a .zip so inbox readers that truncate JSON attachments still keep the full file. */
+  async function makeBackupZip() {
+    const saved = await makeBackup();
+    const jsonName = saved.fileName;
+    const zipName = jsonName.replace(/\.json$/i, '.zip');
+    const bytes = new Uint8Array(await saved.blob.arrayBuffer());
+    const zipBlob = await JU.zip.pack([{ name: jsonName, data: bytes }]);
+    const mb = zipBlob.size / 1048576;
+    const size = mb >= 0.1 ? mb.toFixed(1) + ' MB' : Math.max(1, Math.round(zipBlob.size / 1024)) + ' KB';
+    return Object.assign({}, saved, { blob: zipBlob, fileName: zipName, jsonName, size, zip: true });
+  }
+  async function readBackupFile(f) {
+    const buf = await f.arrayBuffer();
+    const name = (f.name || '').toLowerCase();
+    if (name.endsWith('.zip') || JU.zip.isZip(buf)) return JU.zip.readJsonFromZip(buf);
+    return JSON.parse(new TextDecoder().decode(buf));
   }
   document.getElementById('save-progress').addEventListener('click', saveBackup);
   JU.backup.showBanner(banner, saveBackup);
@@ -254,7 +279,7 @@
     const f = loadFile.files[0]; loadFile.value = '';
     if (!f) return;
     try {
-      const data = JSON.parse(await f.text());
+      const data = await readBackupFile(f);
       if (!JU.storage.isBackup(data)) throw new Error('not a backup');
       const r = await JU.storage.importAll(data);
       const others = Object.keys(r.profiles).map(k => (k === 'dorian' ? 'Dorian' : 'Family') + ': ' + r.profiles[k].added + ' new').join(', ');
@@ -501,14 +526,17 @@
       })));
   }
 
-  /* ---------- Back up to Grok Bot: one click = download the backup file + open a pre-filled mailto:. ----------
-     The address is typed once and kept only in this browser (localStorage). It is never in a site file or the backup file.
-     A web page cannot attach a file, so the message tells the grown-up to attach the file that was just downloaded. */
+  /* ---------- Back up to Grok Bot / Ideas ----------
+     Address is typed once and kept only in this browser (localStorage). Never in a site file or the backup file.
+     When the device can share a file (navigator.canShare with files), Back up attaches the .json in the share sheet.
+     Otherwise it downloads the file and opens a pre-filled mailto:; the grown-up attaches the file and presses Send. */
   const EMAIL_KEY = 'ju_backup_email_v1';          // this browser only
   const EMAIL_RE = /^[^\s@,;?&<>"]+@[^\s@,;?&<>"]+\.[^\s@,;?&<>"]+$/;
+  const SITE_VER = 'v15.1';
   const emailBox = document.getElementById('backup-email'), emailMsg = document.getElementById('email-msg');
   const emailSaved = document.getElementById('email-saved'), emailEdit = document.getElementById('email-edit');
-  const emailBtn = document.getElementById('email-backup');
+  const emailBtn = document.getElementById('email-backup'), emailSteps = document.getElementById('email-steps');
+  const emailCopy = document.getElementById('email-copy');
   const NEED_ADDR = 'Type the backup address once first.';
   function getAddr() { try { const v = JSON.parse(localStorage.getItem(EMAIL_KEY)); return typeof v === 'string' && EMAIL_RE.test(v) ? v : ''; } catch (e) { return ''; } }
   function showEmail(editing) {
@@ -516,7 +544,7 @@
     emailSaved.hidden = !addr || editing; emailEdit.hidden = !!addr && !editing;
     document.getElementById('email-sending').textContent = addr ? 'Sending to: ' + addr : '';
     emailBtn.disabled = !addr;
-    emailMsg.textContent = addr ? '' : NEED_ADDR;
+    if (!addr) emailMsg.textContent = NEED_ADDR;
     if (addr && editing) emailBox.value = addr;
   }
   function saveAddr() {
@@ -524,11 +552,18 @@
     if (!EMAIL_RE.test(v)) { emailMsg.textContent = 'That does not look like an email address. Please check it.'; emailBox.focus(); return; }
     localStorage.setItem(EMAIL_KEY, JSON.stringify(v));
     emailBox.value = '';
+    emailMsg.textContent = '';
     showEmail(false);
+  }
+  async function copyAddr() {
+    const addr = getAddr(); if (!addr) return;
+    try { await navigator.clipboard.writeText(addr); emailMsg.textContent = 'Copied: ' + addr; }
+    catch (e) { emailMsg.textContent = 'Copy failed. Select the address above and copy it yourself.'; }
   }
   document.getElementById('email-save').addEventListener('click', saveAddr);
   emailBox.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); saveAddr(); } });
   document.getElementById('email-change').addEventListener('click', () => { showEmail(true); emailBox.focus(); emailBox.select(); });
+  emailCopy.addEventListener('click', copyAddr);
   showEmail(false);
   async function summaryText() {
     const c = await JU.storage.counts(), last = await JU.storage.getLastBackup(), total = (await JU.money.load()).length;
@@ -547,23 +582,110 @@
       '',
       'This is only a summary of counts. The real backup is the attached file.'].filter(x => x !== null).join('\n');
   }
+  function backupSubject(date) { return 'Family Learning backup ' + date; }
+  function backupMailBody(saved) {
+    return ['This is the weekly backup for the family learning site.',
+      'Please attach the file named ' + saved.fileName + ', from your Downloads folder, then press Send.',
+      (saved.zip ? 'The attachment is a zip that holds the progress JSON (so large backups with recordings are not truncated).' : null),
+      'Nothing else is needed. The bot saves it. You do not need to wait for a reply.',
+      saved.recordings ? 'The file includes ' + saved.recordings + ' sound recording(s), so it is about ' + saved.size + '.' : null].filter(x => x !== null).join('\n');
+  }
+  function showMailSteps(fileName) {
+    emailSteps.hidden = false;
+    emailSteps.innerHTML = '';
+    [['1', 'The file was saved as <strong>' + fileName + '</strong> in your Downloads folder.'],
+     ['2', 'Your email app should open with the message filled in (to the Grok Bot inbox above).'],
+     ['3', 'Attach that file (drag it in from Downloads).'],
+     ['4', 'Press Send. Nothing is sent until you do.']].forEach(([n, html]) => {
+      const li = document.createElement('li'); li.innerHTML = '<span class="email-step-n">' + n + '</span> ' + html; emailSteps.appendChild(li);
+    });
+  }
+  function canShareFile(file) {
+    try { return !!(navigator.canShare && navigator.canShare({ files: [file] })); } catch (e) { return false; }
+  }
   emailBtn.addEventListener('click', async () => {
     const addr = getAddr();
     if (!addr) { showEmail(false); return; }
-    emailBtn.disabled = true;
+    emailBtn.disabled = true; emailSteps.hidden = true; emailMsg.textContent = '';
     try {
-      const saved = await saveBackup();                       // same download as Save progress; also sets the last-backup date
-      const body = ['This is the weekly backup for the family learning site.',
-        'Step 1: attach the file just downloaded, named ' + saved.fileName + ', from your Downloads folder.',
-        'Step 2: press Send.',
-        'Nothing else is needed. The bot saves it. You do not need to wait for a reply.',
-        saved.recordings ? 'The file includes ' + saved.recordings + ' sound recording(s), so it is about ' + saved.size + '.' : null,
-        '', await summaryText()].filter(x => x !== null).join('\n');
-      const url = 'mailto:' + encodeURIComponent(addr).replace(/%40/g, '@') + '?subject=' + encodeURIComponent('Family Learning backup ' + saved.date) + '&body=' + encodeURIComponent(body);
-      emailBtn.dataset.mailto = url;
-      const a = h('a', { href: url }); document.body.appendChild(a); a.click(); a.remove();
-      emailMsg.textContent = 'The backup file was saved as ' + saved.fileName + '. Your email app should open: attach that file and press Send. Nothing is sent until you do.';
+      const saved = await makeBackupZip();
+      const file = new File([saved.blob], saved.fileName, { type: 'application/zip' });
+      const subject = backupSubject(saved.date);
+      const shareText = 'Family learning backup for ' + saved.date + ' (zip with the JSON inside). Please send this file to ' + addr + '.';
+      if (canShareFile(file)) {
+        emailMsg.textContent = 'Send the backup file to: ' + addr + ' (Copy address first if your share sheet cannot pick a recipient).';
+        try {
+          await navigator.share({ files: [file], title: subject, text: shareText });
+          emailMsg.textContent = 'Share sheet opened. Send the file to ' + addr + '. Nothing is sent until you choose a recipient and confirm.';
+        } catch (e) {
+          if (e && e.name === 'AbortError') { emailMsg.textContent = 'Share was cancelled. Nothing was sent.'; return; }
+          downloadBlob(saved.blob, saved.fileName);
+          const body = backupMailBody(saved) + '\n\n' + await summaryText();
+          const url = 'mailto:' + encodeURIComponent(addr).replace(/%40/g, '@') + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+          emailBtn.dataset.mailto = url;
+          const a = h('a', { href: url }); document.body.appendChild(a); a.click(); a.remove();
+          showMailSteps(saved.fileName);
+          emailMsg.textContent = 'Could not share the file here, so it was saved as ' + saved.fileName + ' and your email app should open. Attach that file and press Send.';
+        }
+      } else {
+        downloadBlob(saved.blob, saved.fileName);
+        const body = backupMailBody(saved) + '\n\n' + await summaryText();
+        const url = 'mailto:' + encodeURIComponent(addr).replace(/%40/g, '@') + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        emailBtn.dataset.mailto = url;
+        const a = h('a', { href: url }); document.body.appendChild(a); a.click(); a.remove();
+        showMailSteps(saved.fileName);
+        emailMsg.textContent = 'The backup file was saved as ' + saved.fileName + '. Follow the steps below. Nothing is sent until you press Send.';
+      }
     } finally { emailBtn.disabled = !getAddr(); }
+  });
+
+  /* Ideas and changes: mailto / share to the same saved Grok Bot address. Nothing automatic. */
+  const ideaText = document.getElementById('idea-text'), ideaMsg = document.getElementById('idea-msg');
+  const ideaSend = document.getElementById('idea-send'), ideaShare = document.getElementById('idea-share');
+  function ideaWho() { const el = document.querySelector('input[name="idea-who"]:checked'); return el ? el.value : 'Other'; }
+  function ideaFirstWords(t) {
+    const words = t.trim().replace(/\s+/g, ' ').split(' ').filter(Boolean).slice(0, 8).join(' ');
+    return words || 'note';
+  }
+  function ideaSubject(t) { return 'Family Learning idea: ' + ideaFirstWords(t); }
+  function ideaBody(t) {
+    return ['From: ' + ideaWho(),
+      'Page: parent (Ideas and changes)',
+      'Site: Family Learning ' + SITE_VER,
+      '',
+      t.trim()].join('\n');
+  }
+  function openMailto(addr, subject, body) {
+    const url = 'mailto:' + encodeURIComponent(addr).replace(/%40/g, '@') + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    ideaSend.dataset.mailto = url;
+    const a = h('a', { href: url }); document.body.appendChild(a); a.click(); a.remove();
+    return url;
+  }
+  function refreshIdeaShare() {
+    const can = !!(navigator.share);
+    ideaShare.hidden = !can;
+  }
+  refreshIdeaShare();
+  ideaSend.addEventListener('click', () => {
+    const addr = getAddr(), note = ideaText.value.trim();
+    if (!addr) { ideaMsg.textContent = 'Save the Grok Bot inbox address in Back up to Grok Bot above first.'; document.getElementById('email-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); showEmail(false); return; }
+    if (!note) { ideaMsg.textContent = 'Type a short note first.'; ideaText.focus(); return; }
+    openMailto(addr, ideaSubject(note), ideaBody(note));
+    ideaMsg.textContent = 'Your email app should open to ' + addr + '. Press Send when you are ready. Nothing is sent until you do.';
+  });
+  ideaShare.addEventListener('click', async () => {
+    const addr = getAddr(), note = ideaText.value.trim();
+    if (!addr) { ideaMsg.textContent = 'Save the Grok Bot inbox address in Back up to Grok Bot above first.'; return; }
+    if (!note) { ideaMsg.textContent = 'Type a short note first.'; ideaText.focus(); return; }
+    const subject = ideaSubject(note), body = ideaBody(note);
+    try {
+      await navigator.share({ title: subject, text: body + '\n\n(Send to: ' + addr + ')' });
+      ideaMsg.textContent = 'Share sheet opened. Send it to ' + addr + '. Nothing is sent until you confirm.';
+    } catch (e) {
+      if (e && e.name === 'AbortError') { ideaMsg.textContent = 'Share was cancelled. Nothing was sent.'; return; }
+      openMailto(addr, subject, body);
+      ideaMsg.textContent = 'Share was not available, so your email app should open instead.';
+    }
   });
 
   await renderOthers();

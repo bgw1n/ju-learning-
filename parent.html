@@ -30,24 +30,45 @@
       <button id="save-progress" class="btn" type="button">Save progress (backup file)</button>
       <button id="load-progress" class="btn" type="button">Load progress&hellip;</button>
       <label class="check-inline"><input type="checkbox" id="backup-recordings" checked> Include my sound recordings</label>
-      <input id="load-file" type="file" accept="application/json,.json" hidden aria-label="Choose a progress backup file">
+      <input id="load-file" type="file" accept="application/json,.json,application/zip,.zip" hidden aria-label="Choose a progress backup file">
     </section>
     <p id="backup-msg" class="note" role="status" aria-live="polite"></p>
 
     <section class="card email-card" id="email-card" aria-labelledby="email-h">
       <h2 id="email-h">Back up to Grok Bot</h2>
-      <p class="note">One click saves the backup file and opens your email app with the message already filled in. You only attach the file and press Send. The address is typed once here and kept only in this browser, never in the website&rsquo;s files.</p>
+      <p class="note">Saves a backup file and helps you send it to your Grok Bot inbox. The address is typed once here and kept only in this browser, never in the website&rsquo;s files or the backup file. Nothing is sent until you choose to share or press Send.</p>
       <div class="row" id="email-saved" hidden>
         <span id="email-sending" class="note"></span>
+        <button id="email-copy" class="btn small" type="button">Copy address</button>
         <button id="email-change" class="btn small ghost" type="button">Change address</button>
       </div>
       <div class="row" id="email-edit" hidden>
-        <label for="backup-email">Backup address:</label>
-        <input id="backup-email" class="textbox" type="email" autocomplete="off" inputmode="email" placeholder="the backup email address">
+        <label for="backup-email">Email address of your Grok Bot inbox (where backups go)</label>
+        <input id="backup-email" class="textbox" type="email" autocomplete="off" inputmode="email" placeholder="the Grok Bot inbox address">
         <button id="email-save" class="btn" type="button">Save address</button>
       </div>
+      <p class="note" id="email-help">Not your own email: use the Grok Bot inbox address Grok Bot gave you.</p>
       <div class="row"><button id="email-backup" class="btn primary big" type="button" disabled>Back up to Grok Bot</button></div>
+      <ol id="email-steps" class="note email-steps" hidden></ol>
       <p id="email-msg" class="note" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card ideas-card" id="ideas-card" aria-labelledby="ideas-h">
+      <h2 id="ideas-h">Ideas and changes</h2>
+      <p class="note">Send a short note to the same Grok Bot inbox (ideas, typos, things to change). Nothing is sent until you open your email or share sheet and press Send.</p>
+      <div class="row">
+        <span class="note">Who is writing?</span>
+        <label class="check-inline"><input type="radio" name="idea-who" value="Dad" checked> Dad</label>
+        <label class="check-inline"><input type="radio" name="idea-who" value="Mom"> Mom</label>
+        <label class="check-inline"><input type="radio" name="idea-who" value="Other"> Other</label>
+      </div>
+      <label for="idea-text">Your note</label>
+      <textarea id="idea-text" class="textbox idea-text" rows="4" maxlength="2000" placeholder="What should change or what would help?"></textarea>
+      <div class="row">
+        <button id="idea-send" class="btn primary" type="button">Send idea</button>
+        <button id="idea-share" class="btn" type="button" hidden>Share note</button>
+      </div>
+      <p id="idea-msg" class="note" role="status" aria-live="polite"></p>
     </section>
 
     <section class="card" id="voice-card" aria-labelledby="voice-h">
@@ -248,6 +269,7 @@
   <script src="js/spelling/clap.js"></script>
   <script src="js/spelling/test.js"></script>
   <script src="js/spelling/review.js"></script>
+  <script src="js/zip.js"></script>
   <script src="js/pages/parent.js"></script>
   <script src="js/pages/record.js"></script>
 </body>

@@ -695,3 +695,9 @@ body.kid .k-opts.k-opts4, .k-opts.k-opts4 { grid-template-columns: repeat(4, min
 .k-lpic.k-s1 { font-size: 1.6rem; } .k-lpic.k-s2 { font-size: 3rem; } .k-lpic.k-s3 { font-size: 5rem; }
 .k-plural { min-width: 140px; } .k-plural .k-lpic { font-size: 2.4rem; }
 @media (max-width: 600px) { .k-lookopt { min-width: 92px; min-height: 120px; } .k-lpic.k-s3 { font-size: 4rem; } .k-side .k-obj { width: 44px; height: 44px; font-size: 1.5rem; } .k-pickbtn { min-width: 84px; min-height: 84px; } }
+
+.email-steps { margin: 0.6rem 0 0.2rem; padding-left: 0; list-style: none; }
+.email-steps li { margin: 0.35rem 0; display: flex; gap: 0.6rem; align-items: flex-start; }
+.email-step-n { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 1.6rem; height: 1.6rem; border-radius: 999px; background: #3f6f9c; color: #fff; font-weight: 700; font-size: 0.95rem; }
+.ideas-card .idea-text { width: 100%; min-height: 6rem; resize: vertical; }
+.ideas-card label.check-inline { margin-right: 0.4rem; }

@@ -1,5 +1,10 @@
 # Changelog
 
+## v15.1 (local, not published)
+- **Back up to Grok Bot:** address box stays (parents type it; this browser only; never in the repo or backup file). Relabelled "Email address of your Grok Bot inbox (where backups go)" with help text that it is not your own email. When `navigator.canShare({files})` works, Back up shares a **`.zip`** (JSON inside) with title/text `Family Learning backup <date>` and shows the saved address with Copy (share cannot set the recipient). Otherwise it downloads that `.zip` and opens a pre-filled mailto, with on-screen steps: 1 file saved as X in Downloads, 2 email opens, 3 attach that file, 4 press Send. Plain **Save progress** stays `.json`. **Load progress** accepts `.zip` or `.json`. Zip is built in the browser (`CompressionStream` deflate-raw when available, else store) with no CDN.
+- **Ideas and changes** on the parent page: Dad/Mom/Other, a short note, Send opens mailto to the same saved Grok Bot address with subject `Family Learning idea: <first words>` (body includes who, parent page, site version v15.1). Share sheet offered when available. Nothing is sent automatically.
+- Synced spelling menu label for Unit 2 Lesson 2 (`2026-11-02`) to **Nov 2–13** (same week id and words).
+
 ## Spelling label Nov 2–13 (published 2026-11-06)
 - Menu label for Unit 2 Lesson 2 (id `2026-11-02`) changed from "Week of Nov 2" to "Nov 2–13" so the same word list covers the repeat week of Nov 9. Week id unchanged so saved scores stay. Words unchanged.
 
