@@ -124,6 +124,33 @@
    "targets": [
     "that"
    ]
+  },
+  {
+   "pic": "🦁",
+   "text": "They are big. They like me.",
+   "targets": [
+    "they"
+   ]
+  },
+  {
+   "pic": "🤗",
+   "text": "I like you. We like you.",
+   "targets": [
+    "you",
+    "i",
+    "like",
+    "we"
+   ]
+  },
+  {
+   "pic": "⚽",
+   "text": "We do it. I do it.",
+   "targets": [
+    "do",
+    "we",
+    "it",
+    "i"
+   ]
   }
  ]
 }

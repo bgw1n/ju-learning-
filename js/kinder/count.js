@@ -91,7 +91,7 @@
   /* the number choices; a wrong tap clears the count so he can count again; after two wrong taps the voice counts with him and says the answer */
   K.numberChoices = function (item, ctl, counter, extra, together) {
     let answered = false, wrongs = 0;
-    const buttons = item.options.map((o, i) => h('button', { class: 'opt solo-opt k-opt k-numopt', type: 'button', 'data-opt': i, 'data-n': o.n, 'aria-label': String(o.n),
+    const buttons = item.options.map((o, i) => h('button', { class: 'opt solo-opt k-opt k-numopt', type: 'button', 'data-opt': i, 'data-n': o.n, 'data-right': o.right ? '1' : null, 'aria-label': String(o.n),
       onclick: async () => {
         if (answered || buttons[i].disabled) return;
         if (o.right) {

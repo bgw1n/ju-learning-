@@ -2,7 +2,7 @@
 (async function () {
   const h = JU.ui.h;
   const q = new URLSearchParams(location.search);
-  const activity = ['build', 'sight', 'count', 'add', 'warmup', 'more', 'look'].indexOf(q.get('a')) >= 0 ? q.get('a') : 'letters';
+  const activity = ['build', 'sight', 'count', 'add', 'warmup', 'more', 'look', 'rhyme', 'shapes', 'push', 'take'].indexOf(q.get('a')) >= 0 ? q.get('a') : 'letters';
   const preview = JU.auth.role() === 'parent';
   const mount = document.getElementById('kinder');
   if (preview) document.getElementById('parent-bar').hidden = false;

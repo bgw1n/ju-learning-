@@ -2,8 +2,8 @@
  "note": "Count to 30 (v14). A number is KNOWN after it was right first time with no hint in 2 different visits. v14: the next tier (level) opens only when he earns a star (3 good rounds in a row, see data/kinder/levels.json) or a grown-up opens it on the parent page. Pictures are scattered (not in rows); a tapped picture gets a check mark. 'dotsOnChoices' puts a row of dots (groups of 5) next to each number choice.",
  "rules": {
   "knownSessions": 2,
-  "roundItems": 6,
-  "maxRoundItems": 8,
+  "roundItems": 10,
+  "maxRoundItems": 12,
   "dotsOnChoices": true,
   "numbersToOpenNext": [
    6,
@@ -35,6 +35,11 @@
   {
    "from": 26,
    "to": 30
+  },
+  {
+   "from": 1,
+   "to": 30,
+   "mixed": true
   }
  ],
  "words": [

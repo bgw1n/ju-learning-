@@ -696,6 +696,33 @@ body.kid .k-opts.k-opts4, .k-opts.k-opts4 { grid-template-columns: repeat(4, min
 .k-plural { min-width: 140px; } .k-plural .k-lpic { font-size: 2.4rem; }
 @media (max-width: 600px) { .k-lookopt { min-width: 92px; min-height: 120px; } .k-lpic.k-s3 { font-size: 4rem; } .k-side .k-obj { width: 44px; height: 44px; font-size: 1.5rem; } .k-pickbtn { min-width: 84px; min-height: 84px; } }
 
+/* ---------- v16: rhyme, shapes, push or pull, word switch, bigger compare ---------- */
+.k-slot.k-change { border-style: solid; border-color: #e0a800; background: #fff8dc; }
+.k-rhyme { min-width: 120px; min-height: 140px; }
+.k-shape-shown { display: flex; justify-content: center; }
+.k-shape-shown .k-svg { width: 180px; height: 180px; }
+.k-shapebox { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.6rem; width: 100%; max-width: 720px; margin: 0.4rem auto; }
+.k-shapebtn { min-height: 120px; padding: 0.4rem; display: flex; align-items: center; justify-content: center; }
+.k-shapebtn .k-svg { width: 88px; height: 88px; }
+.k-scene-wrap { display: flex; justify-content: center; width: 100%; }
+.k-scene { width: min(420px, 100%); height: auto; display: block; }
+.k-pushbtn { min-width: 140px; min-height: 110px; font-size: 2rem; font-weight: 800; }
+.k-donemsg { text-align: center; font-size: 1.35rem; font-weight: 700; color: #24425f; margin: 0.1rem 0.4rem 0.7rem; }
+@media (max-width: 700px) {
+  .k-sides.k-has-frames { flex-direction: column; align-items: center; }
+  .k-sides.k-has-frames { gap: 0.35rem; }
+  .k-sides.k-has-frames .k-side { width: 100%; max-width: 340px; }
+  .k-side-tall { padding: 0.2rem; }
+  .k-side-tall .k-count-out { font-size: 1.45rem; min-height: 0; line-height: 1; }
+  .k-side-tall .k-objs.k-frame { grid-template-columns: repeat(5, 28px); gap: 2px; padding: 3px; margin: 0 auto; }
+  .k-side-tall .k-frame .k-obj, .k-side-tall .k-frame .k-cell { width: 28px; height: 28px; font-size: 0.95rem; }
+  .k-has-frames ~ .k-picks { margin: 0.25rem 0 0; }
+  .k-has-frames ~ .k-picks .k-pickbtn { min-width: 76px; min-height: 64px; font-size: 2rem; }
+  .k-shapebox { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .k-shape-shown .k-svg { width: 140px; height: 140px; }
+  .k-pushbtn { min-width: 120px; min-height: 96px; font-size: 1.7rem; }
+  .k-rhyme { min-width: 96px; min-height: 120px; }
+}
 .email-steps { margin: 0.6rem 0 0.2rem; padding-left: 0; list-style: none; }
 .email-steps li { margin: 0.35rem 0; display: flex; gap: 0.6rem; align-items: flex-start; }
 .email-step-n { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 1.6rem; height: 1.6rem; border-radius: 999px; background: #3f6f9c; color: #fff; font-weight: 700; font-size: 0.95rem; }

@@ -20,7 +20,7 @@
   const games = JU.kinderGames = JU.kinderGames || {};
 
   /* the sticker picture for round n of an activity (the same every time, so it can be shown again later) */
-  const STICKER_START = { letters: 0, build: 6, sight: 3, count: 9, add: 1, warmup: 5, more: 7, look: 10 };
+  const STICKER_START = { letters: 0, build: 6, sight: 3, count: 9, add: 1, warmup: 5, more: 7, look: 10, rhyme: 2, shapes: 4, push: 8, take: 11 };
   JU.kinderSticker = (activity, n) => K.STICKERS[(n - 1 + (STICKER_START[activity] || 0)) % K.STICKERS.length];
 
   /* v15: a soft two-note chime when the answers light up (Web Audio, about a quarter second; silent where there is no audio) */
@@ -63,7 +63,7 @@
     const ctx = { game: { id: 'kinder-' + activity, hintGate: true }, week: { id: 'kinder' }, subject: 'kinder', session, hintNoun: game.hintNoun || (activity === 'letters' ? 'picture' : 'word'), kid: true,
       store: preview ? noStore : store, speakButton: () => h('span'), hintCount: 0 };
     const home = opts.home || 'dorian.html';
-    let queue = [], idx = 0, round = { no: roundsDone + 1, id: JU.ui.uid(), played: 0, clean: 0, comebacks: 0 };     // (a new round is planned when the start button is tapped)
+    let queue = [], idx = 0, round = { no: roundsDone + 1, id: JU.ui.uid(), played: 0, clean: 0, comebacks: 0, run: 0, bestRun: 0 };     // (a new round is planned when the start button is tapped)
 
     const speakRow = (getText, sound) => {
       if (!JU.speech.supported && !JU.speech.canClips) return h('p', { class: 'note', 'data-no-voice': '' }, 'Sound is not available on this browser. Ask a grown-up to help.');
@@ -88,7 +88,7 @@
       queue = game.plan(env);
       idx = 0;
       queue.forEach(it => JU.speech.preload([it.text, it.hint, it.right, it.done, (it.sounds || []).join(' ')].join(' ')));      // warm the cache with this round's recorded clips
-      round = { no: roundsDone + 1, id: JU.ui.uid(), played: 0, clean: 0, comebacks: 0 };
+      round = { no: roundsDone + 1, id: JU.ui.uid(), played: 0, clean: 0, comebacks: 0, run: 0, bestRun: 0 };
     }
 
     function drawStart() {
@@ -141,7 +141,9 @@
           const rec = Object.assign({ session, round: round.no, activity: item.activity || activity, item: item.id, correct: wrongs === 0 && !hinted, tries: wrongs + 1, hinted }, o.extra || {});
           if (activity === 'warmup') rec.warmup = true;          // (v14: a warm-up answer, saved under its own game)
           if (!preview) { const r = await store.addKinderAnswer(rec); answers.push(r); } else answers.push(Object.assign({ ts: new Date().toISOString(), id: JU.ui.uid() }, rec));
-          round.played++; if (rec.correct) round.clean++;
+          round.played++;
+          if (rec.correct) { round.clean++; round.run = (round.run || 0) + 1; if (round.run > (round.bestRun || 0)) round.bestRun = round.run; }
+          else round.run = 0;
           /* a missed item comes back once, two screens later (at most 2 comebacks, so a round is 4 to 6 items) */
           if (!rec.correct && !item.comeback && round.comebacks < (rules.maxRoundItems - rules.roundItems) && queue.length < rules.maxRoundItems) {
             round.comebacks++;
@@ -212,31 +214,36 @@
       const pic = JU.kinderSticker(activity, round.no);
       if (!preview && !doneSaved) {
         doneSaved = true;
-        const rrec = { session, activity, items: round.played, clean: round.clean };
+        const rrec = { session, activity, items: round.played, clean: round.clean, run: round.bestRun || 0 };
         if (leveled) { rrec.level = env.level; rrec.good = K.roundGood(rrec, lv); }
         if (activity === 'warmup') rrec.warmup = true;
         await store.addKinderRound(rrec);
         isNew = await store.earnSticker('kinder', activity + '-' + round.no);
         roundsDone++;
-        /* v14: a star after enough good rounds in a row at this level; it opens the next level */
+        /* v16: a star after 2 good rounds in a row, OR 5 right answers in a row inside this round (K.UNLOCK). It opens the next level. */
         if (leveled) {
           const k = await store.getKinder();
-          if (K.streak(k, activity, env.level, lv) >= lv.roundsForStar) {
+          const byRounds = K.streak(k, activity, env.level, lv) >= lv.roundsForStar;
+          const byRun = (round.bestRun || 0) >= (lv.rightInARow || K.UNLOCK.rightInARow);
+          if (byRounds || byRun) {
             const from = env.level, max = K.maxLevel(activity, lv);
-            await store.addKinderStar({ activity, level: from, by: 'rounds' });
+            await store.addKinderStar({ activity, level: from, by: byRun ? 'run' : 'rounds' });
             if (from < max) { await store.setKinderLevel(activity, from + 1); env.level = from + 1; }
-            star = { level: from, opened: from < max };
+            star = { level: from, opened: from < max, by: byRun ? 'run' : 'rounds' };
           }
         }
       }
       const good = leveled && K.roundGood({ items: round.played, clean: round.clean }, lv);
-      const msg = 'You did it! ' + (preview ? 'This was a preview, so nothing was saved.' : star ? (star.opened ? 'You earned a big star! A new level is open!' : 'You earned a big star!') : 'You earned a sticker!' + (good ? ' Great listening!' : ''));
+      const RUNW = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
+      const runLine = star && star.by === 'run' ? ((RUNW[lv.rightInARow] || (lv.rightInARow + '')) + ' right in a row! ') : '';
+      const msg = 'You did it! ' + (preview ? 'This was a preview, so nothing was saved.' : star ? runLine + (star.opened ? 'You earned a big star! A new level is open!' : 'You earned a big star!') : 'You earned a sticker!' + (good ? ' Great listening!' : ''));
       const ask = askFor(number, null);
       const again = h('button', { class: 'btn primary kid-next k-again', type: 'button', 'data-again': '', 'aria-label': 'Play one more round', onclick: () => { doneSaved = false; newRound(); go(0); } }, h('span', { 'aria-hidden': 'true' }, AGAIN));
       const root = frame(number, null, [
         h('div', { class: 'sticker-pop k-sticker', 'aria-hidden': 'true', 'data-sticker': pic }, pic),
-        star ? h('div', { class: 'k-bigstar', 'aria-hidden': 'true', 'data-star': star.level, 'data-opened': star.opened ? '1' : '0' }, '\u2B50') : null,
+        star ? h('div', { class: 'k-bigstar', 'aria-hidden': 'true', 'data-star': star.level, 'data-opened': star.opened ? '1' : '0', 'data-by': star.by }, '\u2B50') : null,
         h('h2', { class: 'lesson-title', tabindex: '-1', 'data-done-title': '' }, 'You did it!'),
+        h('p', { class: 'k-donemsg', 'data-done-msg': '' }, JU.speech.plain(msg).replace(/^You did it!\s*/, '')),
         preview ? h('p', { class: 'note preview-note' }, 'Grown-up preview: nothing was saved.') : null,
         h('div', { class: 'row center k-donebtns' }, again, h('a', { class: 'btn primary kid-next k-gohome', href: home, 'data-home': '', 'aria-label': 'Go home' }, h('span', { 'aria-hidden': 'true' }, HOME))),
         h('div', { class: 'speakrow' }, speakRow(() => msg)),

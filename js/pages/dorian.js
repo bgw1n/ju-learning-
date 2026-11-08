@@ -54,10 +54,10 @@
      for his good rounds in a row, a lock for what comes later). Pictures only; tapping a row says how he is doing. */
   try {
     const lv = await JU.kinder.loadLevels();
-    const ICON = { letters: '\uD83D\uDD24', build: '\uD83E\uDDF1', sight: '\uD83D\uDC40', count: '\uD83D\uDD22', add: '\uD83E\uDDEE', more: '\u2696\uFE0F', look: '\uD83D\uDD0E' };
+    const ICON = { letters: '\uD83D\uDD24', build: '\uD83E\uDDF1', sight: '\uD83D\uDC40', count: '\uD83D\uDD22', add: '\uD83E\uDDEE', more: '\u2696\uFE0F', look: '\uD83D\uDD0E', rhyme: '\uD83C\uDFB5', shapes: '\uD83D\uDD3A', push: '\uD83D\uDEAA', take: '\uD83C\uDF88' };
     const NUMW = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
     const shown = a => { const b = document.querySelector('#kid-kinder [data-act="' + a + '"]'); return b && !b.hidden; };
-    const rows = JU.kinder.starPath(kin || { rounds: [], stars: [], levels: {} }, lv).filter(r => shown(r.activity) && (r.started || ['sight', 'count', 'add', 'more', 'look'].indexOf(r.activity) >= 0));
+    const rows = JU.kinder.starPath(kin || { rounds: [], stars: [], levels: {} }, lv).filter(r => shown(r.activity) && (r.started || ['sight', 'count', 'add', 'more', 'look', 'rhyme', 'shapes', 'push', 'take'].indexOf(r.activity) >= 0));
     if (rows.length) {
       const box = document.getElementById('kid-starpath');
       box.replaceChildren(...rows.map(r => {
@@ -96,7 +96,7 @@
     const keys = Object.keys(st).sort((a, b) => st[a] < st[b] ? -1 : 1).slice(-12);
     if (keys.length) {
       const box = document.getElementById('kid-stickers');
-      box.replaceChildren(...keys.map(k => { const m = /^(letters|build|sight|count|add|warmup|more|look)-(\d+)$/.exec(k); return m ? h('span', { class: 'k-mini-sticker', 'data-sticker-key': k, 'aria-hidden': 'true' }, JU.kinderSticker(m[1], Number(m[2]))) : null; }));
+      box.replaceChildren(...keys.map(k => { const m = /^(letters|build|sight|count|add|warmup|more|look|rhyme|shapes|push|take)-(\d+)$/.exec(k); return m ? h('span', { class: 'k-mini-sticker', 'data-sticker-key': k, 'aria-hidden': 'true' }, JU.kinderSticker(m[1], Number(m[2]))) : null; }));
       box.hidden = false;
     }
   } catch (e) { /* the home still works without the sticker row */ }

@@ -23,6 +23,15 @@
       return { id: 'plural-' + w, kind, opts, text: 'One or many? Find: ' + w + '.', hint: 'Listen to the end of the word. ' + p.many + ' with an s means more than one. ' + p.one + ' means just one.',
         miss: 'Listen again. Find: ' + w + '.', rightMsg: many ? 'Yes! ' + p.many + ', many.' : 'Yes! ' + p.one + ', just one.' };
     }
+    if (kind === 'both') {
+      const cols = K.shuffle(COLORS).slice(0, 2), sizes = ['little', 'big'];
+      const wantSize = K.rng() < 0.5 ? 'big' : 'little', wantCol = cols[0];
+      const opts = [];
+      sizes.forEach(size => cols.forEach(col => opts.push({ v: size + '-' + col.c, e: col.e, size: size === 'big' ? 'k-s3' : 'k-s1', right: size === wantSize && col === wantCol })));
+      const word = wantSize + ' ' + wantCol.c;
+      return { id: 'both-' + wantSize + '-' + wantCol.c, kind: 'both', opts: K.shuffle(opts), text: 'Tap the ' + word + ' one.',
+        hint: 'Find the one that is ' + word + '.', miss: 'Listen again. Tap the ' + word + ' one.', rightMsg: 'Yes! That is the ' + word + ' one.' };
+    }
     const cols = K.shuffle(COLORS).slice(0, 4), want = pick(cols);
     return { id: 'color-' + want.c, kind: 'color', opts: cols.map(c => ({ v: c.c, e: c.e, right: c === want })), text: 'Tap the ' + want.c + ' one.',
       hint: 'Look for the color ' + want.c + '.', miss: 'Listen again. Tap the ' + want.c + ' one.', rightMsg: 'Yes! That one is ' + want.c + '.' };
@@ -31,9 +40,12 @@
   JU.kinderGames.look = {
     id: 'look', code: 8, title: 'Look and tap', icon: '\uD83D\uDD0E', hintNoun: 'picture',
     intro: 'Look and tap! Listen, then tap the picture that matches. Tap the green button to start.',
-    rules: () => ({ roundItems: 6, maxRoundItems: 8 }),
+    rules: () => ({ roundItems: 10, maxRoundItems: 12 }),
     plan(env) {
-      const kinds = (env.level || 1) >= 2 ? ['size', 'plural', 'color', 'size', 'plural', 'color'] : ['size', 'plural', 'size', 'plural', 'size', 'plural'];
+      const lv = env.level || 1;
+      const kinds = lv >= 3 ? ['both', 'both', 'both', 'both', 'color', 'size', 'both', 'plural', 'both', 'color']
+        : lv >= 2 ? ['size', 'plural', 'color', 'size', 'plural', 'color', 'size', 'color', 'plural', 'size']
+        : ['size', 'plural', 'size', 'plural', 'size', 'plural', 'size', 'plural', 'size', 'plural'];
       return kinds.map(K.lookItem);
     },
     redo(env, item) { return K.lookItem(item.kind); },
@@ -41,7 +53,7 @@
       let answered = false, wrongs = 0;
       const btns = item.opts.map(o => {
         const pics = []; for (let i = 0; i < (o.count || 1); i++) pics.push(h('span', { class: 'k-lpic ' + (o.size || ''), 'aria-hidden': 'true' }, o.e));
-        const b = h('button', { class: 'opt k-opt k-lookopt' + (item.kind === 'plural' ? ' k-plural' : ''), type: 'button', 'data-pick': o.v, 'aria-label': item.kind === 'plural' ? (o.count > 1 ? 'many' : 'one') : item.kind === 'size' ? 'a picture' : 'a heart', onclick: async () => {
+        const b = h('button', { class: 'opt k-opt k-lookopt' + (item.kind === 'plural' ? ' k-plural' : ''), type: 'button', 'data-pick': o.v, 'data-right': o.right ? '1' : null, 'aria-label': item.kind === 'plural' ? (o.count > 1 ? 'many' : 'one') : item.kind === 'size' ? 'a picture' : 'a heart', onclick: async () => {
           if (answered || b.disabled) return;
           if (o.right) { answered = true; b.classList.add('right'); btns.forEach(x => { if (x !== b) x.disabled = true; }); ctl.say(item.rightMsg); await ctl.finish({ wrongs, extra: { kind: item.kind }, message: item.rightMsg }); }
           else { wrongs++; b.disabled = true; b.classList.add('tried'); ctl.miss('look ' + o.v, item.miss); }

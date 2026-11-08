@@ -4,8 +4,8 @@
   "knownSessions": 2,
   "wordsToOpenNext": 4,
   "trayExtraAfter": 5,
-  "roundItems": 4,
-  "maxRoundItems": 6,
+  "roundItems": 10,
+  "maxRoundItems": 12,
   "starLevels": true,
   "pluralRound": true
  },
@@ -40,6 +40,11 @@
    "add": [
     "e",
     "f"
+   ]
+  },
+  {
+   "add": [
+    "x"
    ]
   }
  ],
@@ -183,6 +188,26 @@
    "word": "red",
    "tier": 4,
    "e": "🔴"
+  },
+  {
+   "word": "cot",
+   "e": "🛌",
+   "tier": 5
+  },
+  {
+   "word": "cop",
+   "e": "👮",
+   "tier": 5
+  },
+  {
+   "word": "fog",
+   "e": "🌫️",
+   "tier": 5
+  },
+  {
+   "word": "fox",
+   "e": "🦊",
+   "tier": 5
   }
  ]
 }

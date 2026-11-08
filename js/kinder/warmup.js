@@ -15,22 +15,22 @@
       try { lettersReady = (await JU.recordings.letterProgress()).ready; } catch (e) { }
       return { sight, counting, lettersReady, levels: (await JU.storage.profile('dorian').getKinder()).levels || {} };
     },
-    rules: () => ({ roundItems: 5, maxRoundItems: 6 }),
+    rules: () => ({ roundItems: 10, maxRoundItems: 12 }),
     plan(env) {
       const lvl = a => env.levels[a] || 1, out = [];
       const sub = (a, extra) => Object.assign({}, env, { level: lvl(a) }, extra || {});
       /* v15: the letter is O, T or D (this week's letters), still only once every letter sound is recorded */
       if (env.lettersReady) { const se = sub('letters'); G().letters.plan(se); env.active = se.active;
-        const pool = ['o', 't', 'd'].filter(l => env.letters.letters[l]), l = pool[Math.floor(K.rng() * pool.length)];
-        if (l) { const act = Array.from(new Set(se.active.concat(pool))); env.active = act; out.push(tag('letters', G().letters.redo(Object.assign({}, env, { active: act }), { letter: l }))); } }
+        const pool = ['o', 't', 'd'].filter(l => env.letters.letters[l]);
+        pool.slice(0, 2).forEach(l => { const act = Array.from(new Set((se.active || []).concat(pool))); env.active = act; out.push(tag('letters', G().letters.redo(Object.assign({}, env, { active: act }), { letter: l }))); }); }
       /* sight words: plain "find the word" questions (4 look-alike cards) */
       const sp = K.planSight(env.sight, env.answers, 1).items.filter(i => i.type !== 'twice');
-      sp.slice(0, out.length ? 2 : 3).forEach(i => out.push(tag('sight', K.sightItem(env.sight, i.w, 'hunt'))));
-      /* counting: two "how many" questions, the numbers he already has open */
+      sp.slice(0, out.length ? 4 : 6).forEach(i => out.push(tag('sight', K.sightItem(env.sight, i.w, 'hunt'))));
+      /* counting: "how many" questions, the numbers he already has open */
       const cp = K.planCount(env.counting, env.answers, lvl('count')).items;
-      const nums = K.shuffle(cp.map(i => i.n)).slice(0, 2);
+      const nums = K.shuffle(cp.map(i => i.n)).slice(0, 4);
       nums.forEach(n => out.push(tag('count', K.countItem(env.counting, n, 'howmany'))));
-      return K.shuffle(out).slice(0, 5);
+      return K.shuffle(out).slice(0, 10);
     },
     redo(env, item) {
       if (item.warmupOf === 'letters') return tag('letters', G().letters.redo(env, item));

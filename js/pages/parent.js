@@ -433,12 +433,16 @@
     const lv = await JU.kinder.loadLevels();
     const env = { answers: k.answers, cvc, sight, counting, adding };
     /* v14: a game he has not opened since v14 shows the level its first v14 visit will start at (the old rule) */
-    const levelOf = a => (k.levels && k.levels[a]) || Math.max(1, Math.min(JU.kinder.maxLevel(a, lv), JU.kinder.legacyLevel(a, env)));
+    const levelOf = a => {
+      const max = JU.kinder.maxLevel(a, lv);
+      const raw = (k.levels && k.levels[a]) || Math.max(1, Math.min(max, JU.kinder.legacyLevel(a, env)));
+      return Math.max(1, Math.min(max, raw));
+    };
     const sg = JU.kinder.sightSummary(k.answers, sight), ct = JU.kinder.countSummary(k.answers, counting, levelOf('count')), ad = JU.kinder.addSummary(k.answers, adding, levelOf('add'));
     const path = JU.kinder.starPath(Object.assign({}, k, { levels: Object.assign({}, ...JU.kinder.LEVELED.map(a => ({ [a]: levelOf(a) }))) }), lv);
-    box.querySelector('[data-kinder-levels-note]').textContent = 'A round is good when at least ' + Math.round(lv.goodShare * 100) + '% of it was right on the first try with no hint. ' + lv.roundsForStar + ' good rounds in a row at one level earn a star, and the star opens the next level. Warm-up rounds do not count. If he is stuck or bored, you can open the next level yourself.';
+    box.querySelector('[data-kinder-levels-note]').textContent = 'Each round is 10 questions. A round is good when at least ' + Math.round(lv.goodShare * 100) + '% of it was right on the first try with no hint. The next level opens after ' + lv.roundsForStar + ' good rounds in a row, or after ' + (lv.rightInARow || 5) + ' right answers in a row inside one round, whichever comes first. Warm-up rounds do not count. If he is stuck or bored, you can open the next level yourself.';
     fillTable(box.querySelector('[data-kinder-levels]'), ['Game', 'Level', 'Stars', 'Good rounds in a row (of ' + lv.roundsForStar + ')', ''],
-      path.map(r => [h('strong', null, r.title), h('span', { 'data-level-of': r.activity }, r.level + ' of ' + r.max + (lv.games[r.activity].labels ? ' (' + lv.games[r.activity].labels[r.level - 1] + ')' : '')), h('span', { 'data-stars-of': r.activity }, String(r.stars)), r.streak,
+      path.map(r => [h('strong', null, r.title), h('span', { 'data-level-of': r.activity }, r.level + ' of ' + r.max + ((lv.games[r.activity].labels || [])[r.level - 1] ? ' (' + lv.games[r.activity].labels[r.level - 1] + ')' : '')), h('span', { 'data-stars-of': r.activity }, String(r.stars)), r.streak,
         r.level < r.max ? h('button', { class: 'btn small', type: 'button', 'data-unlock': r.activity, onclick: async () => {
           if (!window.confirm('Open level ' + (r.level + 1) + ' of ' + r.title + ' for Dorian now?')) return;
           await store.setKinderLevel(r.activity, r.level + 1);
@@ -460,7 +464,7 @@
       sg.rows.map(r => [h('strong', null, r.word), r.week + (r.focus ? ' (this week)' : ''), h('span', { class: 'k-status ' + r.status, 'data-sight-word': r.word, 'data-status': r.status }, kword[r.status]), r.cleanSessions, r.seen, r.misses, r.hints]), 'No sight words yet.');
     box.querySelector('[data-kinder-count-note]').textContent = 'Open tier: ' + ct.tier + ' of ' + ct.tiers + ' (numbers up to ' + counting.tiers[ct.tier - 1].to + '). Green = knows it, orange = still learning, grey = not yet. Counting along is practice and is not scored' + (ct.along ? ' (' + P(ct.along, 'time') + ' so far)' : '') + '.';
     box.querySelector('[data-kinder-count]').replaceChildren(...ct.strip.map(x => h('li', { class: 'k-strip-n ' + x.status + (x.open ? '' : ' closed'), 'data-count-n': x.n, 'data-status': x.status, title: x.n + ': ' + kword[x.status] + (x.open ? '' : ' (not open yet)') + ', seen ' + x.seen + ', missed ' + x.misses }, String(x.n))));
-    box.querySelector('[data-kinder-add-note]').textContent = 'Open tier: ' + ad.tier + ' of ' + ad.tiers + (adding.rules.showSigns ? '. The screen shows the picture groups with + and = signs (no numbers until he answers), and the voice says "plus" and "equals". The last two tiers are "how many are left": some pictures fly away (no minus sign).' : '. Shown as words, "2 and 1 more", with no plus or equals signs.');
+    box.querySelector('[data-kinder-add-note]').textContent = 'Open tier: ' + ad.tier + ' of ' + ad.tiers + (adding.rules.showSigns ? '. The screen shows the picture groups with + and = signs (no numbers until he answers), and the voice says "plus" and "equals". Two tiers are "how many are left": some pictures fly away (no minus sign). The last tier mixes adding within 10 and take-away within 5.' : '. Shown as words, "2 and 1 more", with no plus or equals signs.');
     fillTable(box.querySelector('[data-kinder-add]'), ['Fact', 'Status', 'Clean visits (of ' + adding.rules.knownSessions + ')', 'Times seen', 'Missed first time', 'Hints'],
       ad.rows.map(r => [h('strong', null, r.take ? r.a + ', ' + r.b + ' fly away' : adding.rules.showSigns ? r.a + ' + ' + r.b : r.a + ' and ' + (r.b === 0 ? 'none' : r.b) + ' more') , h('span', { class: 'k-status ' + r.status, 'data-fact': r.id, 'data-status': r.status }, r.open ? kword[r.status] : 'Not open yet'), r.cleanSessions, r.seen, r.misses, r.hints]), 'No facts yet.');
     const kburst = burstSession(hints.filter(r => r.subject === 'kinder' && r.kind === 'rapid'));

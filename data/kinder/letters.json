@@ -3,8 +3,8 @@
  "rules": {
   "knownSessions": 3,
   "maxLearning": 6,
-  "roundItems": 4,
-  "maxRoundItems": 6
+  "roundItems": 10,
+  "maxRoundItems": 12
  },
  "start": [
   "s",

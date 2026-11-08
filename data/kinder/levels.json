@@ -1,49 +1,121 @@
 {
- "note": "v14 levels and stars for Dorian's games. A round is GOOD when at least goodShare of its items were right on the first try with no hint. A star is earned after roundsForStar good rounds in a row at the same level; each star opens the next level (tier) of that game. A grown-up can open the next level on the parent page. Warm-up rounds do not count toward stars.",
+ "note": "Levels and stars for Dorian's games. The live unlock numbers are K.UNLOCK in js/kinder/levels.js (goodShare 0.8, roundsInARow 2, rightInARow 5). This file mirrors them; loadLevels copies the constant over these values. A round is good when at least goodShare of it was right on the first try with no hint. The next level opens after roundsForStar good rounds in a row, OR rightInARow right answers in a row inside one round, whichever comes first. A grown-up can open the next level on the parent page. Warm-up rounds do not count toward stars. Each round is 10 questions.",
  "goodShare": 0.8,
- "roundsForStar": 3,
+ "roundsForStar": 2,
+ "rightInARow": 5,
  "games": {
   "letters": {
-   "levels": 1,
+   "levels": 2,
    "title": "Letter sounds",
-   "note": "Letter sounds opens new letters by itself as he learns them (6 at a time), so it has one level; stars still show on his star path."
+   "labels": [
+    "3 pictures",
+    "4 pictures"
+   ],
+   "note": "Which letters are in play still opens by itself (6 at a time). The second level only makes each question harder."
   },
   "build": {
-   "levels": 4,
-   "title": "Build a word"
+   "levels": 6,
+   "title": "Build a word",
+   "labels": [
+    "s a t m p n",
+    "+ i c r",
+    "+ o g d u b",
+    "+ e f",
+    "cot, cop, fog, fox, and an easy word switch",
+    "harder word switch, 4 letter choices"
+   ]
   },
   "sight": {
-   "levels": 3,
+   "levels": 4,
    "title": "Sight words",
    "labels": [
     "4 word cards and Find it twice",
     "+ find the missing word",
-    "+ two Find it twice rounds"
+    "+ two Find it twice rounds",
+    "mixed review of every week"
    ]
   },
   "count": {
-   "levels": 5,
-   "title": "Count to 30"
+   "levels": 6,
+   "title": "Count to 30",
+   "labels": [
+    "1 to 10",
+    "11 to 15",
+    "16 to 20",
+    "21 to 25",
+    "26 to 30",
+    "mixed review, 1 to 30"
+   ]
   },
   "add": {
-   "levels": 10,
-   "title": "Add it up"
+   "levels": 11,
+   "title": "Add it up",
+   "labels": [
+    "totals up to 3",
+    "total 4",
+    "total 5",
+    "and none more",
+    "total 6",
+    "total 7",
+    "total 8",
+    "totals 9 and 10",
+    "how many are left, from 5 or less",
+    "how many are left, from 6 to 10",
+    "mix: add within 10 and take away within 5"
+   ]
   },
   "more": {
-   "levels": 3,
+   "levels": 5,
    "title": "Which has more?",
    "labels": [
     "groups of 1 to 5",
     "groups up to 10, and fewer",
-    "groups up to 15"
+    "groups up to 15",
+    "groups up to 20, more, fewer, or equal",
+    "up to 20, the groups are only 1 apart"
    ]
   },
   "look": {
-   "levels": 2,
+   "levels": 3,
    "title": "Look and tap",
    "labels": [
     "big and little, one or many",
-    "+ colors"
+    "+ colors",
+    "two words at once, like big and red"
+   ]
+  },
+  "rhyme": {
+   "levels": 2,
+   "title": "Rhyme",
+   "labels": [
+    "3 pictures, easy rhymes",
+    "4 pictures, some start the same"
+   ]
+  },
+  "shapes": {
+   "levels": 3,
+   "title": "Shapes",
+   "labels": [
+    "sort circles, squares, triangles, rectangles",
+    "match a ball, can, box, or hat to its solid shape",
+    "turned shapes, and the shape shown first"
+   ]
+  },
+  "push": {
+   "levels": 2,
+   "title": "Push or pull",
+   "labels": [
+    "a picture and a small arrow",
+    "no arrow, more swings and tug-of-war"
+   ]
+  },
+  "take": {
+   "levels": 3,
+   "title": "Take away",
+   "labels": [
+    "from 2 or 3",
+    "from 3, 4, or 5",
+    "within 5, sometimes none left"
    ]
   }
  }

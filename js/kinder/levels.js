@@ -1,14 +1,21 @@
-/* kinder/levels.js - v14: levels and stars for Dorian's games (data/kinder/levels.json).
-   A ROUND is GOOD when at least goodShare of its items were right on the first try with no hint. He earns a STAR after roundsForStar good rounds
-   in a row at the same level of a game; a star opens the next level (tier) of that game. A grown-up can also open the next level (parent page).
+/* kinder/levels.js - levels and stars for Dorian's games (data/kinder/levels.json).
+   A ROUND is GOOD when at least UNLOCK.goodShare of its items were right on the first try with no hint.
+   The next level opens when EITHER of these happens first (see K.UNLOCK, the only place to change them):
+     - UNLOCK.roundsInARow good rounds in a row at the same level, or
+     - UNLOCK.rightInARow right answers in a row inside one round.
+   A star opens the next level. A grown-up can also open the next level (parent page).
    Saved under his kindergarten key: levels { activity: n } and stars [ { id, ts, activity, level, by } ] (js/storage.js).
    The first v14 visit to a game seeds its level from his saved answers with the old rule, so nothing he already opened closes again.
    Pure except loading, so tests can call it (JU.kinder.*). */
 (function () {
   const K = JU.kinder;
+  /* v16: change these three numbers to retune EVERY kindergarten game. */
+  K.UNLOCK = { goodShare: 0.8, roundsInARow: 2, rightInARow: 5 };
   let cache = null;
-  K.loadLevels = () => cache || (cache = fetch('data/kinder/levels.json').then(r => { if (!r.ok) throw new Error('could not load levels'); return r.json(); }));
-  K.LEVELED = ['letters', 'build', 'sight', 'count', 'add', 'more', 'look'];
+  K.loadLevels = () => cache || (cache = fetch('data/kinder/levels.json').then(r => { if (!r.ok) throw new Error('could not load levels'); return r.json(); }).then(j => {
+    j.goodShare = K.UNLOCK.goodShare; j.roundsForStar = K.UNLOCK.roundsInARow; j.rightInARow = K.UNLOCK.rightInARow; return j;
+  }));
+  K.LEVELED = ['letters', 'build', 'sight', 'count', 'add', 'more', 'look', 'rhyme', 'shapes', 'push', 'take'];
 
   K.roundGood = (round, lv) => !!round && Number(round.items) > 0 && Number(round.clean) / Number(round.items) >= lv.goodShare - 1e-9;
 

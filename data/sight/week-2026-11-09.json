@@ -1,0 +1,54 @@
+{
+ "id": "2026-11-09",
+ "label": "Week of Nov 9",
+ "source": "Weekly sight words for Nov 9 to 13",
+ "words": [
+  {
+   "word": "they",
+   "sentence": "They are big.",
+   "pre": "",
+   "post": "are big.",
+   "pic": "🦁",
+   "wrong": [
+    "the",
+    "that",
+    "we"
+   ],
+   "fits": [
+    "we"
+   ]
+  },
+  {
+   "word": "you",
+   "sentence": "I like you.",
+   "pre": "I like",
+   "post": "",
+   "pic": "🤗",
+   "wrong": [
+    "the",
+    "we",
+    "me"
+   ],
+   "fits": [
+    "it",
+    "me"
+   ]
+  },
+  {
+   "word": "do",
+   "sentence": "We do it.",
+   "pre": "We",
+   "post": "it.",
+   "pic": "⚽",
+   "wrong": [
+    "of",
+    "is",
+    "we"
+   ],
+   "fits": [
+    "like",
+    "see"
+   ]
+  }
+ ]
+}

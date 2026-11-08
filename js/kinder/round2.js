@@ -74,7 +74,8 @@
   K.LOOKS = { me: ['my', 'we', 'make'], my: ['me', 'make', 'am'], it: ['is', 'in', 'at'], is: ['it', 'in', 'i'], in: ['is', 'it', 'i'], at: ['am', 'it', 'the'],
     am: ['at', 'make', 'me'], see: ['she', 'we', 'me'], she: ['see', 'the', 'we'], the: ['she', 'see', 'with'], i: ['is', 'it', 'in'], like: ['look', 'make', 'me'],
     look: ['like', 'see', 'we'], make: ['me', 'my', 'like'], we: ['me', 'with', 'see'], with: ['we', 'it', 'the'],
-    are: ['at', 'am', 'the'], that: ['the', 'at', 'with'], of: ['it', 'is', 'in'] };       // (v15: the week of Nov 2)
+    are: ['at', 'am', 'the'], that: ['the', 'at', 'with'], of: ['it', 'is', 'in'],
+    they: ['the', 'that', 'we'], you: ['we', 'the', 'do'], do: ['of', 'you', 'is'] };       // (v16: they, you, do)       // (v15: the week of Nov 2)
   /* The wrong cards for finding `word` (v14): LOOK-ALIKES first (me/my, it/is, at/am, see/she ...), then other words that share a letter pattern, then any other word.
      Only words in play (confirmed) are used; `skip` lists words that must not be cards (for a sentence: words that would also fit). */
   K.sightWrong = function (data, word, n, skip) {
@@ -98,14 +99,16 @@
   K.planSight = function (data, answers, level) {
     const r = data.rules, stats = K.sightStats(answers, data);
     const known = data.words.filter(w => stats[w.word] && stats[w.word].known).length;
+    const mixed = level >= 4;          // v16 top level: every week mixed in, not only this week's words
     const gapOpen = level == null || !r.gapByLevel || !r.starLevels ? known >= r.gapAfterKnown : level >= 2;
-    const weightOf = w => K.weight(stats[w.word]) + (w.focus ? r.focusBonus : 0);
+    const weightOf = w => K.weight(stats[w.word]) + (!mixed && w.focus ? r.focusBonus : 0);
     const picked = fill(K.pickWeighted(data.words, weightOf, r.roundItems), data.words, weightOf, r.roundItems);
     const items = picked.map((w, i) => ({ w, type: gapOpen && w.sentence && i % 2 === 1 ? 'gap' : 'hunt' }));
     /* Find it twice: slot 4 (and slot 6 at level 3), once data/sight/twice.json is loaded */
-    const nTwice = level == null || !r.twicePerRound || !data.twice || !data.twice.length ? 0 : Math.min(items.length, (r.twicePerRound || 1) + (level >= 3 ? 1 : 0));
+    const nTwice = !data.twice || !data.twice.length || !r.twicePerRound ? 0 : level == null ? 0 : Math.min(items.length, mixed ? 3 : (r.twicePerRound || 1) + (level >= 3 ? 1 : 0));
     const slots = [3, 5, 1].filter(i => i < items.length).slice(0, nTwice);
     slots.forEach(i => { const t = K.pickTwice(data, stats); if (t) items[i] = { w: data.words.find(x => x.word === t.word), type: 'twice', twice: t }; });
+    if (mixed) items.forEach((it, i) => { if (it.type !== 'twice') it.type = i % 2 === 0 ? 'hunt' : (it.w && it.w.sentence ? 'gap' : 'hunt'); });
     return { stats, known, gapOpen, level: level == null ? null : level, items };
   };
   /* a "Find it twice" sentence and its target word (weighted by how well he knows the word) */
@@ -168,7 +171,16 @@
   K.planCount = function (cd, answers, level) {
     const stats = K.countStats(answers, cd), tier = level == null || !cd.rules.starLevels ? K.countTier(cd, stats) : Math.max(1, Math.min(cd.tiers.length, level)), max = cd.tiers[tier - 1].to;
     const active = []; for (let n = 1; n <= max; n++) active.push(n);
-    const picks = K.pickWeighted(active, n => K.weight(stats[String(n)]), cd.rules.roundItems);
+    if (cd.tiers[tier - 1] && cd.tiers[tier - 1].mixed) {
+      const weightOf = n => K.weight(stats[String(n)]) + (n >= 16 ? 3 : 0);
+      const picks = K.fillRound(active, weightOf, cd.rules.roundItems);
+      let hi = picks.filter(n => n >= 16).length;
+      for (let i = 0; i < picks.length && hi < 4; i++) if (picks[i] < 16) { let x, g = 0; do { x = 16 + Math.floor(K.rng() * 15); } while (picks.indexOf(x) >= 0 && g++ < 30); picks[i] = x; hi++; }
+      const KINDS = ['howmany', 'tenframe', 'next', 'howmany'];
+      const items = picks.map((n, i) => { let kind = KINDS[i % KINDS.length]; if (kind === 'next' && n < 2) kind = 'howmany'; if (kind === 'tenframe' && (n < 11 || n > 20)) kind = 'howmany'; return { n, kind }; });
+      return { stats, tier, max: 30, items };
+    }
+    const picks = K.fillRound(active, n => K.weight(stats[String(n)]), cd.rules.roundItems);
     /* v14: past the first level, at least two of the numbers come from the newest tier (the numbers he has not seen yet) */
     if (tier > 1 && picks.length > 2) { const T = cd.tiers[tier - 1]; let have = picks.filter(n => n >= T.from).length;
       for (let i = picks.length - 1; i >= 0 && have < 2; i--) if (picks[i] < T.from) { let x, g = 0; do { x = T.from + Math.floor(K.rng() * (T.to - T.from + 1)); } while (picks.indexOf(x) >= 0 && g++ < 20); picks[i] = x; have++; } }
@@ -202,14 +214,14 @@
       return Object.assign(base, { options, dots: false, frame: true, text: 'Here is a full ten frame, and some more ' + o.many + '. Count them all, then tap the number.',
         hint: 'A full ten frame is ten. Keep counting the rest: eleven, twelve, and on.',
         right: 'Yes! Ten and ' + N(n - 10) + ' more makes ' + N(n) + '.', miss: 'Let\u2019s count again. A full frame is ten. Keep counting.',
-        together: 'Let\u2019s count together. ' + K.countOut(1, n, W) + ' Ten and ' + N(n - 10) + ' more is ' + N(n) + '. Tap ' + N(n) + '.' });
+        together: 'Let\u2019s count again. Tap each one.' });
     }
     /* v13.3: 'along' and 'how many' both: tap to count (the voice says the running count), then tap the number. Nothing says the number first. */
     const options = K.shuffle([n].concat(nearNumbers(n, 2, 1, K.COUNT_MAX(cd))).map(x => ({ n: x, right: x === n })));
     return Object.assign(base, { options, dots: !!cd.rules.dotsOnChoices, scatter: !!cd.rules.scatter, text: 'Count the ' + o.many + '. Tap each one, then tap the number.',
       hint: 'Tap each one, and I will count with you. The last number you hear is how many.',
       right: 'Yes! There ' + (n === 1 ? 'is ' : 'are ') + N(n) + ' ' + many + '.', miss: 'Let\u2019s count again. Tap each one.',
-      together: 'Let\u2019s count together. ' + K.countOut(1, n, W) + ' There ' + (n === 1 ? 'is ' : 'are ') + N(n) + '. Tap ' + N(n) + '.' });
+      together: 'Let\u2019s count again. Tap each one.' });
   };
   K.countSummary = function (answers, cd, level) {
     const stats = K.countStats(answers, cd), tier = level == null || !cd.rules.starLevels ? K.countTier(cd, stats) : Math.max(1, Math.min(cd.tiers.length, level)), max = cd.tiers[tier - 1].to;
@@ -228,6 +240,15 @@
   };
   K.planAdd = function (ad, answers, level) {
     const stats = K.addStats(answers, ad), tier = level == null || !ad.rules.starLevels ? K.addTier(ad, stats) : Math.max(1, Math.min(ad.tiers.length, level));
+    if (ad.tiers[tier - 1] && ad.tiers[tier - 1].mix) {          // v16 top level: adding within 10 and take-away within 5, mixed
+      const pool = ad.facts.filter(f => (f.take && f.a <= 5) || (!f.take && f.a + f.b <= 10));
+      const weightOf = f => K.weight(stats[factId(f)]) + (f.take ? 2 : 0);
+      const facts = fill(K.pickWeighted(pool, weightOf, ad.rules.roundItems), pool, weightOf, ad.rules.roundItems);
+      let takes = facts.filter(f => f.take).length;
+      const takePool = pool.filter(f => f.take);
+      for (let i = facts.length - 1; i >= 0 && takes < 3 && takePool.length; i--) if (!facts[i].take) { facts[i] = takePool[Math.floor(K.rng() * takePool.length)]; takes++; }
+      return { stats, tier, open: pool, facts };
+    }
     const open = ad.facts.filter(f => f.tier <= tier), weightOf = f => K.weight(stats[factId(f)]) + (f.tier === tier && tier > 1 ? 3 : 0);     // v14: the newest tier comes up more
     return { stats, tier, open, facts: fill(K.pickWeighted(open, weightOf, ad.rules.roundItems), open, weightOf, ad.rules.roundItems) };
   };
@@ -240,8 +261,8 @@
       const options = K.shuffle([left].concat(nearNumbers(left, 2, 0, f.a))).map(x => ({ n: x, right: x === left }));
       const ask = 'Watch! Some ' + o.many + ' fly away. Count the ' + o.many + ' that are left.';
       return { id: factId(f), a: f.a, b: f.b, take: true, total: left, words: W, e: o.e, one: o.one, many: o.many, tier: f.tier, options, signs: false,
-        text: ask, hint: 'Tap each one that is still here, and I will count with you.', miss: 'Let’s count again. Count the ' + o.many + ' that are left.',
-        together: 'Let’s count together. ' + (left ? K.countOut(1, left, W) + ' ' : '') + N(left) + ' are left. Tap ' + N(left) + '.',
+        text: ask, hint: 'Tap each one that is still here, and I will count with you.', miss: 'Let\u2019s count again. Count the ' + o.many + ' that are left.',
+        together: 'Let\u2019s count again. Tap each one that is still here.',
         right: 'Yes! ' + N(f.a) + ', and ' + N(f.b) + ' flew away. ' + N(left) + ' ' + (left === 1 ? 'is' : 'are') + ' left.' };
     }
     const total = f.a + f.b;
@@ -252,7 +273,7 @@
     const ask = 'Count the ' + o.many + '. How many in all?';
     return { id: factId(f), a: f.a, b: f.b, total, words: W, e: o.e, one: o.one, many: o.many, tier: f.tier, options, signs: !!ad.rules.showSigns,
       text: ask, hint: 'Tap each one, and I will count with you. Count this group, then keep counting the other group.', miss: 'Let\u2019s count again. ' + ask,
-      together: 'Let\u2019s count together. ' + K.countOut(1, total, W) + ' ' + first + makes + N(total) + '. Tap ' + N(total) + '.',
+      together: 'Let\u2019s count again. Tap each one.',
       right: 'Yes! ' + first + makes + N(total) + '.' };
   };
   K.addSummary = function (answers, ad, level) {

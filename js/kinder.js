@@ -30,7 +30,8 @@
     loadLetters: () => fetchJson('data/kinder/letters.json'),
     loadWords: () => fetchJson('data/kinder/cvc.json'),
     ACTIVITIES: { letters: { code: 1, title: 'Letter sounds' }, build: { code: 2, title: 'Build a word' },
-      sight: { code: 3, title: 'Sight words' }, count: { code: 4, title: 'Count to 30' }, add: { code: 5, title: 'Add it up' }, warmup: { code: 6, title: 'Warm-up' }, more: { code: 7, title: 'Which has more?' }, look: { code: 8, title: 'Look and tap' } },       // (v14: Count to 30, the daily warm-up)       // (v12: round 2)
+      sight: { code: 3, title: 'Sight words' }, count: { code: 4, title: 'Count to 30' }, add: { code: 5, title: 'Add it up' }, warmup: { code: 6, title: 'Warm-up' }, more: { code: 7, title: 'Which has more?' }, look: { code: 8, title: 'Look and tap' },
+      rhyme: { code: 9, title: 'Rhyme' }, shapes: { code: 10, title: 'Shapes' }, push: { code: 11, title: 'Push or pull' }, take: { code: 12, title: 'Take away' } },
     STICKERS: ['\uD83D\uDC36', '\uD83D\uDC31', '\uD83E\uDD84', '\uD83D\uDC22', '\uD83D\uDC20', '\uD83E\uDD8B', '\uD83D\uDC1D', '\uD83E\uDD81', '\uD83D\uDC27', '\uD83D\uDC3C', '\uD83E\uDD89', '\uD83D\uDC19']
   };
   const byTs = (a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0;
@@ -85,6 +86,19 @@
     if (r.length > 1 && !r[r.length - 2]) w += 1;
     return w;
   };
+  /* v16: a round is longer than the pool, so after the distinct picks it may repeat a item, never the same one twice in a row when it can avoid it. */
+  api.fillRound = function (pool, weightOf, n) {
+    if (!pool.length || n <= 0) return [];
+    const out = api.pickWeighted(pool, weightOf, Math.min(n, pool.length));
+    while (out.length < n) {
+      const last = out[out.length - 1];
+      const rest = pool.length > 1 ? pool.filter(x => x !== last) : pool;
+      const next = api.pickWeighted(rest, weightOf, 1)[0];
+      if (next == null) break;
+      out.push(next);
+    }
+    return out;
+  };
   api.pickWeighted = function (items, weightOf, n) {
     const pool = items.slice(), out = [];
     while (out.length < n && pool.length) {
@@ -112,18 +126,19 @@
   /* Which letters the next round draws from, and the first picks. Returns { active, letters: [4 letters] }. */
   api.planLetters = function (data, answers) {
     const stats = api.letterStats(answers, data), active = api.activeLetters(data, stats);
-    return { active, stats, letters: api.pickWeighted(active, l => api.weight(stats[l]), data.rules.roundItems) };
+    return { active, stats, letters: api.fillRound(active, l => api.weight(stats[l]), data.rules.roundItems) };
   };
   /* One question: the sound, and three pictures (one starts with the sound). */
-  api.letterItem = function (data, letter, active) {
+  api.letterItem = function (data, letter, active, nChoices) {
     const L = data.letters[letter], pos = L.position || 'start';
     const target = pick(L.pics);
     const confusable = l => l === letter || (L.sameSound || []).indexOf(l) !== -1 || (data.letters[l].sameSound || []).indexOf(letter) !== -1;
     const others = api.shuffle(active.filter(l => !confusable(l)));
+    const want = Math.max(2, nChoices || 3);
     const options = [{ letter, pic: target, right: true }];
     const seen = { [target.word]: true };
     for (const l of others) {
-      if (options.length >= 3) break;
+      if (options.length >= want) break;
       const ps = data.letters[l].pics.filter(p => !seen[p.word] && !(pos === 'end' ? p.word.slice(-1) === letter : p.word.indexOf(letter) === 0));
       if (!ps.length) continue;
       const p = pick(ps); seen[p.word] = true; options.push({ letter: l, pic: p, right: false });
@@ -156,7 +171,8 @@
   api.planWords = function (cvc, answers, level) {
     const stats = api.wordStats(answers, cvc), tier = level == null || !cvc.rules.starLevels ? api.openTier(cvc, stats) : Math.max(1, Math.min(cvc.tiers.length, level));     // v14: the level (opened by a star) decides the tier
     const open = cvc.words.filter(w => w.tier <= tier);
-    return { tier, open, stats, words: api.pickWeighted(open, w => api.weight(stats[w.word]), cvc.rules.roundItems) };
+    const weightOf = w => api.weight(stats[w.word]) + (w.tier === tier && tier > 1 ? 3 : 0);     // the newest tier comes up more
+    return { tier, open, stats, words: api.fillRound(open, weightOf, cvc.rules.roundItems) };
   };
   const CONFUSED = { b: 'd', d: 'b', p: 'q', q: 'p' };
   /* One word to build: the picture, the tiles (3 letters, plus 1 extra once he has built `trayExtraAfter` words right first time), the spoken sounds. */

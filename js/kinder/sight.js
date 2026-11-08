@@ -9,7 +9,7 @@
   function drawTwice(item, ctl) {
     let found = 0, wrongs = 0, done = false;
     const tiles = item.tiles.map(t => {
-      const b = h('button', { class: 'k-wtile' + (t.right ? '' : ''), type: 'button', 'data-word-tile': t.bare, 'data-tile': t.i, 'aria-label': t.bare === 'i' ? 'I' : t.bare, 'aria-pressed': 'false',
+      const b = h('button', { class: 'k-wtile' + (t.right ? '' : ''), type: 'button', 'data-word-tile': t.bare, 'data-tile': t.i, 'data-right': t.right ? '1' : null, 'aria-label': t.bare === 'i' ? 'I' : t.bare, 'aria-pressed': 'false',
         onclick: async () => {
           if (done || b.classList.contains('found') || b.disabled) return;
           if (t.right) {
@@ -44,7 +44,7 @@
     draw(item, ctl) {
       if (item.type === 'twice') return drawTwice(item, ctl);
       let answered = false, wrongs = 0;
-      const buttons = item.options.map((o, i) => h('button', { class: 'opt solo-opt k-opt k-wordcard', type: 'button', 'data-opt': i, 'data-word': o.word, 'aria-label': o.word,
+      const buttons = item.options.map((o, i) => h('button', { class: 'opt solo-opt k-opt k-wordcard', type: 'button', 'data-opt': i, 'data-word': o.word, 'data-right': o.right ? '1' : null, 'aria-label': o.word,
         onclick: async () => {
           if (answered || buttons[i].disabled) return;
           if (o.right) {

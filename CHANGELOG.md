@@ -1,5 +1,17 @@
 # Changelog
 
+## v16 (local, not published)
+- **This week (Nov 9–13): they, you, do.** Sight words keeps every earlier week in review. The three new words are in Record sounds. There is no site clip for them yet, so the browser voice says them until a grown-up records them.
+- **Rhyme.** Hear a word, tap the picture that rhymes. Level 1 is 3 pictures. Level 2 is 4 pictures, and a wrong one may start with the same sound.
+- **Build a word, level 5: cot, cop, fog, fox.** c was already in cat, cap and can. x is new (fox). The same level adds an easy word switch: dog, then log, then fog, changing the first letter. Level 6 is harder: more families, sometimes the last letter, and 4 letter choices. Letter sounds and Build a word stay hidden until every letter sound is recorded.
+- **Which has more? goes to 20,** with more, fewer, and equal (the same). The top level keeps the two groups only 1 apart. Bigger groups use ten frames so they fit on a phone.
+- **Add it up** is still in his week (within 10, with pictures). Its new top level mixes adding within 10 and take-away within 5.
+- **Take away,** a new game: pictures fly away, he counts what is left, within 5. The top level sometimes leaves none.
+- **Shapes.** Level 1 sorts circle, square, triangle and rectangle. Level 2 matches a ball, a can, a box and a party hat to sphere, cylinder, cube and cone. Level 3 turns the flat shapes and sometimes shows the solid first.
+- **Push or pull.** A drawn picture (door, wagon, swing, tug-of-war, cart, drawer) and two big buttons. Level 2 takes the arrow away.
+- **Look and tap** top level: two words at once, such as "the big red one." **Count to 30** top level: a mixed review from 1 to 30. **Sight words** top level: every week mixed in. **Letter sounds** top level: 4 pictures.
+- **Longer rounds, faster levels.** Every kindergarten round is 10 questions. The next level opens after **2 good rounds in a row** (80% or more right on the first try) **or 5 right answers in a row inside one round**, whichever comes first. Change those three numbers in `K.UNLOCK` at the top of `js/kinder/levels.js`. Counting, adding, comparing and take-away still never say the answer before he picks. Backup files stay at version 7. Older backups still load.
+
 ## v15.1 (local, not published)
 - **Back up to Grok Bot:** address box stays (parents type it; this browser only; never in the repo or backup file). Relabelled "Email address of your Grok Bot inbox (where backups go)" with help text that it is not your own email. When `navigator.canShare({files})` works, Back up shares a **`.zip`** (JSON inside) with title/text `Family Learning backup <date>` and shows the saved address with Copy (share cannot set the recipient). Otherwise it downloads that `.zip` and opens a pre-filled mailto, with on-screen steps: 1 file saved as X in Downloads, 2 email opens, 3 attach that file, 4 press Send. Plain **Save progress** stays `.json`. **Load progress** accepts `.zip` or `.json`. Zip is built in the browser (`CompressionStream` deflate-raw when available, else store) with no CDN.
 - **Ideas and changes** on the parent page: Dad/Mom/Other, a short note, Send opens mailto to the same saved Grok Bot address with subject `Family Learning idea: <first words>` (body includes who, parent page, site version v15.1). Share sheet offered when available. Nothing is sent automatically.
