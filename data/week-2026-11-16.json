@@ -1,0 +1,166 @@
+{
+ "id": "2026-11-16",
+ "subject": "spelling",
+ "title": "Spelling Words",
+ "label": "Week of Nov 16",
+ "source": "Unit 2 Lesson 3: Compound Words, Week of Nov 16",
+ "syllableColors": [],
+ "patterns": [
+  {
+   "label": "1st word",
+   "letters": [
+    "rattle",
+    "hair",
+    "moon",
+    "foot",
+    "fire",
+    "play",
+    "pop",
+    "eye",
+    "air",
+    "out"
+   ],
+   "color": "#1663d6"
+  },
+  {
+   "label": "2nd word",
+   "letters": [
+    "snake",
+    "sight",
+    "light",
+    "ground",
+    "works",
+    "corn",
+    "ball",
+    "port",
+    "cut",
+    "side"
+   ],
+   "color": "#e06c00"
+  }
+ ],
+ "bonus": "",
+ "words": [
+  {
+   "word": "popcorn",
+   "clue": "A puffy movie snack",
+   "riddle": "Butter and salt go on this movie snack: ___.",
+   "sentence": "We share a big bowl of popcorn at movie night.",
+   "syllables": [
+    "pop",
+    "corn"
+   ]
+  },
+  {
+   "word": "football",
+   "clue": "A sport with a brown ball",
+   "riddle": "The quarterback throws a ___.",
+   "sentence": "He threw the football down the field.",
+   "syllables": [
+    "foot",
+    "ball"
+   ]
+  },
+  {
+   "word": "eyesight",
+   "clue": "How well you can see",
+   "riddle": "Glasses can help your ___.",
+   "sentence": "The doctor said my eyesight is strong.",
+   "syllables": [
+    "eye",
+    "sight"
+   ]
+  },
+  {
+   "word": "moonlight",
+   "clue": "Light from the moon",
+   "riddle": "At night the moon gives us ___.",
+   "sentence": "The path was bright in the moonlight.",
+   "syllables": [
+    "moon",
+    "light"
+   ]
+  },
+  {
+   "word": "airport",
+   "clue": "Planes take off here",
+   "riddle": "We board a plane at the ___.",
+   "sentence": "Our plane left the airport on time.",
+   "syllables": [
+    "air",
+    "port"
+   ]
+  },
+  {
+   "word": "haircut",
+   "clue": "What you get at a salon",
+   "riddle": "I went to the salon for a ___.",
+   "sentence": "She got a short haircut before school pictures.",
+   "syllables": [
+    "hair",
+    "cut"
+   ]
+  },
+  {
+   "word": "fireworks",
+   "clue": "They boom and sparkle in the sky",
+   "riddle": "On July 4th we watch the ___.",
+   "sentence": "We watched the fireworks light up the sky.",
+   "syllables": [
+    "fire",
+    "works"
+   ]
+  },
+  {
+   "word": "outside",
+   "clue": "Not in the house",
+   "riddle": "We play in the yard, not inside but ___.",
+   "sentence": "The dog likes to run outside after lunch.",
+   "syllables": [
+    "out",
+    "side"
+   ]
+  },
+  {
+   "word": "playground",
+   "clue": "A park with swings and slides",
+   "riddle": "Recess is more fun at the ___.",
+   "sentence": "The kids raced to the playground at recess.",
+   "syllables": [
+    "play",
+    "ground"
+   ]
+  },
+  {
+   "word": "rattlesnake",
+   "clue": "A snake that shakes its tail",
+   "riddle": "A snake with a noisy tail is a ___.",
+   "sentence": "We stayed on the trail so we would not surprise a rattlesnake.",
+   "syllables": [
+    "rattle",
+    "snake"
+   ]
+  },
+  {
+   "word": "minutes",
+   "clue": "Sixty of these make an hour",
+   "riddle": "There are 60 ___ in one hour.",
+   "sentence": "Recess is twenty minutes long today.",
+   "syllables": [
+    "min",
+    "utes"
+   ]
+  },
+  {
+   "word": "decided",
+   "clue": "Made up your mind",
+   "riddle": "I thought it over, then I ___.",
+   "sentence": "After thinking it over, she decided to play soccer.",
+   "syllables": [
+    "de",
+    "cid",
+    "ed"
+   ]
+  }
+ ]
+}

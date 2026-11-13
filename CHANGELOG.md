@@ -1,5 +1,9 @@
 # Changelog
 
+## Spelling week of Nov 16 (published 2026-11-13)
+- Added spelling week of Nov 16: Unit 2 Lesson 3 compound words
+
+
 ## v16 (local, not published)
 - **This week (Nov 9–13): they, you, do.** Sight words keeps every earlier week in review. The three new words are in Record sounds. There is no site clip for them yet, so the browser voice says them until a grown-up records them.
 - **Rhyme.** Hear a word, tap the picture that rhymes. Level 1 is 3 pictures. Level 2 is 4 pictures, and a wrong one may start with the same sound.
