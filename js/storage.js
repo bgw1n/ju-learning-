@@ -40,6 +40,24 @@
   function write(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
   const isObj = v => v && typeof v === 'object' && !Array.isArray(v);
 
+  /* Math Fact Flash Cards (Julianna). Optional in the backup: version 5 and version 7 files without "math" still load.
+     { rounds: [ { id, ts, score (facts right in that minute), misses: { "6+4": 2 } } ] } */
+  function mathClean(v) {
+    const m = { rounds: [] };
+    if (isObj(v) && Array.isArray(v.rounds)) {
+      v.rounds.forEach(r => {
+        if (!r || typeof r.ts !== 'string' || !isFinite(Number(r.score))) return;
+        const misses = {};
+        if (isObj(r.misses)) for (const k in r.misses) {
+          const n = Math.floor(Number(r.misses[k]));
+          if (k && isFinite(n) && n > 0) misses[k] = n;
+        }
+        m.rounds.push({ id: typeof r.id === 'string' ? r.id : '', ts: r.ts, score: Math.max(0, Math.floor(Number(r.score))), misses });
+      });
+    }
+    return m;
+  }
+
   function moneyClean(v) {
     const m = { done: {}, answers: [] };
     if (isObj(v)) {
@@ -75,6 +93,7 @@
     const FLAGS_KEY = 'ju_' + mid + 'flags_v1';
     const MONEY_KEY = 'ju_' + mid + 'money_v1';
     const KINDER_KEY = 'ju_' + mid + 'kinder_v1';
+    const MATH_KEY = 'ju_math_v1';
 
     const api = {
       kind: 'localStorage',
@@ -293,6 +312,40 @@
       }
     };
 
+    /* Julianna's flash-card rounds. Kept apart from spelling results. Older backups simply have no "math" field. */
+    if (id === 'julianna') {
+      api.keys.math = MATH_KEY;
+      api.getMath = async () => mathClean(read(MATH_KEY, null));
+      api.addMathRound = async rec => {
+        const m = mathClean(read(MATH_KEY, null));
+        const misses = {};
+        if (isObj(rec && rec.misses)) for (const k in rec.misses) {
+          const n = Math.floor(Number(rec.misses[k]));
+          if (k && isFinite(n) && n > 0) misses[k] = n;
+        }
+        m.rounds.push({ id: (rec && rec.id) || JU.ui.uid(), ts: (rec && rec.ts) || new Date().toISOString(), score: Math.max(0, Math.floor(Number(rec && rec.score) || 0)), misses });
+        write(MATH_KEY, m);
+        return m;
+      };
+      /* Same id, or the same time and score, is a duplicate. A backup with no rounds is a no-op. */
+      api.importMath = async obj => {
+        const m = mathClean(read(MATH_KEY, null));
+        const inc = mathClean(obj);
+        const key = r => [r.ts, r.score].join('|');
+        const ids = new Set(m.rounds.map(r => r.id).filter(Boolean));
+        const keys = new Set(m.rounds.map(key));
+        let added = 0, skipped = 0;
+        inc.rounds.forEach(r => {
+          if ((r.id && ids.has(r.id)) || keys.has(key(r))) { skipped++; return; }
+          if (!r.id) r.id = JU.ui.uid();
+          m.rounds.push(r); ids.add(r.id); keys.add(key(r)); added++;
+        });
+        if (added) { m.rounds.sort((a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0); write(MATH_KEY, m); }
+        return { added, skipped };
+      };
+      api.clearMath = async () => { localStorage.removeItem(MATH_KEY); };
+    }
+
     if (id === 'family') {
       /* ---- family lessons (Money & Economics): which lessons are done, and grown-up unlock/lock overrides ---- */
       const clean = v => {
@@ -350,6 +403,8 @@
     async setLastBackup(iso) { write(BACKUP_KEY, iso || new Date().toISOString()); return iso; },
 
     /* ---- the backup file (version 7; versions 1 to 6 still load) ----
+       Version 7 may also include "math" (Julianna's Math Fact Flash Cards: { rounds: [...] }).
+       A version 5 or version 7 file with no math field still loads, and loading it never erases rounds already here.
        Version 7 (v14) adds "levels" and "stars" inside profiles.dorian.kinder (Dorian's game levels and the stars that opened them).
        Version 6 adds "recordings": the grown-up's own recordings of Dorian's sounds (js/recordings.js), each
        { id, type, ts, dur, start, end, gain, data (base64) }. It is left out when the page has no recordings module or opts.recordings is false.
@@ -364,6 +419,7 @@
       const out = { app: 'ju-learning', version: 7, exportedAt: new Date().toISOString(),
         results: await stores.julianna.getResults(), stickers: await stores.julianna.getStickers(), hints: await stores.julianna.getHints(),
         flags: await stores.julianna.getFlags(), money: await stores.julianna.getMoney(),
+        math: await stores.julianna.getMath(),
         profiles: {} };
       for (const p of ['dorian', 'family']) {
         out.profiles[p] = { results: await stores[p].getResults(), stickers: await stores[p].getStickers(), hints: await stores[p].getHints(), flags: await stores[p].getFlags() };
@@ -387,6 +443,7 @@
       const hints = Array.isArray(data.hints) ? await stores.julianna.importHints(data.hints) : null;   // version 1 has no hint log
       const flags = Array.isArray(data.flags) ? await stores.julianna.importFlags(data.flags) : null;   // versions 1 to 3 have no flags
       const money = isObj(data.money) ? await stores.julianna.importMoney(data.money) : null;
+      const math = isObj(data.math) ? await stores.julianna.importMath(data.math) : null;   // version 5, and version 7 files from before flash cards, have no math part
       const profiles = {};
       for (const p of ['dorian', 'family']) {
         const blk = isObj(data.profiles) && isObj(data.profiles[p]) ? data.profiles[p] : null;
@@ -403,7 +460,7 @@
       }
       let recordings = null;                                                     // versions 1 to 5 have no recordings
       if (Array.isArray(data.recordings) && window.JU.recordings) { try { recordings = await JU.recordings.importAll(data.recordings); } catch (e) { recordings = null; } }
-      return { added: r.added, skipped: r.skipped, hints, flags, money, profiles, recordings };
+      return { added: r.added, skipped: r.skipped, hints, flags, money, math, profiles, recordings };
     },
     /* Plain counts for the progress summary: { julianna: {results, games, hints, stickers, flags, money: {done, answers}}, dorian: {...}, family: {..., lessonsDone} } */
     async counts() {
@@ -418,6 +475,8 @@
         const k = await stores[p].getKinder();
         out[p].kinder = { answers: k.answers.length, rounds: k.rounds.length, sessions: new Set(k.answers.map(a => a.session)).size };
       }
+      const mf = await stores.julianna.getMath();
+      out.julianna.math = { rounds: mf.rounds.length, best: mf.rounds.reduce((b, r) => Math.max(b, r.score), 0) };
       out.family.lessonsDone = Object.keys((await stores.family.getLessonState()).complete).length;
       return out;
     }

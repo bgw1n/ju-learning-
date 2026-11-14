@@ -13,7 +13,7 @@
     const stage = document.getElementById('stage');
     const g = JU.games[subject] && JU.games[subject][gameId];
     if (!g) { stage.replaceChildren(h('p', { class: 'big' }, 'Hmm, we could not find that game.')); return; }
-    const week = await JU.weeks.current(subject);
+    const week = g.ownRound ? null : await JU.weeks.current(subject);
     let words = [];
     const session = JU.ui.uid();
     const results = [];
@@ -70,6 +70,7 @@
     };
 
     try {
+      if (g.ownRound && g.play) { await g.play(ctx); return; }
       /* a game may choose its own items (the Review game does); otherwise it is this week's words */
       words = g.items ? await g.items(ctx) : JU.ui.shuffle(week.words);
       ctx.words = words;

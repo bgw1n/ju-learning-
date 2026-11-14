@@ -125,6 +125,32 @@
     const st = await JU.storage.getStickers();
     const count = Object.keys(st).filter(wk => wk !== 'money').reduce((a, wk) => a + Object.keys(st[wk]).length, 0);     // spelling stickers; money stickers are in the money card
     document.getElementById('stickernote').textContent = 'Stickers earned so far: ' + count;
+    await renderMath();
+  }
+  function factLabel(key) {
+    const m = /^(\d+)([+\-])(\d+)$/.exec(key || '');
+    return m ? m[1] + ' ' + (m[2] === '+' ? '+' : '\u2212') + ' ' + m[3] : key;
+  }
+  async function renderMath() {
+    const box = document.getElementById('math-julianna');
+    if (!box) return;
+    const data = await JU.storage.getMath();
+    const rounds = data.rounds.slice().sort((a, b) => a.ts < b.ts ? 1 : -1);
+    const best = data.rounds.reduce((m, r) => Math.max(m, r.score), 0);
+    box.dataset.best = String(best);
+    box.dataset.rounds = String(data.rounds.length);
+    document.getElementById('math-summary').replaceChildren(
+      statCard('Best score', data.rounds.length ? best : '\u2013'),
+      statCard('Rounds played', data.rounds.length));
+    fillTable(document.getElementById('math-rounds'), ['When', 'Number correct'],
+      rounds.slice(0, 12).map(r => [fmtTime(r.ts), String(r.score)]),
+      'No rounds yet. When Julianna plays Math Fact Flash Cards, they will show up here.');
+    const tally = {};
+    data.rounds.forEach(r => { const ms = r.misses || {}; for (const k in ms) tally[k] = (tally[k] || 0) + Number(ms[k] || 0); });
+    const tricky = Object.keys(tally).map(k => ({ k, n: tally[k] })).filter(x => x.n > 0).sort((a, b) => b.n - a.n || (a.k < b.k ? -1 : 1));
+    fillTable(document.getElementById('math-tricky'), ['Fact', 'Times missed'],
+      tricky.slice(0, 12).map(x => [factLabel(x.k), String(x.n)]),
+      'No missed facts yet.');
   }
   /* ---------- week by week trend ---------- */
   function weekStats(all) {
@@ -285,7 +311,7 @@
       const others = Object.keys(r.profiles).map(k => (k === 'dorian' ? 'Dorian' : 'Family') + ': ' + r.profiles[k].added + ' new').join(', ');
       const extra = (r.flags ? r.flags.added : 0) + (r.money ? r.money.added : 0) + Object.values(r.profiles).reduce((a, x) => a + (x.flags ? x.flags.added : 0) + (x.money ? x.money.added : 0), 0);
       const kin = Object.values(r.profiles).reduce((a, x) => a + (x.kinder ? x.kinder.added : 0), 0);
-      backupMsg.textContent = 'Loaded: ' + P(r.added, 'new result') + ' added, ' + r.skipped + ' already here or skipped.' + (r.hints ? ' Hint log: ' + r.hints.added + ' added.' : '') + (others ? ' ' + others + '.' : '') + (extra ? ' Also added: ' + P(extra, 'flag or money activity record', 'flags and money activity records') + '.' : '') + (kin ? ' Kindergarten: ' + P(kin, 'record') + ' added.' : '') + (r.recordings && (r.recordings.added || r.recordings.replaced) ? ' Sound recordings: ' + r.recordings.added + ' added' + (r.recordings.replaced ? ', ' + r.recordings.replaced + ' replaced by newer ones' : '') + '.' : '');
+      backupMsg.textContent = 'Loaded: ' + P(r.added, 'new result') + ' added, ' + r.skipped + ' already here or skipped.' + (r.hints ? ' Hint log: ' + r.hints.added + ' added.' : '') + (others ? ' ' + others + '.' : '') + (extra ? ' Also added: ' + P(extra, 'flag or money activity record', 'flags and money activity records') + '.' : '') + (kin ? ' Kindergarten: ' + P(kin, 'record') + ' added.' : '') + (r.math && r.math.added ? ' Math flash cards: ' + P(r.math.added, 'round') + ' added.' : '') + (r.recordings && (r.recordings.added || r.recordings.replaced) ? ' Sound recordings: ' + r.recordings.added + ' added' + (r.recordings.replaced ? ', ' + r.recordings.replaced + ' replaced by newer ones' : '') + '.' : '');
       if (r.recordings && JU.recordPage) await JU.recordPage.refresh();
       await renderOthers();
       await render();
@@ -536,7 +562,7 @@
      Otherwise it downloads the file and opens a pre-filled mailto:; the grown-up attaches the file and presses Send. */
   const EMAIL_KEY = 'ju_backup_email_v1';          // this browser only
   const EMAIL_RE = /^[^\s@,;?&<>"]+@[^\s@,;?&<>"]+\.[^\s@,;?&<>"]+$/;
-  const SITE_VER = 'v15.1';
+  const SITE_VER = 'v17';
   const emailBox = document.getElementById('backup-email'), emailMsg = document.getElementById('email-msg');
   const emailSaved = document.getElementById('email-saved'), emailEdit = document.getElementById('email-edit');
   const emailBtn = document.getElementById('email-backup'), emailSteps = document.getElementById('email-steps');
@@ -577,7 +603,7 @@
     const flagBits = [['Julianna', c.julianna.flags], ['Dorian', c.dorian.flags], ['Family', c.family.flags]].filter(x => x[1]).map(x => P(x[1], 'flag') + ' for ' + x[0]);
     return ['Learning progress summary (' + day(new Date().toISOString()) + ')',
       '',
-      'Julianna: ' + P(c.julianna.results, 'word') + ' practiced, ' + (c.julianna.games === 1 ? '1 game or test' : c.julianna.games + ' games and tests') + ', ' + P(c.julianna.stickers, 'sticker') + ', ' + P(c.julianna.hints, 'hint log entry', 'hint log entries') + moneyBit(c.julianna.money),
+      'Julianna: ' + P(c.julianna.results, 'word') + ' practiced, ' + (c.julianna.games === 1 ? '1 game or test' : c.julianna.games + ' games and tests') + ', ' + P(c.julianna.stickers, 'sticker') + ', ' + P(c.julianna.hints, 'hint log entry', 'hint log entries') + moneyBit(c.julianna.money) + (c.julianna.math && c.julianna.math.rounds ? ', ' + P(c.julianna.math.rounds, 'flash-card round') + ' (best ' + c.julianna.math.best + ')' : ''),
       'Dorian: ' + P(c.dorian.results + c.dorian.money.answers + c.dorian.kinder.answers, 'answer') + ' saved, ' + games(c.dorian.games) + ', ' + P(c.dorian.stickers, 'sticker') + moneyBit(c.dorian.money) + (c.dorian.kinder.rounds ? ', ' + P(c.dorian.kinder.rounds, 'kindergarten round') + ' finished' : ''),
       'Family: ' + c.family.lessonsDone + ' of ' + total + ' money lessons finished',
       flagBits.length ? 'Ask a grown-up flags waiting: ' + flagBits.join(', ') : null,

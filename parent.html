@@ -19,7 +19,7 @@
       <button type="button" class="btn big switch-btn" id="sw-dorian" data-profile="dorian" aria-pressed="false">&#128640; Dorian</button>
       <button type="button" class="btn big switch-btn" id="sw-family" data-profile="family" aria-pressed="false">&#127968; Family</button>
     </nav>
-    <nav class="jumpto" id="jump-julianna" data-for="julianna" aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#spelling-julianna" data-jump="spelling-julianna">Spelling</a> <a href="#money-julianna" data-jump="money-julianna">Money</a> <a href="#hints-card" data-jump="hints-card">Hints</a> <a href="#flags-julianna" data-jump="flags-julianna">Flags</a></nav>
+    <nav class="jumpto" id="jump-julianna" data-for="julianna" aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#spelling-julianna" data-jump="spelling-julianna">Spelling</a> <a href="#math-julianna" data-jump="math-julianna">Math</a> <a href="#money-julianna" data-jump="money-julianna">Money</a> <a href="#hints-card" data-jump="hints-card">Hints</a> <a href="#flags-julianna" data-jump="flags-julianna">Flags</a></nav>
     <nav class="jumpto" id="jump-dorian" data-for="dorian" hidden aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#record-sounds" data-jump="record-sounds">Record sounds</a> <a href="#kinder-dorian" data-jump="kinder-dorian">Kindergarten</a> <a href="#money-dorian" data-jump="money-dorian">Money</a> <a href="#flags-dorian" data-jump="flags-dorian">Flags</a></nav>
     <nav class="jumpto" id="jump-family" data-for="family" hidden aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#lessons-card" data-jump="lessons-card">Lessons</a> <a href="#flags-family" data-jump="flags-family">Flags</a></nav>
 
@@ -131,6 +131,17 @@
     </section>
     <section class="card"><h2>Test results</h2><div class="tablewrap"><table id="tests"></table></div></section>
     <section class="card"><h2>Sticker book</h2><div class="row"><p class="note" id="stickernote"></p><button id="reset-stickers" class="btn small" type="button">Reset stickers</button></div></section>
+
+    <section class="card" id="math-julianna" aria-labelledby="math-julianna-h">
+      <h2 id="math-julianna-h">Math fact flash cards</h2>
+      <p class="note">One-minute rounds on Julianna&rsquo;s own login. The score is how many facts she got right. A wrong answer does not add to the score, and that fact comes back later in the same round.</p>
+      <div class="cards" id="math-summary"></div>
+      <h3>Recent rounds</h3>
+      <div class="tablewrap"><table id="math-rounds"></table></div>
+      <h3>Trickiest facts</h3>
+      <p class="note">Facts she missed most often, across every saved round.</p>
+      <div class="tablewrap"><table id="math-tricky"></table></div>
+    </section>
 
     <section class="card" id="flags-julianna" aria-labelledby="flags-julianna-h">
       <h2 id="flags-julianna-h">Ask a grown-up flags</h2>
