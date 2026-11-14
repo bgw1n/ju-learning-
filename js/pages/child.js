@@ -45,6 +45,13 @@
     h('span', { class: 'gemoji', 'aria-hidden': 'true' }, t.emoji),
     h('span', { class: 'gtitle' }, t.title),
     h('span', { class: 'gblurb' }, t.blurb)));
+  const flash = JU.games.math && JU.games.math.flash;
+  if (flash) {
+    grid.appendChild(h('a', { class: 'gcard math', id: 'math-flash-card', href: 'game.html?s=math&g=flash' },
+      h('span', { class: 'gemoji', 'aria-hidden': 'true' }, flash.emoji),
+      h('span', { class: 'gtitle' }, flash.title),
+      h('span', { class: 'gblurb' }, flash.blurb)));
+  }
   grid.appendChild(testCard);
 
   /* Review card: only shown when she has missed words in earlier weeks */

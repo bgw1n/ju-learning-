@@ -1,10 +1,14 @@
 # Changelog
 
+## v17 (preview, not published)
+- **Math Fact Flash Cards** for Julianna. A new tile on her games home. One fact at a time, big numbers, a big number pad (tablet taps, and the keyboard digits, Backspace and Enter). A right answer moves on by itself. A wrong answer shakes the card, clears, and stays until she gets it, then that fact comes back later in the round. One minute each round. Her score is how many she got right, and she sees her best and a "New best!" when she beats it. Facts stay within 20 (sums and minuends at most 18, no negative answers, no +0, −0, +1 or −1). Scores stay in this browser, show on the grown-up page (best, recent rounds, trickiest facts), and ride along in Save progress. Backup files stay at version 7. A version 5 or version 7 file that has no math section still loads.
+- This is a preview for a grown-up to approve. It is not published.
+
 ## Spelling week of Nov 16 (published 2026-11-13)
 - Added spelling week of Nov 16: Unit 2 Lesson 3 compound words
 
 
-## v16 (local, not published)
+## v16
 - **This week (Nov 9–13): they, you, do.** Sight words keeps every earlier week in review. The three new words are in Record sounds. There is no site clip for them yet, so the browser voice says them until a grown-up records them.
 - **Rhyme.** Hear a word, tap the picture that rhymes. Level 1 is 3 pictures. Level 2 is 4 pictures, and a wrong one may start with the same sound.
 - **Build a word, level 5: cot, cop, fog, fox.** c was already in cat, cap and can. x is new (fox). The same level adds an easy word switch: dog, then log, then fog, changing the first letter. Level 6 is harder: more families, sometimes the last letter, and 4 letter choices. Letter sounds and Build a word stay hidden until every letter sound is recorded.
