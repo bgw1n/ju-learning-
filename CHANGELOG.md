@@ -1,8 +1,8 @@
 # Changelog
 
-## v17 (preview, not published)
+## v17 (published Nov 15, 2026)
 - **Math Fact Flash Cards** for Julianna. A new tile on her games home. One fact at a time, big numbers, a big number pad (tablet taps, and the keyboard digits, Backspace and Enter). A right answer moves on by itself. A wrong answer shakes the card, clears, and stays until she gets it, then that fact comes back later in the round. One minute each round. Her score is how many she got right, and she sees her best and a "New best!" when she beats it. Facts stay within 20 (sums and minuends at most 18, no negative answers, no +0, −0, +1 or −1). Scores stay in this browser, show on the grown-up page (best, recent rounds, trickiest facts), and ride along in Save progress. Backup files stay at version 7. A version 5 or version 7 file that has no math section still loads.
-- This is a preview for a grown-up to approve. It is not published.
+- Published Nov 15, 2026.
 
 ## Spelling week of Nov 16 (published 2026-11-13)
 - Added spelling week of Nov 16: Unit 2 Lesson 3 compound words
