@@ -6,7 +6,7 @@ Screenshots of the older spelling checks go to /workspace/ju-learning-previews/
 Spelling clues and words are read from data/weeks.json and every week file, so the
 suite follows whichever week the site opens on. PINs are read from js/config.js.
 """
-import json, os, re, shutil, subprocess, sys, tempfile, zipfile
+import json, os, re, shutil, subprocess, sys, tempfile, time, zipfile
 from playwright.sync_api import sync_playwright
 
 BASE = os.environ.get('BASE', 'http://localhost:8765/')
@@ -115,6 +115,28 @@ def pause_through(page):
 
 ART = os.environ.get('ARTIFACTS', '/opt/cursor/artifacts')
 os.makedirs(ART, exist_ok=True)
+
+def save_shot(page, name):
+    """Write a screenshot, retrying if the artifact folder is briefly busy."""
+    dest = os.path.join(ART, name)
+    fd, tmp = tempfile.mkstemp(suffix='.png')
+    os.close(fd)
+    try:
+        page.screenshot(path=tmp)
+        data = open(tmp, 'rb').read()
+    finally:
+        try: os.remove(tmp)
+        except OSError: pass
+    last = None
+    for attempt in range(6):
+        try:
+            with open(dest, 'wb') as f:
+                f.write(data)
+            return
+        except OSError as e:
+            last = e
+            time.sleep(0.4 * (attempt + 1))
+    raise last
 
 def flash_fact(page):
     return page.evaluate("""() => {
@@ -348,15 +370,15 @@ def flash_cards(br):
         c.add_init_script(SPY)
         pg = c.new_page()
         open_flash(pg)
-        pg.screenshot(path=os.path.join(ART, 'flash_start_%s.png' % orient))
+        save_shot(pg, 'flash_start_%s.png' % orient)
         pg.evaluate('window.__JU_FLASH_MS = 60000')
         install_flash_seq(pg)
         pg.click('#flash-start')
         pg.wait_for_selector('#flash-fact')
-        pg.screenshot(path=os.path.join(ART, 'flash_card_%s.png' % orient))
+        save_shot(pg, 'flash_card_%s.png' % orient)
         flash_press(pg, '99')
         pg.wait_for_function("() => Number(document.getElementById('flash-card').dataset.shakes) >= 1")
-        pg.screenshot(path=os.path.join(ART, 'flash_wrong_%s.png' % orient))
+        save_shot(pg, 'flash_wrong_%s.png' % orient)
         box = pg.locator('.flash-pad .pad[data-k="5"]').bounding_box()
         check(box and box['width'] >= 60 and box['height'] >= 60, 'flash: %s pad stays a large tap target (%s)' % (orient, box))
         pg.goto(BASE + 'game.html?s=math&g=flash')
@@ -367,13 +389,13 @@ def flash_cards(br):
         answer_current(pg, 'pad')
         pg.wait_for_selector('#flash-end', timeout=8000)
         check('New best!' in pg.inner_text('#flash-end'), 'flash: %s end screen has a new best' % orient)
-        pg.screenshot(path=os.path.join(ART, 'flash_new_best_%s.png' % orient))
+        save_shot(pg, 'flash_new_best_%s.png' % orient)
         pg.evaluate('sessionStorage.clear()')
         login(pg, PINS['parent'], who='parent')
         pg.wait_for_url('**/parent.html')
         pg.wait_for_selector('#math-rounds tbody tr')
         pg.locator('#math-julianna').scroll_into_view_if_needed()
-        pg.screenshot(path=os.path.join(ART, 'flash_parent_%s.png' % orient))
+        save_shot(pg, 'flash_parent_%s.png' % orient)
         c.close()
     check(True, 'flash: screenshots saved under ' + ART)
 
