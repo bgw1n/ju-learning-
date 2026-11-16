@@ -1,6 +1,6 @@
 # Changelog
 
-## v18 (preview, not published)
+## v18 (published Nov 16, 2026)
 - **This week (Nov 16–20): one, two, three.** Sight words keeps every earlier week in review. The three new words are in Record sounds. There is no site clip for them yet, so the browser voice says them until a grown-up records them.
 - **Build a word, level 7: hug, rug, mug, gum, tug, and bug.** g and u were already in the letter set. h is new on the tiles (hug). The round adds an -ug switch: bug, then hug, then rug, changing the first letter. Level 8 is the harder top: 4 letter choices, and sometimes the last letter (bug to bun). Levels 1 to 6 are unchanged. A grown-up can open level 7 from the parent page.
 - **Rhyme sort.** Hear a word, tap the picture family it rhymes with: bug, hug, rug, mug, tug, or sun, run, bun, fun. gum is a word to build, not an -ug rhyme, so it is not in this sort. The harder top uses words that start the same, such as bug and bun.
@@ -11,8 +11,8 @@
 - **Missing number, up to 100.** A short run with a blank, such as 47, blank, 49, and number cards. The blank stays blank, and the missing number is not said or shown before he picks. Level 1 stays at or under 50 with the blank in the middle. The harder top goes to 100 and the blank can be first or last.
 - **Add it up** is still in his week (within 10, with pictures). Counting, adding, the picture graph, and the missing number still never say or show the answer before he picks. Tap-to-count may say each number as he taps.
 - Same rounds and levels as v16: 10 questions, the Go! ready cue, and the next level after 2 good rounds at 80% or 5 right in a row (`K.UNLOCK`). Julianna's games and the spelling weeks are unchanged. Backup files stay at version 7. A version 5 or version 7 file still loads.
-- Not published. This is a preview for a grown-up to approve.
 - **Home screen.** His home is a few big pictures: Warm-up, Reading, Math, Move, and Stars. Reading, Math, and Move each open a picture shelf of those games. The long star list is off the home. A short star row sits under each game, and the full list is behind Stars. Every game, level, and saved star is still there.
+- Published Nov 16, 2026.
 
 ## v17 (published Nov 15, 2026)
 - **Math Fact Flash Cards** for Julianna. A new tile on her games home. One fact at a time, big numbers, a big number pad (tablet taps, and the keyboard digits, Backspace and Enter). A right answer moves on by itself. A wrong answer shakes the card, clears, and stays until she gets it, then that fact comes back later in the round. One minute each round. Her score is how many she got right, and she sees her best and a "New best!" when she beats it. Facts stay within 20 (sums and minuends at most 18, no negative answers, no +0, −0, +1 or −1). Scores stay in this browser, show on the grown-up page (best, recent rounds, trickiest facts), and ride along in Save progress. Backup files stay at version 7. A version 5 or version 7 file that has no math section still loads.
