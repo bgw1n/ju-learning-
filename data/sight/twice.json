@@ -151,6 +151,29 @@
     "it",
     "i"
    ]
+  },
+  {
+   "pic": "🐱",
+   "text": "I see one cat. I like one cat.",
+   "targets": [
+    "one",
+    "i"
+   ]
+  },
+  {
+   "pic": "🐶",
+   "text": "We see two dogs. We like two dogs.",
+   "targets": [
+    "two",
+    "we"
+   ]
+  },
+  {
+   "pic": "🐛",
+   "text": "Look at three bugs. I see three bugs.",
+   "targets": [
+    "three"
+   ]
   }
  ]
 }

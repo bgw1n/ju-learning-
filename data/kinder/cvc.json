@@ -7,7 +7,8 @@
   "roundItems": 10,
   "maxRoundItems": 12,
   "starLevels": true,
-  "pluralRound": true
+  "pluralRound": true,
+  "levelTier": [1, 2, 3, 4, 5, 5, 6, 6]
  },
  "tiers": [
   {
@@ -45,6 +46,11 @@
   {
    "add": [
     "x"
+   ]
+  },
+  {
+   "add": [
+    "h"
    ]
   }
  ],
@@ -208,6 +214,31 @@
    "word": "fox",
    "e": "🦊",
    "tier": 5
+  },
+  {
+   "word": "hug",
+   "e": "🤗",
+   "tier": 6
+  },
+  {
+   "word": "rug",
+   "e": "🟪",
+   "tier": 6
+  },
+  {
+   "word": "mug",
+   "e": "☕",
+   "tier": 6
+  },
+  {
+   "word": "gum",
+   "e": "🍬",
+   "tier": 6
+  },
+  {
+   "word": "tug",
+   "e": "🪢",
+   "tier": 6
   }
  ]
 }

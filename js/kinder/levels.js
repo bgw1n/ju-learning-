@@ -15,7 +15,7 @@
   K.loadLevels = () => cache || (cache = fetch('data/kinder/levels.json').then(r => { if (!r.ok) throw new Error('could not load levels'); return r.json(); }).then(j => {
     j.goodShare = K.UNLOCK.goodShare; j.roundsForStar = K.UNLOCK.roundsInARow; j.rightInARow = K.UNLOCK.rightInARow; return j;
   }));
-  K.LEVELED = ['letters', 'build', 'sight', 'count', 'add', 'more', 'look', 'rhyme', 'shapes', 'push', 'take'];
+  K.LEVELED = ['letters', 'build', 'sight', 'count', 'add', 'more', 'look', 'rhyme', 'shapes', 'push', 'take', 'rsort', 'who', 'sort', 'graph', 'cal', 'hundred'];
 
   K.roundGood = (round, lv) => !!round && Number(round.items) > 0 && Number(round.clean) / Number(round.items) >= lv.goodShare - 1e-9;
 

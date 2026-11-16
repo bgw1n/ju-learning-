@@ -116,13 +116,16 @@ def pause_through(page):
 ART = os.environ.get('ARTIFACTS', '/opt/cursor/artifacts')
 os.makedirs(ART, exist_ok=True)
 
-def save_shot(page, name):
+def save_shot(page, name, selector=None):
     """Write a screenshot, retrying if the artifact folder is briefly busy."""
     dest = os.path.join(ART, name)
     fd, tmp = tempfile.mkstemp(suffix='.png')
     os.close(fd)
     try:
-        page.screenshot(path=tmp)
+        if selector:
+            page.locator(selector).first.screenshot(path=tmp)
+        else:
+            page.screenshot(path=tmp)
         data = open(tmp, 'rb').read()
     finally:
         try: os.remove(tmp)
@@ -202,6 +205,345 @@ def answer_current(page, how='pad'):
     else:
         flash_press(page, fact['answer'])
     return fact
+
+KINDER_FAKE = r"""
+window.__JU_LETTERS_OPEN = true;
+window.__spoken = [];
+window.__speechMark = 0;
+window.speechSynthesis.speak = function(u){ window.__spoken.push(u.text); setTimeout(function(){ u.onend && u.onend(); }, 5); };
+function FakeAudio() {
+  var listeners = {};
+  return { preload: '', src: '', playbackRate: 1, currentTime: 0, volume: 1,
+    addEventListener: function(type, fn) { (listeners[type] = listeners[type] || []).push(fn); },
+    removeEventListener: function() {},
+    pause: function() {},
+    play: function() { setTimeout(function(){ (listeners.ended || []).forEach(function(fn){ fn(); }); }, 5); return Promise.resolve(); } };
+}
+window.Audio = FakeAudio;
+"""
+
+def kinder_heard_has_number(page, n):
+    return page.evaluate("""(n) => {
+      const word = JU.kinder.numberWord(n);
+      const heard = (JU.speech.heard || []).slice(window.__heardMark || 0).join('\\n').toLowerCase();
+      const tokens = heard.match(/[a-z]+(?:-[a-z]+)?/g) || [];
+      const digit = new RegExp('(?:^|\\\\D)' + n + '(?:\\\\D|$)').test(heard);
+      return tokens.indexOf(word) >= 0 || heard.indexOf('[num-' + n + ']') >= 0 || digit;
+    }""", n)
+
+def kinder_open(page, act, level=None):
+    page.evaluate("""(pair) => {
+      if (!pair) { localStorage.removeItem('ju_dorian_kinder_v1'); return; }
+      const raw = localStorage.getItem('ju_dorian_kinder_v1');
+      const k = raw ? JSON.parse(raw) : { answers: [], rounds: [], stars: [], levels: {} };
+      k.answers = k.answers || []; k.rounds = k.rounds || []; k.stars = k.stars || []; k.levels = k.levels || {};
+      k.levels[pair[0]] = pair[1];
+      localStorage.setItem('ju_dorian_kinder_v1', JSON.stringify(k));
+    }""", [act, level] if level else None)
+    page.goto(BASE + 'kinder.html?a=' + act)
+    try:
+        page.wait_for_selector('[data-start]', timeout=20000)
+    except Exception:
+        check(False, act + ' loads: ' + page.inner_text('#kinder')[:180])
+        return False
+    oops = page.locator('text=Oops!').count()
+    check(oops == 0, act + ' level %s loads' % (level or 1))
+    return oops == 0
+
+def mark_heard(page):
+    """Only the words spoken for this question count. Earlier rounds stay in the log."""
+    page.evaluate("window.__heardMark = (window.JU && JU.speech && JU.speech.heard || []).length")
+
+def kinder_play(page, hear=False, before=None):
+    mark_heard(page)
+    page.click('[data-start]')
+    n = 0
+    saw_go = False
+    while n < 14:
+        page.wait_for_selector('.k-ready, [data-done-title]', timeout=20000)
+        if page.locator('[data-done-title]').count():
+            break
+        if not saw_go:
+            saw_go = page.locator('.k-ready [data-go]').count() == 1
+            if before:
+                before()
+        btn = page.locator('[data-right="1"]')
+        btn.click()
+        if hear:
+            page.wait_for_function("""() => {
+              const b = document.querySelector('[data-right="1"]');
+              return b && b.getAttribute('data-heard') === '1';
+            }""")
+            btn.click()
+        page.wait_for_selector('[data-next]:not([disabled])', timeout=10000)
+        page.click('[data-next]:not([disabled])')
+        n += 1
+    return n, saw_go
+
+def kinder_nov16(br):
+    """Dorian's week of Nov 16: new games, 10-question rounds, fast level-up, answers hidden until he taps."""
+    ctx = br.new_context(viewport={'width': 1024, 'height': 768})
+    ctx.add_init_script(KINDER_FAKE)
+    page = ctx.new_page()
+    page.emulate_media(reduced_motion='reduce')
+    errs = []
+    page.on('pageerror', lambda e: errs.append(str(e)))
+    login(page, PINS['dorian'], who='dorian')
+    page.wait_for_url('**/dorian.html')
+    page.wait_for_selector('[data-act="hundred"]')
+    page.wait_for_selector('#kid-starpath:not([hidden]) [data-path="hundred"]')
+    for act in ['rsort', 'who', 'sort', 'graph', 'cal', 'hundred']:
+        check(page.locator('#kid-kinder [data-act="%s"]' % act).count() == 1, 'home tile: ' + act)
+        check(page.locator('#kid-starpath [data-path="%s"]' % act).count() == 1, 'star path: ' + act)
+    save_shot(page, 'kinder_home_nov16.png', 'main.kid-home')
+
+    # Pure plans: 10 questions, unlock numbers, build -ug levels, sight focus.
+    page.goto(BASE + 'kinder.html?a=build')
+    page.wait_for_selector('[data-start]')
+    planned = page.evaluate("""async () => {
+      const cvc = await (await fetch('data/kinder/cvc.json')).json();
+      const letters = await (await fetch('data/kinder/letters.json')).json();
+      const plan = lv => JU.kinderGames.build.plan({ cvc, letters, answers: [], level: lv });
+      const brief = items => items.filter(i => i.kind === 'switch').map(i => ({ id: i.id, n: i.tiles.length, pos: i.pos }));
+      let l6last = false;
+      for (let i = 0; i < 40 && !l6last; i++) l6last = brief(plan(6)).some(s => s.pos === 2);
+      const games = {};
+      ['rsort', 'who', 'sort', 'graph', 'cal', 'hundred'].forEach(id => {
+        games[id] = [1, 2, 3].map(lv => {
+          try { return JU.kinderGames[id].plan({ level: lv, answers: [] }).length; }
+          catch (e) { return String(e && e.message || e); }
+        });
+      });
+      const sight = await JU.kinder.loadSight();
+      return {
+        games,
+        unlock: JU.kinder.UNLOCK,
+        l5: { n: plan(5).length, sw: brief(plan(5)) },
+        l6: { n: plan(6).length, sw: brief(plan(6)) },
+        l6last,
+        l7: { n: plan(7).length, sw: brief(plan(7)) },
+        l8: { n: plan(8).length, sw: brief(plan(8)) },
+        focus: sight.focusWeek,
+        focusWords: sight.words.filter(w => w.focus).map(w => w.word),
+        they: sight.words.some(w => w.word === 'they')
+      };
+    }""")
+    check(planned['unlock'] == {'goodShare': 0.8, 'roundsInARow': 2, 'rightInARow': 5}, 'K.UNLOCK is still 2 good rounds or 5 in a row')
+    for gid, lengths in planned['games'].items():
+        check(lengths == [10, 10, 10], gid + ' plans 10 questions at every level: ' + str(lengths))
+    check(planned['focus'] == '2026-11-16' and planned['focusWords'] == ['one', 'two', 'three'] and planned['they'], 'sight focus is one, two, three and earlier weeks stay')
+    check(planned['l5']['n'] == 10 and [s['id'] for s in planned['l5']['sw']] == ['dog-log', 'log-fog', 'dog-fog'] and all(s['n'] == 3 for s in planned['l5']['sw']), 'build level 5 word switch is unchanged')
+    check(planned['l6']['n'] == 10 and len(planned['l6']['sw']) == 5 and all(s['n'] == 4 for s in planned['l6']['sw']) and planned['l6last'] and not any(s['id'].endswith('ug') for s in planned['l6']['sw']), 'build level 6 stays the harder switch, not -ug')
+    check(planned['l7']['n'] == 10 and [s['id'] for s in planned['l7']['sw']] == ['bug-hug', 'hug-rug', 'bug-rug'] and all(s['n'] == 3 and s['pos'] == 0 for s in planned['l7']['sw']), 'build level 7 is bug, hug, rug')
+    check(planned['l8']['n'] == 10 and len(planned['l8']['sw']) == 5 and all(s['n'] == 4 for s in planned['l8']['sw']) and any(s['pos'] == 2 for s in planned['l8']['sw']), 'build level 8 is the harder -ug top')
+
+    def shot(name):
+        page.evaluate('window.scrollTo(0, 0)')
+        save_shot(page, name, '.k-screen')
+
+    def level_up(act, hear=False, first=None):
+        if not kinder_open(page, act):
+            return
+        def before():
+            if first:
+                first()
+        n, saw_go = kinder_play(page, hear=hear, before=before)
+        check(n == 10, act + ' round is 10 questions (%s)' % n)
+        check(saw_go, act + ' shows the Go cue')
+        page.wait_for_selector('[data-opened="1"]')
+        check(page.locator('[data-by]').get_attribute('data-by') == 'run', act + ' levels up from 5 right in a row')
+        saved = page.evaluate("""(a) => {
+          const k = JSON.parse(localStorage.getItem('ju_dorian_kinder_v1'));
+          const round = k.rounds.filter(r => r.activity === a).pop();
+          return { level: k.levels[a], items: round.items, clean: round.clean };
+        }""", act)
+        check(saved['level'] == 2 and saved['items'] == 10 and saved['clean'] == 10, act + ' saved level 2 after a perfect round: ' + str(saved))
+
+    def rhyme_ok():
+        word = page.locator('[data-rsort]').get_attribute('data-rsort')
+        check(word in ['bug', 'hug', 'rug', 'mug', 'tug', 'sun', 'run', 'bun', 'fun'], 'rhyme sort picture is an -ug or -un word')
+        check(page.locator('[data-pick]').count() == 2, 'rhyme sort has two picture bins')
+        shot('kinder_rhyme_sort.png')
+
+    def who_ok():
+        check(page.locator('[data-who="easy"]').count() == 1 and page.locator('[data-top]').count() == 0, 'who is it starts with one character')
+        shot('kinder_who_character.png')
+
+    def sort_ok():
+        check(page.locator('[data-sort="size"]').count() == 1, 'sort starts with size')
+        labels = page.locator('.k-sortbin').evaluate_all('els => els.map(e => e.getAttribute("aria-label"))')
+        pick = page.locator('[data-right="1"]').get_attribute('data-pick')
+        said = page.evaluate("""(name) => {
+          const heard = (JU.speech.heard || []).slice(window.__heardMark || 0).join('\\n').toLowerCase();
+          const tokens = heard.match(/[a-z]+(?:-[a-z]+)?/g) || [];
+          return tokens.indexOf(name) >= 0;
+        }""", pick)
+        check(labels == ['a bin', 'a bin', 'a bin'] and not said, 'sort does not say or label the size before the tap')
+        shot('kinder_sort_size.png')
+
+    def graph_ok():
+        n = int(page.locator('[data-right="1"]').get_attribute('data-n'))
+        pics = page.locator('[data-ask-row] .k-obj').count()
+        board = page.locator('[data-graph-board]').inner_text()
+        check(page.locator('[data-graph="howmany"]').count() == 1 and pics == n, 'picture graph row matches the number card')
+        check(page.locator('[data-count-out]').inner_text().strip() == '0' and not re.search(r'\d', board), 'picture graph shows no count before the tap')
+        check(not kinder_heard_has_number(page, n), 'picture graph does not say the count before the tap')
+        shot('kinder_picture_graph.png')
+
+    def cal_ok():
+        ans = page.locator('[data-hear-card][data-right="1"]').get_attribute('data-day')
+        said = page.evaluate("""(day) => {
+          const heard = (JU.speech.heard || []).slice(window.__heardMark || 0).join('\\n').toLowerCase();
+          const tokens = heard.match(/[a-z]+(?:-[a-z]+)?/g) || [];
+          return tokens.indexOf(day) >= 0 || heard.indexOf('[word-' + day + ']') >= 0;
+        }""", ans)
+        strip = page.locator('.k-week').inner_text()
+        check(page.locator('[data-mark-today="1"]').count() == 1 and ans.capitalize() not in strip and not said, 'calendar asks without saying yesterday or tomorrow')
+        shot('kinder_calendar.png')
+
+    def miss_ok():
+        n = int(page.locator('[data-right="1"]').get_attribute('data-n'))
+        seq = page.locator('.k-seq').inner_text()
+        shown = [int(x) for x in re.findall(r'\d+', seq)]
+        check('?' in seq and n not in shown and page.locator('[data-miss="easy"]').count() == 1, 'missing number stays blank (%s shown %s)' % (n, shown))
+        check(not kinder_heard_has_number(page, n), 'missing number is not spoken before the tap')
+        shot('kinder_missing_number.png')
+
+    level_up('rsort', first=rhyme_ok)
+    mark_heard(page)
+    page.click('[data-again]')
+    page.wait_for_selector('.k-ready [data-rhyme-sort="hard"]')
+    check(page.locator('[data-top="1"]').count() >= 1, 'rhyme sort has a harder top')
+
+    level_up('who', first=who_ok)
+    mark_heard(page)
+    page.click('[data-again]')
+    page.wait_for_selector('.k-ready [data-who="hard"]')
+    check(page.locator('[data-top="1"]').count() >= 1, 'who is it has a harder top')
+    shot('kinder_top_level.png')
+
+    level_up('sort', first=sort_ok)
+    mark_heard(page)
+    page.click('[data-again]')
+    page.wait_for_selector('.k-ready [data-sort="shape"]')
+    shape = page.locator('[data-right="1"]').get_attribute('data-pick')
+    shape_said = page.evaluate("""(name) => {
+      const heard = (JU.speech.heard || []).slice(window.__heardMark || 0).join('\\n').toLowerCase();
+      const tokens = heard.match(/[a-z]+(?:-[a-z]+)?/g) || [];
+      return tokens.indexOf(name) >= 0;
+    }""", shape)
+    check(not shape_said, 'shape sort does not say the shape before the tap')
+    shot('kinder_sort_shape.png')
+    kinder_open(page, 'sort', 3)
+    page.click('[data-start]')
+    page.wait_for_selector('.k-ready [data-top="1"]')
+    check(page.locator('[data-sort]').count() == 1, 'sort top level mixes size and shape')
+
+    level_up('graph', first=graph_ok)
+    mark_heard(page)
+    page.click('[data-again]')
+    page.wait_for_selector('.k-ready [data-graph="more"]')
+    counts = page.evaluate("""() => [...document.querySelectorAll('[data-graph-board] .k-grow')].map(r => r.querySelectorAll('.k-gpic, .k-obj').length)""")
+    board = page.locator('[data-graph-board]').inner_text()
+    check(len(counts) == 2 and len(set(counts)) == 2 and not re.search(r'\d', board), 'which has more shows pictures only')
+    check(all(not kinder_heard_has_number(page, c) for c in counts), 'which has more does not say a count')
+    kinder_open(page, 'graph', 3)
+    page.click('[data-start]')
+    page.wait_for_selector('.k-ready [data-top="1"]')
+    check(page.locator('[data-graph-board] .k-grow').count() == 3, 'picture graph top has three close rows')
+
+    level_up('cal', hear=True, first=cal_ok)
+    mark_heard(page)
+    page.click('[data-again]')
+    page.wait_for_selector('.k-ready [data-cal="hard"]')
+    ans = page.locator('[data-hear-card][data-right="1"]').get_attribute('data-day')
+    said = page.evaluate("""(day) => {
+      const heard = (JU.speech.heard || []).slice(window.__heardMark || 0).join('\\n').toLowerCase();
+      const tokens = heard.match(/[a-z]+(?:-[a-z]+)?/g) || [];
+      return tokens.indexOf(day) >= 0 || heard.indexOf('[word-' + day + ']') >= 0;
+    }""", ans)
+    check(page.locator('[data-top="1"]').count() >= 1 and page.locator('[data-mark-today="0"]').count() == 1 and not said, 'calendar top does not mark today or say the answer')
+
+    level_up('hundred', first=miss_ok)
+    mark_heard(page)
+    page.click('[data-again]')
+    page.wait_for_selector('.k-ready [data-miss="hard"]')
+    n = int(page.locator('[data-right="1"]').get_attribute('data-n'))
+    shown = [int(x) for x in re.findall(r'\d+', page.locator('.k-seq').inner_text())]
+    check(page.locator('[data-top="1"]').count() >= 1 and n not in shown and not kinder_heard_has_number(page, n), 'missing number top stays blank and quiet')
+
+    # Add it up is already his adding game. One question: the total is not said or written before he taps.
+    kinder_open(page, 'add')
+    mark_heard(page)
+    page.click('[data-start]')
+    page.wait_for_selector('.k-ready [data-right="1"]')
+    total = int(page.locator('[data-right="1"]').get_attribute('data-n'))
+    groups = page.locator('.k-groups').inner_text()
+    check(page.locator('.k-ready [data-go]').count() == 1, 'add it up shows the Go cue')
+    check(not re.search(r'\d', groups) and page.locator('[data-count-out]').inner_text().strip() == '0', 'add it up shows pictures, not the total')
+    if page.locator('[data-q]').count():
+        check(page.locator('[data-q]').inner_text().strip() == '?', 'add it up keeps the equals box blank')
+    check(not kinder_heard_has_number(page, total), 'add it up does not say the total')
+
+    # Build a word, level 7: the -ug switch is the second question.
+    kinder_open(page, 'build', 7)
+    page.click('[data-start]')
+    page.wait_for_selector('.k-ready')
+    if page.locator('[data-switch]').count() == 0:
+        word = page.locator('.k-wordpic').get_attribute('aria-label')
+        for ch in word:
+            page.locator('.k-tile[data-tile="%s"]:not([disabled])' % ch).first.click()
+        page.wait_for_selector('[data-next]:not([disabled])')
+        page.click('[data-next]:not([disabled])')
+        page.wait_for_selector('.k-ready [data-switch]')
+    check(page.locator('[data-switch]').get_attribute('data-switch') == 'bug-hug', 'build a word asks bug to hug')
+    check(page.locator('.k-ready [data-go]').count() == 1, 'build a word shows the Go cue')
+    shot('kinder_build_ug_switch.png')
+
+    # Record sounds lists the new sight words and the new build words. Earlier weeks stay.
+    login(page, PINS['parent'], who='parent')
+    page.wait_for_url('**/parent.html')
+    page.goto(BASE + 'parent.html?p=dorian')
+    page.wait_for_selector('#view-dorian:not([hidden]) [data-rec-group="sight"]')
+    for key in ['sight', 'words', 'week16']:
+        page.locator('[data-rec-group="%s"]' % key).evaluate('el => { el.open = true; }')
+    page.wait_for_selector('[data-rec-item="sight-one"]')
+    for cid in ['sight-one', 'sight-two', 'sight-three', 'sight-they', 'word-hug', 'word-rug', 'word-mug', 'word-gum', 'word-tug', 'word-bug', 'word-run', 'word-bun', 'word-fun', 'word-hum', 'word-sunday', 'word-tuesday']:
+        check(page.locator('[data-rec-item="%s"]' % cid).count() == 1, 'record sounds lists ' + cid)
+    check(page.locator('#kinder-preview-hundred').count() == 1 and page.locator('#kinder-preview-rsort').count() == 1, 'parent page can preview the new games')
+
+    # A version 5 backup still loads, and a version 7 backup never lowers a level. The file we write is still version 7.
+    page.evaluate("""async () => {
+      localStorage.removeItem('ju_dorian_kinder_v1');
+      const v5 = { app: 'ju-learning', version: 5, results: [], profiles: { dorian: { kinder: {
+        answers: [{ id: 'v5-count', ts: '2026-01-01T00:00:00.000Z', session: 's', activity: 'count', item: '3', correct: true }],
+        rounds: [] } } } };
+      await JU.storage.importAll(v5);
+      await JU.storage.importAll(v5);
+      const mid = JSON.parse(localStorage.getItem('ju_dorian_kinder_v1'));
+      mid.levels = Object.assign({}, mid.levels, { build: 5 });
+      localStorage.setItem('ju_dorian_kinder_v1', JSON.stringify(mid));
+      const v7 = { app: 'ju-learning', version: 7, results: [], profiles: { dorian: { kinder: {
+        answers: [
+          { id: 'v5-count', ts: '2026-01-01T00:00:00.000Z', session: 's', activity: 'count', item: '3', correct: true },
+          { id: 'v7-new', ts: '2026-02-01T00:00:00.000Z', session: 's2', activity: 'hundred', item: 'miss-48', correct: true },
+          { id: 'nope', ts: '2026-02-02T00:00:00.000Z', session: 's3', activity: 'not-a-game', item: 'x', correct: true }
+        ],
+        rounds: [],
+        levels: { build: 2, letters: 3, hundred: 2 }
+      } } } };
+      await JU.storage.importAll(v7);
+      window.__backup = JSON.parse(localStorage.getItem('ju_dorian_kinder_v1'));
+      window.__exported = await JU.storage.exportAll({ recordings: false });
+    }""")
+    backup = page.evaluate("window.__backup")
+    exported = page.evaluate("window.__exported")
+    ids = [a.get('id') for a in backup.get('answers', [])]
+    check(ids.count('v5-count') == 1 and 'v7-new' in ids and 'nope' not in ids, 'v5 and v7 backups restore without duplicating or keeping unknown games')
+    check(backup['levels'].get('build') == 5 and backup['levels'].get('letters') == 3 and backup['levels'].get('hundred') == 2, 'a backup never lowers a level: ' + str(backup.get('levels')))
+    check(exported.get('version') == 7 and exported.get('profiles', {}).get('dorian', {}).get('kinder', {}).get('levels', {}).get('build') == 5, 'new backups stay version 7')
+    check(not errs, 'kindergarten week: no page errors: ' + '; '.join(errs[:3]))
+    ctx.close()
 
 def flash_cards(br):
     ctx = br.new_context(viewport={'width': 1024, 'height': 768})
@@ -902,6 +1244,7 @@ with sync_playwright() as p:
     shutil.rmtree(tmp, ignore_errors=True)
 
     flash_cards(br)
+    kinder_nov16(br)
 
     check(not errors, 'no console/page errors: ' + '; '.join(errors[:3]))
     br.close()

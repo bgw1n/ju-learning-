@@ -765,3 +765,28 @@ body.kid .k-opts.k-opts4, .k-opts.k-opts4 { grid-template-columns: repeat(4, min
 .email-step-n { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 1.6rem; height: 1.6rem; border-radius: 999px; background: #3f6f9c; color: #fff; font-weight: 700; font-size: 0.95rem; }
 .ideas-card .idea-text { width: 100%; min-height: 6rem; resize: vertical; }
 .ideas-card label.check-inline { margin-right: 0.4rem; }
+
+/* v18: rhyme sort, who's the character, size and shape sort, picture graph, week strip, missing number */
+.k-bins { display: flex; gap: 0.8rem; justify-content: center; width: 100%; flex-wrap: wrap; }
+.k-bin { flex: 1 1 180px; max-width: 280px; justify-content: center; }
+.k-binpics { font-size: 2.6rem; letter-spacing: 0.15rem; line-height: 1.2; }
+.k-scene-row { display: flex; gap: 0.8rem; justify-content: center; align-items: flex-end; flex-wrap: wrap; width: 100%; background: linear-gradient(#d7f0ff, #e7f6df); border-radius: 28px; padding: 1rem 0.6rem; box-sizing: border-box; }
+.k-who { min-width: 120px; justify-content: center; }
+.k-sortbin { min-width: 120px; max-width: 200px; flex: 1 1 120px; justify-content: center; }
+.k-sizestage { min-height: 150px; display: flex; align-items: center; justify-content: center; }
+.k-graph { display: flex; flex-direction: column; gap: 0.55rem; width: 100%; max-width: 640px; margin: 0.2rem auto 0.6rem; }
+.k-grow { display: flex; flex-wrap: wrap; gap: 0.2rem; align-items: center; min-height: 72px; border-radius: 18px; border: 4px solid #9fc4e3; background: #fff; padding: 0.35rem 0.55rem; font: inherit; cursor: pointer; text-align: left; }
+.k-grow-still { cursor: default; background: #f7fbff; }
+.k-graph .k-objs.k-grow { width: auto; }
+.k-gpic { font-size: 2rem; line-height: 1; }
+.k-week { display: flex; gap: 0.35rem; justify-content: center; flex-wrap: wrap; background: #fff8e8; border-radius: 20px; padding: 0.55rem; margin: 0.2rem auto 0.8rem; width: 100%; box-sizing: border-box; }
+.k-day { width: 58px; height: 68px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; background: #fff; border: 3px solid #f0d9b5; }
+.k-day.k-today { border-color: #3f9c5a; box-shadow: 0 0 0 4px rgba(63, 156, 90, 0.28); }
+.k-daycards { display: flex; flex-wrap: wrap; gap: 0.7rem; justify-content: center; width: 100%; }
+.k-daycard { flex-direction: column; justify-content: center; min-width: 132px; max-width: 180px; gap: 0.2rem; }
+.k-dayname { font-size: 1.25rem; font-weight: 800; }
+@media (max-width: 700px) {
+  .k-day { width: 40px; height: 48px; font-size: 1.3rem; }
+  .k-dayname { font-size: 1rem; }
+  .k-gpic { font-size: 1.5rem; }
+}

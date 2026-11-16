@@ -1,7 +1,9 @@
 /* kinder/build.js - Build a word. He hears the word and sees its picture, then taps the sounds in order from a tray of letter tiles into three boxes.
    Each tile plays its recorded sound when tapped; the whole word (a recorded clip) is played when the last box is filled.
    v16: level 5 adds cot, cop, fog, fox and an easy word-family switch (dog -> log -> fog, change the first letter).
-   Level 6 is the harder top: more families, sometimes the last letter, and 4 letter choices.
+   Level 6 is harder: more families, sometimes the last letter, and 4 letter choices.
+   v18: level 7 is the -ug family (bug -> hug -> rug, change the first letter) plus hug, rug, mug, gum, tug.
+   Level 8 is the harder top: 4 letter choices, and sometimes the last letter (bug -> bun).
    Which words are open is worked out in js/kinder.js (planWords, wordItem). */
 (function () {
   const h = JU.ui.h, K = JU.kinder;
@@ -19,6 +21,20 @@
     { from: 'cat', to: 'can', e: '\uD83D\uDC31', toE: '\uD83E\uDD6B', pos: 2 },
     { from: 'can', to: 'cap', e: '\uD83E\uDD6B', toE: '\uD83E\uDDE2', pos: 2 },
     { from: 'dog', to: 'dot', e: '\uD83D\uDC36', toE: '\u26AB', pos: 2 }
+  ]);
+  /* v18: bug -> hug -> rug, first letter only. gum is a word to build, not an -ug rhyme. */
+  const UG = [
+    { from: 'bug', to: 'hug', e: '\uD83D\uDC1B', toE: '\uD83E\uDD17', pos: 0 },
+    { from: 'hug', to: 'rug', e: '\uD83E\uDD17', toE: '\uD83D\uDFE3', pos: 0 },
+    { from: 'bug', to: 'rug', e: '\uD83D\uDC1B', toE: '\uD83D\uDFE3', pos: 0 }
+  ];
+  const UG_HARD = UG.concat([
+    { from: 'rug', to: 'mug', e: '\uD83D\uDFE3', toE: '\u2615', pos: 0 },
+    { from: 'mug', to: 'tug', e: '\u2615', toE: '\uD83E\uDEA2', pos: 0 },
+    { from: 'tug', to: 'bug', e: '\uD83E\uDEA2', toE: '\uD83D\uDC1B', pos: 0 },
+    { from: 'bug', to: 'bun', e: '\uD83D\uDC1B', toE: '\uD83C\uDF5E', pos: 2 },
+    { from: 'rug', to: 'run', e: '\uD83D\uDFE3', toE: '\uD83C\uDFC3', pos: 2 },
+    { from: 'hug', to: 'hum', e: '\uD83E\uDD17', toE: '\uD83C\uDFB5', pos: 2 }
   ]);
   K.switchItem = function (step, nChoices, letters) {
     const from = step.from, to = step.to, pos = step.pos, right = to.charAt(pos);
@@ -86,11 +102,18 @@
         }
         built.sort((a, b) => (b.tier === p.tier) - (a.tier === p.tier));
       }
-      const nSwitch = level >= 6 ? 5 : level >= 5 ? 3 : 0;
-      const nChoices = level >= 6 ? 4 : 3;
-      const bank = level >= 6 ? K.shuffle(HARD) : EASY.slice();
-      const switches = [];
-      for (let i = 0; i < nSwitch; i++) switches.push(K.switchItem(bank[i % bank.length], nChoices, env.letters));
+      const nChoices = level >= 8 || level === 6 ? 4 : 3;
+      let switches = [];
+      if (level >= 8) {
+        let steps = K.shuffle(UG_HARD).slice(0, 5);
+        if (!steps.some(s => s.pos === 2)) steps[steps.length - 1] = UG_HARD.find(s => s.pos === 2);
+        switches = steps.map(s => K.switchItem(s, nChoices, env.letters));
+      } else if (level >= 7) switches = UG.map(s => K.switchItem(s, nChoices, env.letters));
+      else if (level >= 5) {
+        const bank = level >= 6 ? K.shuffle(HARD) : EASY.slice();
+        const nSwitch = level >= 6 ? 5 : 3;
+        for (let i = 0; i < nSwitch; i++) switches.push(K.switchItem(bank[i % bank.length], nChoices, env.letters));
+      }
       const pluralOn = env.cvc.rules.pluralRound && window.__JU_BUILD_PLURAL !== false && K.lookItem;
       const plural = pluralOn ? Object.assign(K.lookItem('plural'), { activity: 'look', other: 'look' }) : null;
       const nTail = switches.length + (plural ? 1 : 0);
@@ -103,7 +126,8 @@
     redo(env, item) {
       if (item.other) return Object.assign(K.lookItem('plural'), { activity: 'look', other: 'look' });
       if (item.kind === 'switch') {
-        const bank = (env.level || 1) >= 6 ? HARD : EASY;
+        const lv = env.level || 1;
+        const bank = lv >= 8 ? UG_HARD : lv >= 7 ? UG : lv >= 6 ? HARD : EASY;
         const step = bank.find(s => s.from === item.from && s.to === item.to) || bank[0];
         return K.switchItem(step, item.tiles.length, env.letters);
       }

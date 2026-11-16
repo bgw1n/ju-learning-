@@ -20,7 +20,7 @@
   const games = JU.kinderGames = JU.kinderGames || {};
 
   /* the sticker picture for round n of an activity (the same every time, so it can be shown again later) */
-  const STICKER_START = { letters: 0, build: 6, sight: 3, count: 9, add: 1, warmup: 5, more: 7, look: 10, rhyme: 2, shapes: 4, push: 8, take: 11 };
+  const STICKER_START = { letters: 0, build: 6, sight: 3, count: 9, add: 1, warmup: 5, more: 7, look: 10, rhyme: 2, shapes: 4, push: 8, take: 11, rsort: 1, who: 5, sort: 8, graph: 3, cal: 10, hundred: 0 };
   JU.kinderSticker = (activity, n) => K.STICKERS[(n - 1 + (STICKER_START[activity] || 0)) % K.STICKERS.length];
 
   /* v15: a soft two-note chime when the answers light up (Web Audio, about a quarter second; silent where there is no audio) */

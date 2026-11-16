@@ -1,0 +1,55 @@
+{
+ "id": "2026-11-16",
+ "label": "Week of Nov 16",
+ "source": "Weekly sight words for Nov 16 to 20",
+ "words": [
+  {
+   "word": "one",
+   "sentence": "I see one cat.",
+   "pre": "I see",
+   "post": "cat.",
+   "pic": "🐱",
+   "wrong": [
+    "we",
+    "is",
+    "it"
+   ],
+   "fits": [
+    "the",
+    "my"
+   ]
+  },
+  {
+   "word": "two",
+   "sentence": "I see two dogs.",
+   "pre": "I see",
+   "post": "dogs.",
+   "pic": "🐶",
+   "wrong": [
+    "we",
+    "is",
+    "it"
+   ],
+   "fits": [
+    "the",
+    "my"
+   ]
+  },
+  {
+   "word": "three",
+   "sentence": "We have three bugs.",
+   "pre": "We have",
+   "post": "bugs.",
+   "pic": "🐛",
+   "wrong": [
+    "the",
+    "we",
+    "is"
+   ],
+   "fits": [
+    "one",
+    "two"
+   ]
+  }
+ ]
+}

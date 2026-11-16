@@ -11,5 +11,30 @@
  "letterTip": "Say the sound, not the letter name. Short, with no \"uh\" on the end.",
  "wordTip": "Say the word once, clearly, at a normal speed.",
  "sightTip": "Say the word once, clearly.",
- "extra": []
+ "extra": [
+  {
+   "key": "week16",
+   "title": "Week of Nov 16",
+   "tip": "Say the word once, clearly. These are the new rhyme words and the days, and there is no site clip for them yet.",
+   "items": [
+    { "id": "word-run", "label": "run", "pic": "🏃", "tip": "" },
+    { "id": "word-bun", "label": "bun", "pic": "🍞", "tip": "" },
+    { "id": "word-fun", "label": "fun", "pic": "😄", "tip": "" },
+    { "id": "word-hum", "label": "hum", "pic": "🎵", "tip": "" },
+    { "id": "word-small", "label": "small", "tip": "" },
+    { "id": "word-medium", "label": "medium", "tip": "" },
+    { "id": "word-big", "label": "big", "tip": "" },
+    { "id": "word-circle", "label": "circle", "tip": "" },
+    { "id": "word-square", "label": "square", "tip": "" },
+    { "id": "word-triangle", "label": "triangle", "tip": "" },
+    { "id": "word-sunday", "label": "Sunday", "pic": "☀️", "tip": "" },
+    { "id": "word-monday", "label": "Monday", "pic": "🌙", "tip": "" },
+    { "id": "word-tuesday", "label": "Tuesday", "pic": "⭐", "tip": "" },
+    { "id": "word-wednesday", "label": "Wednesday", "pic": "🌈", "tip": "" },
+    { "id": "word-thursday", "label": "Thursday", "pic": "🍎", "tip": "" },
+    { "id": "word-friday", "label": "Friday", "pic": "🎈", "tip": "" },
+    { "id": "word-saturday", "label": "Saturday", "pic": "⚽", "tip": "" }
+   ]
+  }
+ ]
 }

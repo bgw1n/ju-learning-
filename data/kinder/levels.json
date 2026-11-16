@@ -14,7 +14,7 @@
    "note": "Which letters are in play still opens by itself (6 at a time). The second level only makes each question harder."
   },
   "build": {
-   "levels": 6,
+   "levels": 8,
    "title": "Build a word",
    "labels": [
     "s a t m p n",
@@ -22,7 +22,9 @@
     "+ o g d u b",
     "+ e f",
     "cot, cop, fog, fox, and an easy word switch",
-    "harder word switch, 4 letter choices"
+    "harder word switch, 4 letter choices",
+    "-ug words, bug to hug to rug",
+    "harder -ug switch, 4 letters, sometimes the last letter"
    ]
   },
   "sight": {
@@ -116,6 +118,56 @@
     "from 2 or 3",
     "from 3, 4, or 5",
     "within 5, sometimes none left"
+   ]
+  },
+  "rsort": {
+   "levels": 2,
+   "title": "Rhyme sort",
+   "labels": [
+    "sort pictures into -ug and -un",
+    "words that start the same, like bug and bun"
+   ]
+  },
+  "who": {
+   "levels": 2,
+   "title": "Who is it?",
+   "labels": [
+    "one character, a thing, and a place",
+    "two characters, listen for who the story is about"
+   ]
+  },
+  "sort": {
+   "levels": 3,
+   "title": "Sort",
+   "labels": [
+    "small, medium, and big",
+    "circle, square, and triangle",
+    "size and shape mixed"
+   ]
+  },
+  "graph": {
+   "levels": 3,
+   "title": "Picture graph",
+   "labels": [
+    "how many in the row",
+    "which row has more",
+    "three rows, the amounts are close"
+   ]
+  },
+  "cal": {
+   "levels": 2,
+   "title": "Yesterday and tomorrow",
+   "labels": [
+    "yesterday and tomorrow, today is marked",
+    "four day cards, today is not marked"
+   ]
+  },
+  "hundred": {
+   "levels": 2,
+   "title": "Missing number",
+   "labels": [
+    "missing number up to 50",
+    "missing number up to 100, the blank can be first or last"
    ]
   }
  }

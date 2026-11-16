@@ -67,8 +67,8 @@
     return m;
   }
 
-  const KINDER_ACTIVITIES = ['letters', 'build', 'sight', 'count', 'add', 'warmup', 'more', 'look', 'rhyme', 'shapes', 'push', 'take'];       // (v16 adds rhyme, shapes, push, take; backup shape stays version 7)
-  const KINDER_LEVELED = ['letters', 'build', 'sight', 'count', 'add', 'more', 'look', 'rhyme', 'shapes', 'push', 'take'];       // same kinder shape as v14; backup version stays 7
+  const KINDER_ACTIVITIES = ['letters', 'build', 'sight', 'count', 'add', 'warmup', 'more', 'look', 'rhyme', 'shapes', 'push', 'take', 'rsort', 'who', 'sort', 'graph', 'cal', 'hundred'];       // (v18 adds rhyme sort, who, sort, graph, calendar, missing number; backup shape stays version 7)
+  const KINDER_LEVELED = ['letters', 'build', 'sight', 'count', 'add', 'more', 'look', 'rhyme', 'shapes', 'push', 'take', 'rsort', 'who', 'sort', 'graph', 'cal', 'hundred'];       // same kinder shape as v14; backup version stays 7
   function kinderClean(v) {
     const k = { answers: [], rounds: [] };
     if (isObj(v)) {

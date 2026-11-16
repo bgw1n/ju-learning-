@@ -32,6 +32,29 @@
   /* a spoken number: a recorded clip with the number word as its fallback */
   const num = (n, words) => '{{n:' + (n === 0 && words[0] === 'none' ? 'none' : n) + '|' + words[n] + '}}';
   K.num = num;
+  /* Spoken number up to 100. 0 to 30 match the clips in audio/round2. Past 30 there is no site clip, so the browser voice says the word unless a grown-up has recorded num-N. */
+  K.numberWord = function (n) {
+    const ones = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+    const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+    n = Number(n);
+    if (n < 20) return ones[n];
+    if (n === 100) return 'one hundred';
+    const t = Math.floor(n / 10), o = n % 10;
+    return o ? tens[t] + '-' + ones[o] : tens[t];
+  };
+  K.numWord = n => '{{n:' + n + '|' + K.numberWord(n) + '}}';
+  /* The question text, with clip markers turned into the words a child would hear. Used to keep an answer out of the question. */
+  K.heardPlain = function (text) {
+    return String(text == null ? '' : text).replace(/\{\{[^|]+\|([^}]*)\}\}/g, '$1').toLowerCase();
+  };
+  K.hidesWord = function (text, word) {
+    const words = K.heardPlain(text).match(/[a-z]+(?:-[a-z]+)?/g) || [];
+    if (words.indexOf(String(word).toLowerCase()) >= 0) throw new Error('prompt says the answer');
+  };
+  K.hidesNumber = function (text, n) {
+    K.hidesWord(text, K.numberWord(n));
+    if (new RegExp('(?:^|\\D)' + Number(n) + '(?:\\D|$)').test(K.heardPlain(text))) throw new Error('prompt shows the number');
+  };
   /* "one. two. three." as clips (a hint or a count-along) */
   K.countOut = (from, to, words) => { const a = []; for (let i = from; i <= to; i++) a.push(num(i, words) + '.'); return a.join(' '); };
 
@@ -75,7 +98,8 @@
     am: ['at', 'make', 'me'], see: ['she', 'we', 'me'], she: ['see', 'the', 'we'], the: ['she', 'see', 'with'], i: ['is', 'it', 'in'], like: ['look', 'make', 'me'],
     look: ['like', 'see', 'we'], make: ['me', 'my', 'like'], we: ['me', 'with', 'see'], with: ['we', 'it', 'the'],
     are: ['at', 'am', 'the'], that: ['the', 'at', 'with'], of: ['it', 'is', 'in'],
-    they: ['the', 'that', 'we'], you: ['we', 'the', 'do'], do: ['of', 'you', 'is'] };       // (v16: they, you, do)       // (v15: the week of Nov 2)
+    they: ['the', 'that', 'we'], you: ['we', 'the', 'do'], do: ['of', 'you', 'is'],
+    one: ['of', 'we', 'the'], two: ['the', 'do', 'you'], three: ['the', 'they', 'that'] };       // (v18: one, two, three)       // (v16: they, you, do)       // (v15: the week of Nov 2)
   /* The wrong cards for finding `word` (v14): LOOK-ALIKES first (me/my, it/is, at/am, see/she ...), then other words that share a letter pattern, then any other word.
      Only words in play (confirmed) are used; `skip` lists words that must not be cards (for a sentence: words that would also fit). */
   K.sightWrong = function (data, word, n, skip) {

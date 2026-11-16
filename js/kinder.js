@@ -31,7 +31,8 @@
     loadWords: () => fetchJson('data/kinder/cvc.json'),
     ACTIVITIES: { letters: { code: 1, title: 'Letter sounds' }, build: { code: 2, title: 'Build a word' },
       sight: { code: 3, title: 'Sight words' }, count: { code: 4, title: 'Count to 30' }, add: { code: 5, title: 'Add it up' }, warmup: { code: 6, title: 'Warm-up' }, more: { code: 7, title: 'Which has more?' }, look: { code: 8, title: 'Look and tap' },
-      rhyme: { code: 9, title: 'Rhyme' }, shapes: { code: 10, title: 'Shapes' }, push: { code: 11, title: 'Push or pull' }, take: { code: 12, title: 'Take away' } },
+      rhyme: { code: 9, title: 'Rhyme' }, shapes: { code: 10, title: 'Shapes' }, push: { code: 11, title: 'Push or pull' }, take: { code: 12, title: 'Take away' },
+      rsort: { code: 13, title: 'Rhyme sort' }, who: { code: 14, title: 'Who is it?' }, sort: { code: 15, title: 'Sort' }, graph: { code: 16, title: 'Picture graph' }, cal: { code: 17, title: 'Yesterday and tomorrow' }, hundred: { code: 18, title: 'Missing number' } },
     STICKERS: ['\uD83D\uDC36', '\uD83D\uDC31', '\uD83E\uDD84', '\uD83D\uDC22', '\uD83D\uDC20', '\uD83E\uDD8B', '\uD83D\uDC1D', '\uD83E\uDD81', '\uD83D\uDC27', '\uD83D\uDC3C', '\uD83E\uDD89', '\uD83D\uDC19']
   };
   const byTs = (a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0;
@@ -169,7 +170,14 @@
     return t;
   };
   api.planWords = function (cvc, answers, level) {
-    const stats = api.wordStats(answers, cvc), tier = level == null || !cvc.rules.starLevels ? api.openTier(cvc, stats) : Math.max(1, Math.min(cvc.tiers.length, level));     // v14: the level (opened by a star) decides the tier
+    const stats = api.wordStats(answers, cvc);
+    let tier;
+    if (level == null || !cvc.rules.starLevels) tier = api.openTier(cvc, stats);     // v14: the level (opened by a star) decides the tier
+    else {
+      const map = cvc.rules.levelTier;
+      tier = map && map[level - 1] ? map[level - 1] : level;     // v18: level 6 stays on tier 5; levels 7 and 8 are the -ug family
+      tier = Math.max(1, Math.min(cvc.tiers.length, tier));
+    }
     const open = cvc.words.filter(w => w.tier <= tier);
     const weightOf = w => api.weight(stats[w.word]) + (w.tier === tier && tier > 1 ? 3 : 0);     // the newest tier comes up more
     return { tier, open, stats, words: api.fillRound(open, weightOf, cvc.rules.roundItems) };
