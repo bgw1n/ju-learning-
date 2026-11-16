@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Reading Speed — Progress</title>
+  <link rel="stylesheet" href="mockup.css">
+</head>
+<body>
+  <header class="topbar">
+    <span class="nav">← Games</span>
+    <div class="topbar-title">Reading Speed</div>
+    <span class="topbar-right nav">Log out</span>
+  </header>
+  <main class="page">
+    <div class="prog-layout">
+      <section class="chart-card">
+        <h2>Julianna’s words per minute</h2>
+        <p class="chart-sub">Words correct per minute on the one-minute read-aloud. Dashed lines mark her start, her school score, and the 112 goal.</p>
+        <svg class="chart-svg" viewBox="0 0 640 430" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Line chart of words per minute over time">
+          <!-- plot area: left 70, right 610, top 36, bottom 360 -->
+          <!-- y scale: 40 to 130 wpm over 324 px. y = 360 - (wpm-40)*324/90 -->
+          <defs>
+            <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2b8a8a" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#2b8a8a" stop-opacity="0.02"/>
+            </linearGradient>
+          </defs>
+          <!-- legend -->
+          <rect x="86" y="4" width="12" height="0" />
+          <line x1="70" y1="16" x2="98" y2="16" stroke="#5b6b78" stroke-width="2" stroke-dasharray="5 4"/>
+          <text class="ax" x="104" y="20">Start 57</text>
+          <line x1="190" y1="16" x2="218" y2="16" stroke="#1663d6" stroke-width="2" stroke-dasharray="5 4"/>
+          <text class="ax" x="224" y="20">School 99</text>
+          <line x1="326" y1="16" x2="354" y2="16" stroke="#e06c00" stroke-width="2" stroke-dasharray="5 4"/>
+          <text class="ax" x="360" y="20">Goal 112</text>
+          <circle cx="478" cy="16" r="5" fill="#2b8a8a"/>
+          <text class="ax" x="488" y="20">Her scores</text>
+
+          <line x1="70" y1="360" x2="610" y2="360" stroke="#d9d3c4" stroke-width="2"/>
+          <line x1="70" y1="36" x2="70" y2="360" stroke="#d9d3c4" stroke-width="2"/>
+
+          <!-- y ticks 50,70,90,110,130 : y=360-(wpm-40)*324/90 -->
+          <line x1="70" y1="324" x2="610" y2="324" stroke="#efe9da" stroke-width="1"/>
+          <text class="ax" x="62" y="328" text-anchor="end">50</text>
+          <line x1="70" y1="252" x2="610" y2="252" stroke="#efe9da" stroke-width="1"/>
+          <text class="ax" x="62" y="256" text-anchor="end">70</text>
+          <line x1="70" y1="180" x2="610" y2="180" stroke="#efe9da" stroke-width="1"/>
+          <text class="ax" x="62" y="184" text-anchor="end">90</text>
+          <line x1="70" y1="108" x2="610" y2="108" stroke="#efe9da" stroke-width="1"/>
+          <text class="ax" x="62" y="112" text-anchor="end">110</text>
+          <line x1="70" y1="36" x2="610" y2="36" stroke="#efe9da" stroke-width="1"/>
+          <text class="ax" x="62" y="40" text-anchor="end">130</text>
+
+          <!-- reference lines: 57=298.8, 99=147.6, 112=100.8 -->
+          <line x1="70" y1="298.8" x2="610" y2="298.8" stroke="#5b6b78" stroke-width="1.75" stroke-dasharray="6 5"/>
+          <line x1="70" y1="147.6" x2="610" y2="147.6" stroke="#1663d6" stroke-width="1.75" stroke-dasharray="6 5"/>
+          <line x1="70" y1="100.8" x2="610" y2="100.8" stroke="#e06c00" stroke-width="2" stroke-dasharray="6 5"/>
+
+          <!-- x positions for 7 points: 100, 180, 260, 340, 420, 500, 580 -->
+          <!-- values: 57, 68, 79, 88, 96, 99, 104 -->
+          <!-- y: 298.8, 259.2, 219.6, 187.2, 158.4, 147.6, 129.6 -->
+          <path d="M100,298.8 L180,259.2 L260,219.6 L340,187.2 L420,158.4 L500,147.6 L580,129.6 L580,360 L100,360 Z" fill="url(#area)"/>
+          <path d="M100,298.8 L180,259.2 L260,219.6 L340,187.2 L420,158.4 L500,147.6 L580,129.6" fill="none" stroke="#2b8a8a" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="100" cy="298.8" r="6" fill="#fff" stroke="#2b8a8a" stroke-width="3"/>
+          <circle cx="180" cy="259.2" r="6" fill="#fff" stroke="#2b8a8a" stroke-width="3"/>
+          <circle cx="260" cy="219.6" r="6" fill="#fff" stroke="#2b8a8a" stroke-width="3"/>
+          <circle cx="340" cy="187.2" r="6" fill="#fff" stroke="#2b8a8a" stroke-width="3"/>
+          <circle cx="420" cy="158.4" r="6" fill="#fff" stroke="#2b8a8a" stroke-width="3"/>
+          <circle cx="500" cy="147.6" r="6" fill="#fff" stroke="#2b8a8a" stroke-width="3"/>
+          <circle cx="580" cy="129.6" r="7.5" fill="#2b8a8a" stroke="#fff" stroke-width="3"/>
+          <text class="val" x="580" y="116" text-anchor="middle">104</text>
+
+          <text class="ax" x="100" y="382" text-anchor="middle">Oct 6</text>
+          <text class="ax" x="180" y="382" text-anchor="middle">Oct 13</text>
+          <text class="ax" x="260" y="382" text-anchor="middle">Oct 20</text>
+          <text class="ax" x="340" y="382" text-anchor="middle">Oct 27</text>
+          <text class="ax" x="420" y="382" text-anchor="middle">Nov 3</text>
+          <text class="ax" x="500" y="382" text-anchor="middle">Nov 10</text>
+          <text class="ax" x="580" y="382" text-anchor="middle">Nov 16</text>
+        </svg>
+      </section>
+      <section class="parent-card">
+        <h2>Reading · Grown-up view</h2>
+        <p class="parent-sub">Scores stay on this device. Tap Save progress after her rounds.</p>
+        <div class="parent-stats">
+          <div class="stat">
+            <div class="stat-n">104</div>
+            <div class="stat-l">Latest wpm</div>
+          </div>
+          <div class="stat">
+            <div class="stat-n">104</div>
+            <div class="stat-l">Best wpm</div>
+          </div>
+          <div class="stat wide">
+            <div class="stat-n">8 to go to 112</div>
+            <div class="stat-l">Words correct per minute still needed</div>
+          </div>
+          <div class="stat">
+            <div class="stat-n">97%</div>
+            <div class="stat-l">Accuracy</div>
+          </div>
+          <div class="stat">
+            <div class="stat-n">3/3</div>
+            <div class="stat-l">Comprehension</div>
+          </div>
+          <div class="stat">
+            <div class="stat-n">60</div>
+            <div class="stat-l">Flash speed (wpm)</div>
+          </div>
+          <div class="stat">
+            <div class="stat-n">7</div>
+            <div class="stat-l">Rounds saved</div>
+          </div>
+        </div>
+        <div style="font-weight:700;font-size:0.92rem;margin:2px 0 4px">Most-missed words</div>
+        <table class="miss-table">
+          <thead>
+            <tr><th>Word</th><th>Times missed</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mword">habitat</td><td>4</td></tr>
+            <tr><td class="mword">leftover</td><td>3</td></tr>
+            <tr><td class="mword">burrows</td><td>2</td></tr>
+          </tbody>
+        </table>
+        <p class="parent-save">Save progress keeps her best score, this chart, and her trickiest words.</p>
+      </section>
+    </div>
+    <div class="footer">Mockup, example numbers</div>
+  </main>
+</body>
+</html>
