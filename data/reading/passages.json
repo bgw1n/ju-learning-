@@ -1,0 +1,187 @@
+{
+  "note": "Reading Speed passages for Julianna. To add one, copy a passage object onto the end of \"passages\". id is a short slug (letters, numbers, dashes). title, emoji, and blurb show on the picker. text is the passage: separate paragraphs with a blank line, about 150 to 250 words, third-grade language, animal habitats. The game counts the words, so you do not need a wordCount field. questions is exactly 3. Each question has a prompt, three choices, and answer as 0, 1, or 2 (the correct choice). Do not copy published stories.",
+  "unit": "Unit 2 · Animals and habitats",
+  "benchmarks": { "start": 57, "school": 99, "goal": 112 },
+  "passages": [
+    {
+      "id": "wolf-island",
+      "title": "Wolf Island",
+      "emoji": "🐺",
+      "blurb": "Wolves find a home, and the island comes alive.",
+      "text": "The little island was quiet until the wolves arrived. At first they walked the rocky shore and sniffed the wind. Then they made a den under a fallen log. Soon the pack was hunting fish, crabs, and even the birds that nested in the tall grass.\n\nEvery animal on the island felt the change. The deer hid in the trees. The rabbits dug deeper burrows. Even the foxes watched from a distance. But the wolves did more than hunt. Their leftover meals fed beetles and flies. Those bugs fed the birds. The birds dropped seeds, and new plants began to grow along the path. All this helped.\n\nIn time, the island was busier than ever. Plants covered the bare spots. Fish returned to the clear coves. Birds sang from the new bushes, and crabs scurried back under the wet rocks. The wolves had found a habitat, and the habitat had found a way to share it. One spring morning, two wolf pups tumbled out of the den and blinked at the sun. The island, once empty, was a home again.\n\nA few people were certain the island should stay empty. One human came to explore the rocky shore and left again before darkness. The wolves did not need that visitor. They could defend the den and still share the land. Finally, even half of the bare hillside was green. Outside the den, the pups kept practicing until the morning sun stood high over the water.",
+      "questions": [
+        {
+          "prompt": "Why did the island become busier after the wolves arrived?",
+          "choices": [
+            "The wolves planted new trees themselves.",
+            "Leftover meals fed other animals, and that helped plants grow too.",
+            "The deer asked the wolves to stay on the island."
+          ],
+          "answer": 1
+        },
+        {
+          "prompt": "Where did the wolves make their den?",
+          "choices": [
+            "Under a fallen log.",
+            "Inside a house a human built.",
+            "On a boat out in the cove."
+          ],
+          "answer": 0
+        },
+        {
+          "prompt": "What did the pups do outside the den?",
+          "choices": [
+            "They sailed away with the visitor.",
+            "They practiced until the morning sun was high.",
+            "They ate only the green hillside grass."
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "id": "tide-pool",
+      "title": "Life in the Tide Pool",
+      "emoji": "🌊",
+      "blurb": "Tiny animals share a rocky pool by the sea.",
+      "text": "When the sea slips back, a rocky pocket keeps a little water. That pocket is a tide pool, a tiny habitat beside the open ocean. Starfish cling to the stone. Crabs tuck under wet rock. A sea anemone waits with soft arms, ready to absorb any small bit of food that drifts by.\n\nLife in the pool is a daily puzzle. At low tide the water can warm up, and the salt can rise. Animals that stay must hold on or hide. A hermit crab wears a borrowed shell. A barnacle shuts its door until the waves return. Nothing here is equal in size, but each animal has a talent for this rough place. The mussel has a talent for holding fast. The little sculpin has a talent for blending in with the rock.\n\nVisitors need careful eyes and quiet hands. It is better to watch and name what you see. Look for the small snail, the green algae, and the shrimp no bigger than a fingernail. Take nothing home. The pool is not a salad bowl of souvenirs. It is a neighborhood of neighbors that cannot pack a bag.\n\nWhen the tide comes back, waves wash over the rock and the pool fills again. That rush of water is a gift. It is not a problem you solve with a minus sign. Cool sea water lowers the heat and brings new food. Then the animals open up, and the little habitat starts its busy hours all over again.",
+      "questions": [
+        {
+          "prompt": "What is a tide pool?",
+          "choices": [
+            "A deep cave under the whole ocean.",
+            "A rocky pocket that keeps a little water when the sea slips back.",
+            "A pool that people fill with a hose."
+          ],
+          "answer": 1
+        },
+        {
+          "prompt": "Why should visitors take nothing home?",
+          "choices": [
+            "The pool is a neighborhood of living animals, not a bowl of souvenirs.",
+            "The animals are made of plastic.",
+            "The tide never comes back to the rock."
+          ],
+          "answer": 0
+        },
+        {
+          "prompt": "What happens when the tide returns?",
+          "choices": [
+            "The pool dries up for the rest of the year.",
+            "The starfish walk inland to find a city.",
+            "Waves fill the pool with cool sea water and new food."
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "food-chain",
+      "title": "Food Chain Friends",
+      "emoji": "🐟",
+      "blurb": "Who eats whom in a habitat?",
+      "text": "A habitat is a home, and every home has a food chain. The chain starts with plants. Plants make their own food from sunlight, air, and water. A grasshopper nibbles the leaves. A mouse nibbles seeds. Then a snake or a fox comes looking for the mouse. Each eater depends on the one before it.\n\nIn a pond habitat the chain is easy to picture. Algae grows in the sun. Tiny insects eat the algae. A small fish eats the insects. A bigger fish eats the small fish. A heron stands as still as a statue, and then its beak is the last alarm the fish will ever feel. When the heron soared away, it carried energy from the pond into the sky.\n\nNothing in the chain is famous for being kind or cruel. Eating is how wild animals stay alive. Still, the chain can break. If the plants die, the insects go. If the insects go, the fish go too. The total number of animals falls when the first link is weak. People can help by keeping water clean and by leaving wild plants where they grow.\n\nSome animals adore one kind of food, and some will eat almost anything. A raccoon is a flexible eater. A butterfly is not. It needs the right flowers. When those flowers stay safe, the butterfly stays too, and so does the bird that may catch it. A food chain is a team, even when the teammates never hold a meeting.",
+      "questions": [
+        {
+          "prompt": "Where does a food chain start?",
+          "choices": [
+            "With plants that make food from sunlight, air, and water.",
+            "With a heron that soars away from the pond.",
+            "With a meeting the animals hold each week."
+          ],
+          "answer": 0
+        },
+        {
+          "prompt": "What can happen if the plants in a habitat die?",
+          "choices": [
+            "The chain gets stronger the very same day.",
+            "The insects and then the fish can go too.",
+            "Wild animals stop needing any food at all."
+          ],
+          "answer": 1
+        },
+        {
+          "prompt": "Why does the story say a food chain is a team?",
+          "choices": [
+            "Only famous animals are allowed to eat.",
+            "The animals sit down and say hello every morning.",
+            "Each living thing depends on the others in the habitat."
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "marsh-home",
+      "title": "A Home in the Marsh",
+      "emoji": "🌿",
+      "blurb": "Birds, fish, and plants share the reeds.",
+      "text": "A marsh is a soft, wet habitat where land and water mix. Tall reeds click in the wind. Mud pulls at a boot. To a heron, that mud is a fine place to hunt. The bird stands still for long minutes, then strikes at a silver fish flashing under the surface.\n\nDragonflies dart over the water. Frogs hide in the green, and their calls grow louder after sunset. When moonlight silvers the reeds, raccoons come to the edge to feel for food with careful paws. Ducks tuck a beak under a wing and rest on a quiet patch of open water.\n\nPlants do heavy work here, even though they never move to show it. Their roots hold the mud so it does not wash away. They also clean the water as it creeps through the marsh. Fish lay eggs among the stems. Insects use the stems as a bridge. A fallen reed can become a roof for a tiny creature hiding from the sun.\n\nPeople once drained marshes to make more dry land. Many animals lost a home when the water left. Now some towns have decided to let the water come back. They finish a path as a wooden boardwalk, so visitors can look without trampling a nest. From the boards you can see the habitat at work: plants, insects, fish, birds, and slow water, all in one wet, shining place.",
+      "questions": [
+        {
+          "prompt": "What job do the plant roots do in the marsh?",
+          "choices": [
+            "They scare the heron away from the fish.",
+            "They hold the mud in place and help clean the water.",
+            "They turn the wet marsh into a dry road."
+          ],
+          "answer": 1
+        },
+        {
+          "prompt": "Why did some animals lose their homes in the past?",
+          "choices": [
+            "People drained marshes to make more dry land.",
+            "The moonlight was too bright for the ducks.",
+            "Dragonflies drank the marsh until it was empty."
+          ],
+          "answer": 0
+        },
+        {
+          "prompt": "What is the wooden boardwalk for?",
+          "choices": [
+            "So cars can drive through the tall reeds.",
+            "So the fish can climb out and walk on wood.",
+            "So visitors can look without trampling a nest."
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "forest-neighbors",
+      "title": "Forest Neighbors",
+      "emoji": "🌳",
+      "blurb": "A walk through the trees and who lives there.",
+      "text": "Step into a forest and the air feels cooler at once. Tall trees build a roof of leaves. Under that roof, the habitat is stacked in layers. Moss and mushrooms live on the damp ground. Shrubs fill the middle. Birds and squirrels claim the high branches and chatter when a visitor walks below.\n\nIn the morning, a deer steps out to browse on tender twigs. It lifts its head at every snap. Its eyesight is sharp, and its ears are sharper still. A woodpecker hammers a dead trunk, hunting beetles that chew old wood. Those beetles help turn the trunk into soil, so a new plant can take its turn in the sun.\n\nNot every neighbor is easy to greet. A rattlesnake may rest in a warm patch beside the trail. It does not want to chase a person. The rattle is a clear warning that means, give me room. Hikers who stay on the path and watch their feet can share the woods safely. Outside the deep shade, a hawk circles and waits for a mouse in the grass.\n\nAt night the forest changes jobs. Owls glide, and crickets sing from the leaves. What fell in autumn becomes a blanket for insects and for seeds. In spring those seeds open, and the habitat begins again. The woods do not need a store or a sign. They already hold more living things than one slow walk can count. Explore a little longer, and a new neighbor will show itself.",
+      "questions": [
+        {
+          "prompt": "What does a rattlesnake's rattle mean in this story?",
+          "choices": [
+            "Come closer and play under the trees.",
+            "Give me room.",
+            "The forest path is closed for the day."
+          ],
+          "answer": 1
+        },
+        {
+          "prompt": "What are the layers of the forest habitat?",
+          "choices": [
+            "Only the tops of the tallest trees.",
+            "A store, a sign, and a wide road.",
+            "Damp ground, shrubs in the middle, and high branches."
+          ],
+          "answer": 2
+        },
+        {
+          "prompt": "What happens to leaves that fell in autumn?",
+          "choices": [
+            "They become a blanket for insects and seeds.",
+            "They fly to the ocean on the same day.",
+            "They turn into rattlesnakes by the trail."
+          ],
+          "answer": 0
+        }
+      ]
+    }
+  ]
+}

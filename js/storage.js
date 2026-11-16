@@ -42,6 +42,50 @@
 
   /* Math Fact Flash Cards (Julianna). Optional in the backup: version 5 and version 7 files without "math" still load.
      { rounds: [ { id, ts, score (facts right in that minute), misses: { "6+4": 2 } } ] } */
+  function snapReadWpm(n, fallback) {
+    let w = Math.round(Number(n));
+    if (!isFinite(w)) return fallback;
+    w = Math.round(w / 5) * 5;
+    if (w < 40) return 40;
+    if (w > 200) return 200;
+    return w;
+  }
+  /* Reading Speed (Julianna). Optional in the backup, same rule as math: a version 5 or version 7 file
+     with no "reading" field still loads, and loading it never erases rounds already here.
+     { rounds: [ { id, ts, passageId, passageTitle, wpm, accuracy, wordsRead, misses, seconds, early,
+                   missWords: ["habitat"], compCorrect, compTotal } ],
+       flashWpm, smoothStreak, smoothAt } */
+  function readingClean(v) {
+    const out = { rounds: [], flashWpm: 60, smoothStreak: 0, smoothAt: 60 };
+    if (!isObj(v)) return out;
+    out.flashWpm = snapReadWpm(v.flashWpm, 60);
+    out.smoothAt = snapReadWpm(v.smoothAt, out.flashWpm);
+    const streak = Math.floor(Number(v.smoothStreak));
+    if (isFinite(streak) && streak > 0) out.smoothStreak = Math.min(50, streak);
+    if (Array.isArray(v.rounds)) v.rounds.forEach(r => {
+      if (!r || typeof r.ts !== 'string' || !isFinite(Number(r.wpm))) return;
+      const missWords = [];
+      if (Array.isArray(r.missWords)) r.missWords.forEach(w => {
+        if (typeof w === 'string' && w) missWords.push(w.toLowerCase());
+      });
+      out.rounds.push({
+        id: typeof r.id === 'string' ? r.id : '',
+        ts: r.ts,
+        passageId: typeof r.passageId === 'string' ? r.passageId : '',
+        passageTitle: typeof r.passageTitle === 'string' ? r.passageTitle : '',
+        wpm: Math.max(0, Math.round(Number(r.wpm))),
+        accuracy: Math.max(0, Math.min(100, Math.round(Number(r.accuracy) || 0))),
+        wordsRead: Math.max(0, Math.floor(Number(r.wordsRead) || 0)),
+        misses: Math.max(0, Math.floor(Number(r.misses) || 0)),
+        seconds: Math.max(0, Math.round(Number(r.seconds) || 0)),
+        early: !!r.early,
+        missWords: missWords,
+        compCorrect: Math.max(0, Math.floor(Number(r.compCorrect) || 0)),
+        compTotal: Math.max(0, Math.floor(Number(r.compTotal) || 0))
+      });
+    });
+    return out;
+  }
   function mathClean(v) {
     const m = { rounds: [] };
     if (isObj(v) && Array.isArray(v.rounds)) {
@@ -94,6 +138,7 @@
     const MONEY_KEY = 'ju_' + mid + 'money_v1';
     const KINDER_KEY = 'ju_' + mid + 'kinder_v1';
     const MATH_KEY = 'ju_math_v1';
+    const READING_KEY = 'ju_reading_v1';
 
     const api = {
       kind: 'localStorage',
@@ -344,6 +389,61 @@
         return { added, skipped };
       };
       api.clearMath = async () => { localStorage.removeItem(MATH_KEY); };
+
+      /* Julianna's Reading Speed rounds and flash-reader settings. Older backups have no "reading" field. */
+      api.keys.reading = READING_KEY;
+      api.getReading = async () => readingClean(read(READING_KEY, null));
+      api.setReadingPrefs = async prefs => {
+        const m = readingClean(read(READING_KEY, null));
+        if (prefs && isFinite(Number(prefs.flashWpm))) m.flashWpm = snapReadWpm(prefs.flashWpm, m.flashWpm);
+        if (prefs && isFinite(Number(prefs.smoothStreak))) m.smoothStreak = Math.max(0, Math.min(50, Math.floor(Number(prefs.smoothStreak))));
+        if (prefs && isFinite(Number(prefs.smoothAt))) m.smoothAt = snapReadWpm(prefs.smoothAt, m.flashWpm);
+        write(READING_KEY, m);
+        return m;
+      };
+      api.addReadingRound = async rec => {
+        const m = readingClean(read(READING_KEY, null));
+        const row = readingClean({ rounds: [Object.assign({ ts: new Date().toISOString(), id: JU.ui.uid() }, rec || {})], flashWpm: m.flashWpm }).rounds[0];
+        if (!row) return null;
+        if (!row.id) row.id = JU.ui.uid();
+        m.rounds.push(row);
+        write(READING_KEY, m);
+        return row;
+      };
+      api.patchReadingRound = async (id, patch) => {
+        const m = readingClean(read(READING_KEY, null));
+        const row = m.rounds.find(r => r.id === id);
+        if (!row || !patch) return m;
+        if (patch.compCorrect != null) row.compCorrect = Math.max(0, Math.floor(Number(patch.compCorrect) || 0));
+        if (patch.compTotal != null) row.compTotal = Math.max(0, Math.floor(Number(patch.compTotal) || 0));
+        write(READING_KEY, m);
+        return m;
+      };
+      /* Same id, or the same time + passage + wpm, is a duplicate. Prefs restore when this browser has no rounds yet. */
+      api.importReading = async obj => {
+        const cur = readingClean(read(READING_KEY, null));
+        const inc = readingClean(obj);
+        const hadRounds = cur.rounds.length > 0;
+        const key = r => [r.ts, r.passageId, r.wpm].join('|');
+        const ids = new Set(cur.rounds.map(r => r.id).filter(Boolean));
+        const keys = new Set(cur.rounds.map(key));
+        let added = 0, skipped = 0;
+        inc.rounds.forEach(r => {
+          if ((r.id && ids.has(r.id)) || keys.has(key(r))) { skipped++; return; }
+          if (!r.id) r.id = JU.ui.uid();
+          cur.rounds.push(r); ids.add(r.id); keys.add(key(r)); added++;
+        });
+        let prefs = false;
+        if (!hadRounds) {
+          cur.flashWpm = inc.flashWpm;
+          cur.smoothStreak = inc.smoothStreak;
+          cur.smoothAt = inc.smoothAt;
+          prefs = true;
+        }
+        if (added || prefs) { cur.rounds.sort((a, b) => a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0); write(READING_KEY, cur); }
+        return { added, skipped };
+      };
+      api.clearReading = async () => { localStorage.removeItem(READING_KEY); };
     }
 
     if (id === 'family') {
@@ -403,8 +503,9 @@
     async setLastBackup(iso) { write(BACKUP_KEY, iso || new Date().toISOString()); return iso; },
 
     /* ---- the backup file (version 7; versions 1 to 6 still load) ----
-       Version 7 may also include "math" (Julianna's Math Fact Flash Cards: { rounds: [...] }).
-       A version 5 or version 7 file with no math field still loads, and loading it never erases rounds already here.
+       Version 7 may also include "math" (Julianna's Math Fact Flash Cards: { rounds: [...] })
+       and "reading" (Julianna's Reading Speed: { rounds, flashWpm, smoothStreak, smoothAt }).
+       A version 5 or version 7 file with no math field, or no reading field, still loads, and loading it never erases rounds already here.
        Version 7 (v14) adds "levels" and "stars" inside profiles.dorian.kinder (Dorian's game levels and the stars that opened them).
        Version 6 adds "recordings": the grown-up's own recordings of Dorian's sounds (js/recordings.js), each
        { id, type, ts, dur, start, end, gain, data (base64) }. It is left out when the page has no recordings module or opts.recordings is false.
@@ -420,6 +521,7 @@
         results: await stores.julianna.getResults(), stickers: await stores.julianna.getStickers(), hints: await stores.julianna.getHints(),
         flags: await stores.julianna.getFlags(), money: await stores.julianna.getMoney(),
         math: await stores.julianna.getMath(),
+        reading: await stores.julianna.getReading(),
         profiles: {} };
       for (const p of ['dorian', 'family']) {
         out.profiles[p] = { results: await stores[p].getResults(), stickers: await stores[p].getStickers(), hints: await stores[p].getHints(), flags: await stores[p].getFlags() };
@@ -444,6 +546,7 @@
       const flags = Array.isArray(data.flags) ? await stores.julianna.importFlags(data.flags) : null;   // versions 1 to 3 have no flags
       const money = isObj(data.money) ? await stores.julianna.importMoney(data.money) : null;
       const math = isObj(data.math) ? await stores.julianna.importMath(data.math) : null;   // version 5, and version 7 files from before flash cards, have no math part
+      const reading = isObj(data.reading) ? await stores.julianna.importReading(data.reading) : null;   // version 5, and version 7 files from before Reading Speed, have no reading part
       const profiles = {};
       for (const p of ['dorian', 'family']) {
         const blk = isObj(data.profiles) && isObj(data.profiles[p]) ? data.profiles[p] : null;
@@ -460,7 +563,7 @@
       }
       let recordings = null;                                                     // versions 1 to 5 have no recordings
       if (Array.isArray(data.recordings) && window.JU.recordings) { try { recordings = await JU.recordings.importAll(data.recordings); } catch (e) { recordings = null; } }
-      return { added: r.added, skipped: r.skipped, hints, flags, money, math, profiles, recordings };
+      return { added: r.added, skipped: r.skipped, hints, flags, money, math, reading, profiles, recordings };
     },
     /* Plain counts for the progress summary: { julianna: {results, games, hints, stickers, flags, money: {done, answers}}, dorian: {...}, family: {..., lessonsDone} } */
     async counts() {
@@ -477,6 +580,8 @@
       }
       const mf = await stores.julianna.getMath();
       out.julianna.math = { rounds: mf.rounds.length, best: mf.rounds.reduce((b, r) => Math.max(b, r.score), 0) };
+      const rd = await stores.julianna.getReading();
+      out.julianna.reading = { rounds: rd.rounds.length, best: rd.rounds.reduce((b, r) => Math.max(b, r.wpm), 0), flashWpm: rd.flashWpm };
       out.family.lessonsDone = Object.keys((await stores.family.getLessonState()).complete).length;
       return out;
     }

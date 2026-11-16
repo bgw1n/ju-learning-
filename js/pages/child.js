@@ -52,6 +52,13 @@
       h('span', { class: 'gtitle' }, flash.title),
       h('span', { class: 'gblurb' }, flash.blurb)));
   }
+  const reading = JU.games.reading && JU.games.reading.speed;
+  if (reading) {
+    grid.appendChild(h('a', { class: 'gcard reading', id: 'reading-speed-card', href: 'game.html?s=reading&g=speed' },
+      h('span', { class: 'gemoji', 'aria-hidden': 'true' }, reading.emoji),
+      h('span', { class: 'gtitle' }, reading.title),
+      h('span', { class: 'gblurb' }, reading.blurb)));
+  }
   grid.appendChild(testCard);
 
   /* Review card: only shown when she has missed words in earlier weeks */

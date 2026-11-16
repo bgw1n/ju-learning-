@@ -1,5 +1,13 @@
 # Changelog
 
+## v19 (preview, not published)
+- **Reading Speed** for Julianna. A new tile on her games home, next to Math Fact Flash Cards. She picks an original animal-habitat passage (about 150 to 250 words, with three questions). Flash practice shows one word at a time, with the focus letter in red. The speed slider runs from 40 to 200 and remembers her last speed. A comma, a sentence end, or a long word gets a little extra pause. She can tap to pause and go back a phrase. After two smooth flashes, the game suggests 5 words per minute faster.
+- **One-minute read-aloud.** The passage is on the screen and the timer does not stop when a grown-up taps a missed word (tap again to undo). When the minute ends, or she finishes early, the grown-up taps the last word she read. The score is words read up to that word, minus the red ones. An early finish scales to one minute. Accuracy is shown too. Then the three comprehension questions.
+- **Progress.** A chart of words per minute, with dashed lines at her start (57), her school score (99), and the goal (112), plus stars and a "New best!" when she beats her best.
+- **Grown-up page.** A Reading card shows latest and best wpm, how many to go to 112, accuracy, comprehension, flash speed, and the words she misses most. All of it rides along in Save progress. Backup files stay at version 7. A version 5 or version 7 file that has no reading section still loads.
+- Dorian's kindergarten pages and the Family money lessons are unchanged.
+- Preview, not published.
+
 ## v18 (published Nov 16, 2026)
 - **This week (Nov 16–20): one, two, three.** Sight words keeps every earlier week in review. The three new words are in Record sounds. There is no site clip for them yet, so the browser voice says them until a grown-up records them.
 - **Build a word, level 7: hug, rug, mug, gum, tug, and bug.** g and u were already in the letter set. h is new on the tiles (hug). The round adds an -ug switch: bug, then hug, then rug, changing the first letter. Level 8 is the harder top: 4 letter choices, and sometimes the last letter (bug to bun). Levels 1 to 6 are unchanged. A grown-up can open level 7 from the parent page.

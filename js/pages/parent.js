@@ -126,6 +126,42 @@
     const count = Object.keys(st).filter(wk => wk !== 'money').reduce((a, wk) => a + Object.keys(st[wk]).length, 0);     // spelling stickers; money stickers are in the money card
     document.getElementById('stickernote').textContent = 'Stickers earned so far: ' + count;
     await renderMath();
+    await renderReading();
+  }
+  async function renderReading() {
+    const box = document.getElementById('reading-julianna');
+    if (!box) return;
+    const data = await JU.storage.getReading();
+    const rounds = data.rounds.slice().sort((a, b) => a.ts < b.ts ? 1 : -1);
+    const last = rounds[0] || null;
+    const best = data.rounds.reduce((m, r) => Math.max(m, r.wpm), 0);
+    const goal = 112;
+    const toGo = last ? Math.max(0, goal - last.wpm) : null;
+    box.dataset.latest = last ? String(last.wpm) : '';
+    box.dataset.best = data.rounds.length ? String(best) : '';
+    box.dataset.togo = last ? String(toGo) : '';
+    box.dataset.accuracy = last ? String(last.accuracy) : '';
+    box.dataset.comp = last && last.compTotal ? (last.compCorrect + '/' + last.compTotal) : '';
+    box.dataset.flash = String(data.flashWpm);
+    box.dataset.rounds = String(data.rounds.length);
+    const tally = {};
+    data.rounds.forEach(r => (r.missWords || []).forEach(w => { if (w) tally[w] = (tally[w] || 0) + 1; }));
+    const missed = Object.keys(tally).map(w => ({ w: w, n: tally[w] })).sort((a, b) => b.n - a.n || (a.w < b.w ? -1 : 1));
+    box.dataset.miss = missed.length ? missed[0].w : '';
+    const toGoCard = h('div', { class: 'stat wide' },
+      h('div', { class: 'stat-n' }, last ? (toGo === 0 ? 'Goal reached!' : toGo + ' to go to ' + goal) : '\u2013'),
+      h('div', { class: 'stat-l' }, 'Words correct per minute still needed'));
+    document.getElementById('reading-summary').replaceChildren(
+      statCard('Latest wpm', last ? last.wpm : '\u2013'),
+      statCard('Best wpm', data.rounds.length ? best : '\u2013'),
+      toGoCard,
+      statCard('Accuracy', last ? last.accuracy + '%' : '\u2013'),
+      statCard('Comprehension', last && last.compTotal ? (last.compCorrect + '/' + last.compTotal) : '\u2013'),
+      statCard('Flash speed (wpm)', data.flashWpm),
+      statCard('Rounds saved', data.rounds.length));
+    fillTable(document.getElementById('reading-misses'), ['Word', 'Times missed'],
+      missed.slice(0, 8).map(x => [h('span', { class: 'rs-mword' }, x.w), String(x.n)]),
+      'No missed words yet.');
   }
   function factLabel(key) {
     const m = /^(\d+)([+\-])(\d+)$/.exec(key || '');
@@ -311,7 +347,7 @@
       const others = Object.keys(r.profiles).map(k => (k === 'dorian' ? 'Dorian' : 'Family') + ': ' + r.profiles[k].added + ' new').join(', ');
       const extra = (r.flags ? r.flags.added : 0) + (r.money ? r.money.added : 0) + Object.values(r.profiles).reduce((a, x) => a + (x.flags ? x.flags.added : 0) + (x.money ? x.money.added : 0), 0);
       const kin = Object.values(r.profiles).reduce((a, x) => a + (x.kinder ? x.kinder.added : 0), 0);
-      backupMsg.textContent = 'Loaded: ' + P(r.added, 'new result') + ' added, ' + r.skipped + ' already here or skipped.' + (r.hints ? ' Hint log: ' + r.hints.added + ' added.' : '') + (others ? ' ' + others + '.' : '') + (extra ? ' Also added: ' + P(extra, 'flag or money activity record', 'flags and money activity records') + '.' : '') + (kin ? ' Kindergarten: ' + P(kin, 'record') + ' added.' : '') + (r.math && r.math.added ? ' Math flash cards: ' + P(r.math.added, 'round') + ' added.' : '') + (r.recordings && (r.recordings.added || r.recordings.replaced) ? ' Sound recordings: ' + r.recordings.added + ' added' + (r.recordings.replaced ? ', ' + r.recordings.replaced + ' replaced by newer ones' : '') + '.' : '');
+      backupMsg.textContent = 'Loaded: ' + P(r.added, 'new result') + ' added, ' + r.skipped + ' already here or skipped.' + (r.hints ? ' Hint log: ' + r.hints.added + ' added.' : '') + (others ? ' ' + others + '.' : '') + (extra ? ' Also added: ' + P(extra, 'flag or money activity record', 'flags and money activity records') + '.' : '') + (kin ? ' Kindergarten: ' + P(kin, 'record') + ' added.' : '') + (r.math && r.math.added ? ' Math flash cards: ' + P(r.math.added, 'round') + ' added.' : '') + (r.reading && r.reading.added ? ' Reading speed: ' + P(r.reading.added, 'round') + ' added.' : '') + (r.recordings && (r.recordings.added || r.recordings.replaced) ? ' Sound recordings: ' + r.recordings.added + ' added' + (r.recordings.replaced ? ', ' + r.recordings.replaced + ' replaced by newer ones' : '') + '.' : '');
       if (r.recordings && JU.recordPage) await JU.recordPage.refresh();
       await renderOthers();
       await render();

@@ -19,7 +19,7 @@
       <button type="button" class="btn big switch-btn" id="sw-dorian" data-profile="dorian" aria-pressed="false">&#128640; Dorian</button>
       <button type="button" class="btn big switch-btn" id="sw-family" data-profile="family" aria-pressed="false">&#127968; Family</button>
     </nav>
-    <nav class="jumpto" id="jump-julianna" data-for="julianna" aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#spelling-julianna" data-jump="spelling-julianna">Spelling</a> <a href="#math-julianna" data-jump="math-julianna">Math</a> <a href="#money-julianna" data-jump="money-julianna">Money</a> <a href="#hints-card" data-jump="hints-card">Hints</a> <a href="#flags-julianna" data-jump="flags-julianna">Flags</a></nav>
+    <nav class="jumpto" id="jump-julianna" data-for="julianna" aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#spelling-julianna" data-jump="spelling-julianna">Spelling</a> <a href="#math-julianna" data-jump="math-julianna">Math</a> <a href="#reading-julianna" data-jump="reading-julianna">Reading</a> <a href="#money-julianna" data-jump="money-julianna">Money</a> <a href="#hints-card" data-jump="hints-card">Hints</a> <a href="#flags-julianna" data-jump="flags-julianna">Flags</a></nav>
     <nav class="jumpto" id="jump-dorian" data-for="dorian" hidden aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#record-sounds" data-jump="record-sounds">Record sounds</a> <a href="#kinder-dorian" data-jump="kinder-dorian">Kindergarten</a> <a href="#money-dorian" data-jump="money-dorian">Money</a> <a href="#flags-dorian" data-jump="flags-dorian">Flags</a></nav>
     <nav class="jumpto" id="jump-family" data-for="family" hidden aria-label="Jump to a section"><span class="jumpto-label">Jump to:</span> <a href="#lessons-card" data-jump="lessons-card">Lessons</a> <a href="#flags-family" data-jump="flags-family">Flags</a></nav>
 
@@ -141,6 +141,15 @@
       <h3>Trickiest facts</h3>
       <p class="note">Facts she missed most often, across every saved round.</p>
       <div class="tablewrap"><table id="math-tricky"></table></div>
+    </section>
+
+    <section class="card" id="reading-julianna" aria-labelledby="reading-julianna-h">
+      <h2 id="reading-julianna-h">Reading</h2>
+      <p class="note">One-minute read-alouds on Julianna&rsquo;s own login. The score is words she read correctly, per minute. A grown-up taps the words she missed. Scores stay in this browser.</p>
+      <div class="cards" id="reading-summary"></div>
+      <h3>Most-missed words</h3>
+      <p class="note">Words she missed on the read-aloud, across every saved round.</p>
+      <div class="tablewrap"><table id="reading-misses"></table></div>
     </section>
 
     <section class="card" id="flags-julianna" aria-labelledby="flags-julianna-h">

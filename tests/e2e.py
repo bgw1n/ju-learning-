@@ -778,6 +778,386 @@ def flash_cards(br):
         c.close()
     check(True, 'flash: screenshots saved under ' + ART)
 
+def passage_tokens(text):
+    text = text.replace('\r\n', '\n').strip()
+    out = []
+    for block in re.split(r'\n\s*\n', text):
+        out.extend([w for w in block.split() if w])
+    return out
+
+def norm_tok(token):
+    return re.sub(r'^[^a-z0-9]+|[^a-z0-9]+$', '', token.lower())
+
+def rs_overflow(page, label):
+    over = page.evaluate("() => document.documentElement.scrollWidth - document.documentElement.clientWidth")
+    check(over <= 1, label + ' fits without sideways scrolling (%s px)' % over)
+
+def reading_speed(br):
+    pack = json.load(open(os.path.join(ROOT, 'data', 'reading', 'passages.json')))
+    passages = pack['passages']
+    check(len(passages) == 5 and pack['benchmarks'] == {'start': 57, 'school': 99, 'goal': 112}, 'reading: 5 passages and the 57 / 99 / 112 benchmarks')
+    spelling = set()
+    for week in WEEKS:
+        for item in week['words']:
+            spelling.add(item['word'].lower())
+    used = set()
+    for p in passages:
+        toks = passage_tokens(p['text'])
+        check(150 <= len(toks) <= 250, 'reading: %s is %s words' % (p['id'], len(toks)))
+        check(len(p.get('questions') or []) == 3, 'reading: %s has 3 questions' % p['id'])
+        for q in p['questions']:
+            check(q.get('answer') in (0, 1, 2) and len(q.get('choices') or []) == 3, 'reading: %s question is 3 choices' % p['id'])
+        for tok in toks:
+            w = norm_tok(tok)
+            if w in spelling:
+                used.add(w)
+    check(len(used) >= 12, 'reading: passages use spelling words where they fit (%s)' % len(used))
+
+    ctx = br.new_context(viewport={'width': 1024, 'height': 768}, accept_downloads=True)
+    ctx.add_init_script(SPY)
+    page = ctx.new_page()
+    errors = []
+    foreign = []
+    page.on('pageerror', lambda e: errors.append('page:' + str(e)))
+    page.on('console', lambda m: errors.append(m.text) if m.type == 'error' else None)
+    page.on('request', lambda r: foreign.append(r.url) if not re.match(r'^(http://localhost:|data:|blob:)', r.url) else None)
+
+    login(page, PINS['julianna'])
+    page.wait_for_url('**/child.html')
+    check(page.locator('#reading-speed-card').count() == 1, 'reading: tile is on Julianna\'s page')
+    sib = page.evaluate("""() => {
+      const r = document.getElementById('reading-speed-card');
+      return r && r.previousElementSibling ? r.previousElementSibling.id : '';
+    }""")
+    check(sib == 'math-flash-card', 'reading: tile sits next to Math Fact Flash Cards')
+    check('Reading Speed' in page.inner_text('#reading-speed-card'), 'reading: tile is titled Reading Speed')
+
+    page.goto(BASE + 'game.html?s=reading&g=speed')
+    page.wait_for_selector('#rs-picker')
+    logic = page.evaluate("""() => {
+      const base = 60000 / 60;
+      return {
+        plain: JU.reading.delayMs('island', 60),
+        comma: JU.reading.delayMs('shore,', 60),
+        end: JU.reading.delayMs('arrived.', 60),
+        longw: JU.reading.delayMs('leftover', 60),
+        focus: JU.reading.focusParts('island').focus,
+        full: JU.reading.score(107, 3, 60000),
+        stars: [JU.reading.stars(57), JU.reading.stars(88), JU.reading.stars(99), JU.reading.stars(0)]
+      };
+    }""")
+    check(logic['plain'] == 1000 and logic['comma'] == 1450 and logic['end'] == 1800 and logic['longw'] == 1350, 'reading: extra pause at a comma, a sentence end, and a long word')
+    check(logic['focus'] == 'l' and logic['full']['wpm'] == 104 and logic['full']['accuracy'] == 97, 'reading: focus letter and full-minute score')
+    check(logic['stars'] == [1, 2, 3, 0], 'reading: stars at 57, 88, 99, and a zero')
+
+    info = page.evaluate("""async () => {
+      const pack = await JU.reading.load();
+      const cards = [...document.querySelectorAll('.rs-pcard')].map(c => ({
+        id: c.dataset.id, words: Number(c.dataset.words), best: c.dataset.best, text: c.textContent
+      }));
+      return { cards: cards, byId: Object.fromEntries(pack.passages.map(p => [p.id, p.wordCount])), legend: document.querySelector('.rs-legend').textContent };
+    }""")
+    check(len(info['cards']) == 5, 'reading: picker shows 5 passages')
+    for card in info['cards']:
+        check(card['words'] == info['byId'].get(card['id']) and 'Not played yet' in card['text'] and card['best'] == '', 'reading: %s shows its word count and no score yet' % card['id'])
+    check('Start 57' in info['legend'] and 'School 99' in info['legend'] and 'Goal 112' in info['legend'], 'reading: legend marks 57, 99, and 112')
+
+    page.click('#rs-open-progress')
+    page.wait_for_selector('#rs-chart')
+    empty = page.evaluate("""() => ({
+      refs: [...document.querySelectorAll('[data-ref]')].map(el => el.dataset.ref + ':' + el.dataset.wpm + ':' + (el.getAttribute('stroke-dasharray') || '')),
+      points: document.querySelectorAll('.rs-point').length,
+      empty: (document.getElementById('rs-chart-empty') || {}).textContent || ''
+    })""")
+    check(empty['refs'] == ['start:57:6 5', 'school:99:6 5', 'goal:112:6 5'] and empty['points'] == 0 and 'read-aloud' in empty['empty'], 'reading: empty chart still draws the three dashed lines')
+    page.click('#rs-to-passages')
+    page.wait_for_selector('#rs-picker')
+
+    page.evaluate('window.__JU_RS_FLASH_FACTOR = 30')
+    page.click('.rs-pcard[data-id="wolf-island"]')
+    page.wait_for_selector('#rs-word')
+    flash = page.evaluate("""() => {
+      const word = document.getElementById('rs-word');
+      const token = JU.reading.current().tokens[Number(word.dataset.i)];
+      const parts = JU.reading.focusParts(token);
+      const slider = document.getElementById('rs-wpm');
+      return {
+        i: word.dataset.i, focus: document.getElementById('rs-focus').textContent, expect: parts.focus,
+        min: slider.min, max: slider.max, step: slider.step, value: slider.value
+      };
+    }""")
+    check(flash['i'] == '0' and flash['focus'] == flash['expect'] and flash['focus'] != '', 'reading: first word shows its focus letter in the fixed spot')
+    check(flash['min'] == '40' and flash['max'] == '200' and flash['step'] == '5' and flash['value'] == '60', 'reading: speed slider is 40 to 200, step 5, starting at 60')
+    page.click('#rs-pause')
+    page.wait_for_function("() => document.getElementById('rs-flash').dataset.paused === '1'")
+    held = page.get_attribute('#rs-word', 'data-i')
+    page.wait_for_timeout(400)
+    check(page.get_attribute('#rs-word', 'data-i') == held and page.locator('#rs-bar-fill').count() == 1, 'reading: pause holds the word and the progress bar stays')
+    page.click('#rs-back')
+    check(page.get_attribute('#rs-word', 'data-i') == '0', 'reading: back a phrase stays on the first word')
+    page.evaluate('JU.reading.flash.jump(18)')
+    page.wait_for_function("() => document.getElementById('rs-word').dataset.i === '18'")
+    page.click('#rs-back')
+    page.wait_for_function("() => Number(document.getElementById('rs-word').dataset.i) < 18")
+    check(page.get_attribute('#rs-flash', 'data-paused') == '1', 'reading: back a phrase moves earlier and stays paused')
+    page.evaluate("""() => {
+      const s = document.getElementById('rs-wpm');
+      s.value = '75';
+      s.dispatchEvent(new Event('input', { bubbles: true }));
+    }""")
+    check(page.inner_text('#rs-speed-num') == '75', 'reading: the slider shows 75')
+    page.click('#rs-to-passages')
+    page.wait_for_selector('#rs-picker')
+    page.evaluate('window.__JU_RS_FLASH_FACTOR = 0')
+    page.click('.rs-pcard[data-id="wolf-island"]')
+    page.wait_for_selector('#rs-flash-done', timeout=45000)
+    check('Smooth!' in page.inner_text('#rs-flash-done') and page.locator('#rs-nudge:not([hidden])').count() == 0, 'reading: one smooth flash does not suggest a faster speed yet')
+    page.click('#rs-flash-again')
+    page.wait_for_selector('#rs-flash-done', timeout=45000)
+    check('80' in page.inner_text('#rs-nudge') and page.locator('#rs-nudge:not([hidden])').count() == 1, 'reading: two smooth flashes suggest 5 wpm faster')
+    page.evaluate('window.__JU_RS_FLASH_FACTOR = 30')
+    page.click('#rs-flash-again')
+    page.wait_for_selector('#rs-flash')
+    check('80' in page.inner_text('#rs-nudge'), 'reading: the suggestion is waiting on the next flash')
+    page.evaluate('window.__JU_RS_Q_MS = 0')
+    page.click('#rs-to-read')
+    page.wait_for_selector('#rs-read')
+    page.wait_for_function("() => Number(document.getElementById('rs-time').dataset.elapsed) > 200")
+    e1 = int(page.get_attribute('#rs-time', 'data-elapsed'))
+    page.click('.rs-tok[data-i="4"]')
+    page.wait_for_timeout(400)
+    e2 = int(page.get_attribute('#rs-time', 'data-elapsed'))
+    check(e2 > e1 + 200 and page.locator('.rs-tok[data-i="4"].is-miss').count() == 1, 'reading: a missed word turns red and the timer keeps going')
+    page.click('.rs-tok[data-i="4"]')
+    check(page.locator('.rs-tok[data-i="4"].is-miss').count() == 0, 'reading: tapping a red word undoes it')
+    page.click('.rs-tok[data-i="6"]')
+    page.click('#rs-done')
+    page.wait_for_function("() => document.getElementById('rs-time').dataset.stopped === '1'")
+    frozen = page.get_attribute('#rs-time', 'data-elapsed')
+    score_ms = int(page.get_attribute('#rs-time', 'data-score-ms'))
+    page.wait_for_timeout(350)
+    check(page.get_attribute('#rs-time', 'data-elapsed') == frozen and page.get_attribute('#rs-time', 'data-early') == '1', 'reading: Done stops the clock early')
+    check(page.locator('#rs-results').count() == 0 and 'Tap the last word' in page.inner_text('#rs-prompt') and 'Time' not in page.inner_text('#rs-prompt'), 'reading: the score waits until the last word is tapped')
+    page.click('.rs-tok[data-i="20"]')
+    page.wait_for_selector('#rs-results')
+    ui = page.evaluate("""() => {
+      const r = document.getElementById('rs-results');
+      return { wpm: Number(r.dataset.wpm), accuracy: Number(r.dataset.accuracy), words: Number(r.dataset.words), misses: Number(r.dataset.misses), elapsed: Number(r.dataset.elapsed), early: r.dataset.early };
+    }""")
+    exp = page.evaluate("(ms) => JU.reading.score(21, 1, ms)", score_ms)
+    check(ui['words'] == 21 and ui['misses'] == 1 and ui['early'] == '1' and ui['wpm'] == exp['wpm'] and ui['accuracy'] == exp['accuracy'] and ui['elapsed'] == exp['elapsed'], 'reading: early finish scales to one minute (%s vs %s)' % (ui, exp))
+    check(page.locator('#rs-new-best:not([hidden])').count() == 1 and '%' in page.inner_text('#rs-accuracy'), 'reading: accuracy and a new best show up')
+    check('Question 1 of 3' in page.inner_text('#rs-q-kicker'), 'reading: comprehension starts at question 1')
+    check(page.locator('.rs-choice[data-answer]').count() == 0, 'reading: answer keys are not in the page')
+    answers = page.evaluate("() => JU.reading.current().questions.map(q => q.answer)")
+    picks = [answers[0], 0 if answers[1] != 0 else 1, answers[2]]
+    for n, pick in enumerate(picks):
+        page.click('#rs-q .rs-choice[data-i="%d"]' % pick)
+        if n < 2:
+            page.wait_for_function("(k) => { const el = document.getElementById('rs-q-kicker'); return !!(el && el.textContent.indexOf('Question ' + k) !== -1); }", arg=str(n + 2))
+    page.wait_for_function("() => { const el = document.getElementById('rs-comp'); return !!(el && !el.hidden && el.textContent.indexOf('2/3') !== -1); }")
+    check(page.get_attribute('#rs-results', 'data-comp') == '2/3', 'reading: comprehension scores 2 of 3')
+    page.click('#rs-see-progress')
+    page.wait_for_selector('#rs-chart .rs-point')
+    chart = page.evaluate("""() => ({
+      goal: document.querySelector('[data-ref="goal"]').dataset.wpm,
+      fresh: document.getElementById('rs-chart-new').hidden,
+      points: document.querySelectorAll('.rs-point').length
+    })""")
+    check(chart['goal'] == '112' and chart['fresh'] is False and chart['points'] >= 1, 'reading: progress chart has the goal line and a new best')
+
+    page.evaluate('sessionStorage.clear()')
+    login(page, PINS['parent'], who='parent')
+    page.wait_for_url('**/parent.html')
+    page.wait_for_selector('#reading-julianna[data-latest]')
+    parent = page.evaluate("""async () => {
+      const d = await JU.storage.getReading();
+      const rounds = d.rounds.slice().sort((a, b) => a.ts < b.ts ? 1 : -1);
+      const last = rounds[0];
+      const best = d.rounds.reduce((m, r) => Math.max(m, r.wpm), 0);
+      const box = document.getElementById('reading-julianna');
+      return {
+        latest: box.dataset.latest, best: box.dataset.best, togo: box.dataset.togo,
+        accuracy: box.dataset.accuracy, comp: box.dataset.comp, flash: box.dataset.flash,
+        rounds: box.dataset.rounds, miss: box.dataset.miss,
+        expectLatest: String(last.wpm), expectBest: String(best), expectTo: String(Math.max(0, 112 - last.wpm)),
+        expectAcc: String(last.accuracy), expectComp: last.compCorrect + '/' + last.compTotal,
+        expectFlash: String(d.flashWpm), expectRounds: String(d.rounds.length),
+        expectMiss: last.missWords[0] || '',
+        table: document.getElementById('reading-misses').textContent
+      };
+    }""")
+    check(parent['latest'] == parent['expectLatest'] and parent['best'] == parent['expectBest'] and parent['togo'] == parent['expectTo'], 'reading: parent card shows latest, best, and how many to go')
+    check(parent['accuracy'] == parent['expectAcc'] and parent['comp'] == '2/3' and parent['flash'] == '75' and parent['rounds'] == '1', 'reading: parent card shows accuracy, comprehension, and flash speed')
+    check(parent['miss'] and parent['miss'] in parent['table'], 'reading: parent card lists a missed word')
+
+    with page.expect_download() as dl:
+        page.click('#save-progress')
+    bpath = dl.value.path()
+    bj = json.load(open(bpath))
+    check(bj.get('version') == 7 and isinstance(bj.get('reading'), dict) and len(bj['reading'].get('rounds') or []) == 1 and bj['reading'].get('flashWpm') == 75, 'backup: version 7 includes the reading round and flash speed')
+    check(bj['reading']['rounds'][0].get('compCorrect') == 2, 'backup: the reading round keeps the comprehension score')
+    page.evaluate("localStorage.removeItem('ju_reading_v1')")
+    page.set_input_files('#load-file', bpath)
+    page.wait_for_function("() => (document.getElementById('backup-msg').textContent || '').indexOf('Reading speed') !== -1")
+    restored = page.evaluate("""async () => {
+      const d = await JU.storage.getReading();
+      const last = d.rounds.slice().sort((a, b) => a.ts < b.ts ? 1 : -1)[0];
+      return { n: d.rounds.length, flash: d.flashWpm, comp: last.compCorrect, wpm: last.wpm };
+    }""")
+    check(restored['n'] == 1 and restored['flash'] == 75 and restored['comp'] == 2 and restored['wpm'] == ui['wpm'], 'backup: loading the file puts the reading round back')
+
+    compat = page.evaluate("""async () => {
+      const before = await JU.storage.getReading();
+      const v5 = await JU.storage.importAll({
+        app: 'ju-learning', version: 5, exportedAt: '2026-01-01T00:00:00.000Z',
+        results: [{ id: 'v5-reading-compat', ts: '2026-01-01T00:00:00.000Z', session: 'V5', week: '2026-10-26', subject: 'spelling', type: 'test', word: 'minutes', typed: 'minutes', typedAll: ['minutes'], correct: true, tries: 1 }],
+        stickers: {}, hints: [], flags: [], money: { done: {}, answers: [] }
+      });
+      const mid = await JU.storage.getReading();
+      const v7 = await JU.storage.importAll({
+        app: 'ju-learning', version: 7, exportedAt: '2026-01-02T00:00:00.000Z',
+        results: [{ id: 'v7-reading-compat', ts: '2026-01-02T00:00:00.000Z', session: 'V7', week: '2026-10-26', subject: 'spelling', type: 'test', word: 'decided', typed: 'decided', typedAll: ['decided'], correct: true, tries: 1 }],
+        stickers: {}, hints: [], flags: [], money: { done: {}, answers: [] }, profiles: {}
+      });
+      const after = await JU.storage.getReading();
+      return {
+        n: [before.rounds.length, mid.rounds.length, after.rounds.length],
+        flash: [before.flashWpm, mid.flashWpm, after.flashWpm],
+        v5reading: v5.reading, v7reading: v7.reading, v5added: v5.added, v7added: v7.added
+      };
+    }""")
+    check(compat['v5reading'] is None and compat['v7reading'] is None and compat['n'] == [1, 1, 1] and compat['flash'] == [75, 75, 75] and compat['v5added'] == 1 and compat['v7added'] == 1,
+          'backup: a v5 or v7 file with no reading section still loads and keeps the rounds')
+
+    page.evaluate('sessionStorage.clear()')
+    login(page, PINS['julianna'])
+    page.wait_for_url('**/child.html')
+    page.goto(BASE + 'game.html?s=reading&g=speed')
+    page.wait_for_selector('#rs-picker')
+    page.evaluate('window.__JU_RS_READ_MS = 700; window.__JU_RS_FLASH_FACTOR = 30')
+    page.click('.rs-pcard[data-id="wolf-island"]')
+    page.wait_for_selector('#rs-to-read')
+    page.click('#rs-to-read')
+    page.wait_for_function("() => document.getElementById('rs-time') && document.getElementById('rs-time').dataset.stopped === '1'", timeout=8000)
+    check(page.locator('#rs-results').count() == 0 and 'Time' in page.inner_text('#rs-prompt'), 'reading: a finished minute asks for the last word before it scores')
+    page.click('.rs-tok[data-i="10"]')
+    page.wait_for_selector('#rs-results')
+    minute = page.evaluate("""() => {
+      const r = document.getElementById('rs-results');
+      return { wpm: r.dataset.wpm, accuracy: r.dataset.accuracy, words: r.dataset.words, misses: r.dataset.misses, elapsed: r.dataset.elapsed, early: r.dataset.early };
+    }""")
+    check(minute == {'wpm': '11', 'accuracy': '100', 'words': '11', 'misses': '0', 'elapsed': '60000', 'early': '0'}, 'reading: a full minute is not scaled up (%s)' % minute)
+    check(not errors, 'reading: no console/page errors: ' + '; '.join(errors[:4]))
+    check(not foreign, 'reading: no network requests leave this site: ' + ', '.join(foreign[:3]))
+    ctx.close()
+
+    seed = {
+        'rounds': [
+            {'id': 'seed-1', 'ts': '2026-10-01T15:00:00.000Z', 'passageId': 'wolf-island', 'passageTitle': 'Wolf Island', 'wpm': 57, 'accuracy': 90, 'wordsRead': 60, 'misses': 3, 'seconds': 60, 'early': False, 'missWords': ['habitat', 'leftover', 'burrows'], 'compCorrect': 2, 'compTotal': 3},
+            {'id': 'seed-2', 'ts': '2026-10-08T15:00:00.000Z', 'passageId': 'marsh-home', 'passageTitle': 'A Home in the Marsh', 'wpm': 68, 'accuracy': 91, 'wordsRead': 70, 'misses': 2, 'seconds': 60, 'early': False, 'missWords': ['habitat', 'leftover'], 'compCorrect': 3, 'compTotal': 3},
+            {'id': 'seed-3', 'ts': '2026-10-15T15:00:00.000Z', 'passageId': 'tide-pool', 'passageTitle': 'Life in the Tide Pool', 'wpm': 79, 'accuracy': 92, 'wordsRead': 80, 'misses': 2, 'seconds': 60, 'early': False, 'missWords': ['habitat', 'burrows'], 'compCorrect': 2, 'compTotal': 3},
+            {'id': 'seed-4', 'ts': '2026-10-22T15:00:00.000Z', 'passageId': 'marsh-home', 'passageTitle': 'A Home in the Marsh', 'wpm': 88, 'accuracy': 94, 'wordsRead': 90, 'misses': 2, 'seconds': 60, 'early': False, 'missWords': ['habitat', 'leftover'], 'compCorrect': 3, 'compTotal': 3},
+            {'id': 'seed-5', 'ts': '2026-10-29T15:00:00.000Z', 'passageId': 'tide-pool', 'passageTitle': 'Life in the Tide Pool', 'wpm': 94, 'accuracy': 95, 'wordsRead': 96, 'misses': 0, 'seconds': 60, 'early': False, 'missWords': [], 'compCorrect': 3, 'compTotal': 3},
+            {'id': 'seed-6', 'ts': '2026-11-05T15:00:00.000Z', 'passageId': 'wolf-island', 'passageTitle': 'Wolf Island', 'wpm': 96, 'accuracy': 96, 'wordsRead': 100, 'misses': 0, 'seconds': 60, 'early': False, 'missWords': [], 'compCorrect': 2, 'compTotal': 3},
+            {'id': 'seed-7', 'ts': '2026-11-12T15:00:00.000Z', 'passageId': 'food-chain', 'passageTitle': 'Food Chain Friends', 'wpm': 99, 'accuracy': 97, 'wordsRead': 102, 'misses': 0, 'seconds': 60, 'early': False, 'missWords': [], 'compCorrect': 3, 'compTotal': 3}
+        ],
+        'flashWpm': 60, 'smoothStreak': 2, 'smoothAt': 60
+    }
+    for tag, vp in (('phone', {'width': 390, 'height': 844}), ('tablet', {'width': 1024, 'height': 768})):
+        c = br.new_context(viewport=vp)
+        c.add_init_script(SPY)
+        pg = c.new_page()
+        pg.goto(BASE + 'index.html')
+        pg.evaluate("(seed) => localStorage.setItem('ju_reading_v1', JSON.stringify(seed))", seed)
+        login(pg, PINS['julianna'])
+        pg.wait_for_url('**/child.html')
+        pg.goto(BASE + 'game.html?s=reading&g=speed')
+        pg.wait_for_selector('#rs-picker')
+        pg.evaluate('window.__JU_RS_FLASH_FACTOR = 40; window.__JU_RS_Q_MS = 0')
+        pg.click('.rs-pcard[data-id="wolf-island"]')
+        pg.wait_for_selector('#rs-word')
+        jumped = pg.evaluate("""() => {
+          const tokens = JU.reading.current().tokens;
+          const n = JU.reading.normWord;
+          let i = -1;
+          for (let k = 21; k < tokens.length; k++) if (n(tokens[k]) === 'island') { i = k; break; }
+          JU.reading.flash.jump(i);
+          return { i: i, focus: document.getElementById('rs-focus').textContent, nudge: document.getElementById('rs-nudge').textContent, paused: document.getElementById('rs-flash').dataset.paused };
+        }""")
+        check(jumped['focus'] == 'l' and '65' in jumped['nudge'] and jumped['paused'] == '0', 'reading: %s flash is on island with a 65 nudge' % tag)
+        pg.evaluate('window.scrollTo(0,0)')
+        rs_overflow(pg, 'reading %s flash' % tag)
+        save_shot(pg, 'rs-flash-%s.png' % tag)
+        pg.click('#rs-to-read')
+        pg.wait_for_selector('#rs-passage')
+        ids = pg.evaluate("""() => {
+          const tokens = JU.reading.current().tokens;
+          const n = JU.reading.normWord;
+          function find(word) { for (let i = 0; i < tokens.length; i++) if (n(tokens[i]) === word) return i; return -1; }
+          return { arrived: find('arrived'), sniffed: find('sniffed'), nested: find('nested'), helped: find('helped') };
+        }""")
+        pg.click('.rs-tok[data-i="%d"]' % ids['arrived'])
+        pg.wait_for_selector('.rs-tok.is-miss')
+        pg.evaluate('window.scrollTo(0,0)')
+        rs_overflow(pg, 'reading %s read-aloud' % tag)
+        save_shot(pg, 'rs-read-%s.png' % tag)
+        pg.click('.rs-tok[data-i="%d"]' % ids['sniffed'])
+        pg.click('.rs-tok[data-i="%d"]' % ids['nested'])
+        pg.evaluate('window.__JU_RS_READ_MS = 1')
+        pg.wait_for_function("() => document.getElementById('rs-time').dataset.stopped === '1'")
+        pg.click('.rs-tok[data-i="%d"]' % ids['helped'])
+        pg.wait_for_selector('#rs-results')
+        got = pg.evaluate("""() => {
+          const r = document.getElementById('rs-results');
+          return { wpm: r.dataset.wpm, acc: r.dataset.accuracy, words: r.dataset.words, misses: r.dataset.misses, early: r.dataset.early, q: document.getElementById('rs-q-kicker').textContent };
+        }""")
+        check(got == {'wpm': '104', 'acc': '97', 'words': '107', 'misses': '3', 'early': '0', 'q': 'Question 1 of 3'}, 'reading: %s results are 104 wpm (%s)' % (tag, got))
+        check('New best!' in pg.inner_text('#rs-new-best'), 'reading: %s results say new best' % tag)
+        pg.evaluate("() => document.getElementById('rs-score').scrollIntoView({block:'start'})")
+        rs_overflow(pg, 'reading %s results' % tag)
+        save_shot(pg, 'rs-results-%s.png' % tag)
+        pg.evaluate("() => document.getElementById('rs-q').scrollIntoView({block:'start'})")
+        save_shot(pg, 'rs-question-%s.png' % tag)
+        for n in range(3):
+            ans = pg.evaluate("(n) => JU.reading.current().questions[n].answer", n)
+            pg.click('#rs-q .rs-choice[data-i="%d"]' % ans)
+            if n < 2:
+                pg.wait_for_function("(k) => { const el = document.getElementById('rs-q-kicker'); return !!(el && el.textContent.indexOf('Question ' + k) !== -1); }", arg=str(n + 2))
+        pg.wait_for_function("() => (document.getElementById('rs-comp') || {}).textContent.indexOf('3/3') !== -1")
+        pg.click('#rs-see-progress')
+        pg.wait_for_selector('#rs-chart-new:not([hidden])')
+        pg.evaluate('window.scrollTo(0,0)')
+        rs_overflow(pg, 'reading %s progress' % tag)
+        save_shot(pg, 'rs-progress-%s.png' % tag)
+        pg.click('#rs-to-passages')
+        pg.wait_for_selector('#rs-picker')
+        pick = pg.evaluate("""() => ({
+          togo: document.getElementById('rs-to-go').textContent,
+          latest: document.getElementById('rs-latest').textContent,
+          wolf: document.querySelector('.rs-pcard[data-id="wolf-island"]').dataset.best,
+          featured: document.querySelector('.rs-pcard[data-id="wolf-island"]').classList.contains('is-featured'),
+          forest: document.querySelector('.rs-pcard[data-id="forest-neighbors"]').textContent
+        })""")
+        check(pick['togo'] == '8 to go to 112' and '104' in pick['latest'] and pick['wolf'] == '104' and pick['featured'] and 'Not played yet' in pick['forest'], 'reading: %s picker shows 104 and 8 to go' % tag)
+        pg.evaluate('window.scrollTo(0,0)')
+        rs_overflow(pg, 'reading %s picker' % tag)
+        save_shot(pg, 'rs-picker-%s.png' % tag)
+        pg.evaluate('sessionStorage.clear()')
+        login(pg, PINS['parent'], who='parent')
+        pg.wait_for_url('**/parent.html')
+        pg.wait_for_selector('#reading-julianna[data-latest="104"]')
+        card = pg.evaluate("""() => {
+          const b = document.getElementById('reading-julianna');
+          return { latest: b.dataset.latest, best: b.dataset.best, togo: b.dataset.togo, accuracy: b.dataset.accuracy, comp: b.dataset.comp, flash: b.dataset.flash, miss: b.dataset.miss, rounds: b.dataset.rounds };
+        }""")
+        check(card == {'latest': '104', 'best': '104', 'togo': '8', 'accuracy': '97', 'comp': '3/3', 'flash': '60', 'miss': 'habitat', 'rounds': '8'}, 'reading: %s parent card matches the 104 read (%s)' % (tag, card))
+        pg.evaluate("() => document.getElementById('reading-julianna').scrollIntoView({block:'start'})")
+        rs_overflow(pg, 'reading %s parent' % tag)
+        save_shot(pg, 'rs-parent-%s.png' % tag, '#reading-julianna')
+        c.close()
+    check(True, 'reading: screenshots saved under ' + ART)
+
 with sync_playwright() as p:
     br = p.chromium.launch(executable_path='/usr/bin/google-chrome', headless=True, args=['--no-sandbox'])
     ctx = br.new_context(viewport={'width': 1280, 'height': 720}, accept_downloads=True)
@@ -808,7 +1188,7 @@ with sync_playwright() as p:
     login(page, PINS['julianna'])
     page.wait_for_url('**/child.html')
     page.wait_for_selector('.gcard')
-    check(page.locator('.gcard').count() == 7, 'child home shows 5 games + test + math flash cards')
+    check(page.locator('.gcard').count() == 8, 'child home shows 5 games + test + math flash cards + reading speed')
     check(page.locator('.sbox').count() == 5, 'five sticker boxes')
     check(page.locator('.sbox.got').count() == 0, 'no stickers yet')
     page.screenshot(path=f'{OUT}/02-child-home.png')
@@ -1032,7 +1412,7 @@ with sync_playwright() as p:
     check(page.evaluate("localStorage.getItem('ju_results_v1')") is None, 'clear removes results')
     # parent can view games
     page.goto(BASE + 'child.html'); page.wait_for_selector('.gcard')
-    check(page.locator('.gcard').count() == 7, 'parent can open games home')
+    check(page.locator('.gcard').count() == 8, 'parent can open games home')
 
 
     # =====================================================================
@@ -1120,7 +1500,7 @@ with sync_playwright() as p:
     stick_week(p3, '2026-11-02')
     login(p3, PINS['julianna']); p3.wait_for_url('**/child.html'); p3.wait_for_selector('.gcard')
     p3.wait_for_timeout(300)
-    check(p3.locator('.gcard.review').count() == 0 and p3.locator('.gcard').count() == 7, 'review: hidden when there is no history')
+    check(p3.locator('.gcard.review').count() == 0 and p3.locator('.gcard').count() == 8, 'review: hidden when there is no history')
     p3.goto(BASE + 'game.html?s=spelling&g=review')
     p3.wait_for_selector('#stage .card')
     check('Nothing to review' in p3.inner_text('#stage'), 'review: direct link with no history shows a calm message')
@@ -1213,7 +1593,7 @@ with sync_playwright() as p:
     # --- review game ---
     p3.goto(BASE + 'child.html'); p3.wait_for_selector('.gcard')
     p3.wait_for_selector('.gcard.review')
-    check(p3.locator('.gcard').count() == 8 and p3.locator('.sbox').count() == 5, 'review: card appears with history (8 cards, still 5 sticker boxes)')
+    check(p3.locator('.gcard').count() == 9 and p3.locator('.sbox').count() == 5, 'review: card appears with history (9 cards, still 5 sticker boxes)')
     p3.screenshot(path=f'{OUT2}/02a-child-home-review.png')
     pick = p3.evaluate("""async () => { const wk = await JU.weeks.loadAll('spelling'); const rs = await JU.storage.getResults();
         return JU.review.pick(wk[1], wk, rs).map(i => i.w.word + ':' + i.mech); }""")
@@ -1281,6 +1661,7 @@ with sync_playwright() as p:
     shutil.rmtree(tmp, ignore_errors=True)
 
     flash_cards(br)
+    reading_speed(br)
     kinder_nov16(br)
 
     check(not errors, 'no console/page errors: ' + '; '.join(errors[:3]))
