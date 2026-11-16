@@ -766,6 +766,39 @@ body.kid .k-opts.k-opts4, .k-opts.k-opts4 { grid-template-columns: repeat(4, min
 .ideas-card .idea-text { width: 100%; min-height: 6rem; resize: vertical; }
 .ideas-card label.check-inline { margin-right: 0.4rem; }
 
+/* v18 home: a few big pictures. Games live on a shelf, stars under each picture and behind Stars. */
+.kid-home { justify-content: flex-start; gap: 0.7rem; padding: 0.7rem 0.7rem 1.2rem; }
+.kid-hello { font-size: 2rem; }
+.kid-stage { font-size: 3.5rem; }
+.kid-pick { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; width: 100%; }
+.kid-pair { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; width: 100%; }
+.kid-launch { font: inherit; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1rem; text-decoration: none; color: var(--ink); background: #fff; border: 5px solid #9fc4e3; border-radius: 32px; box-shadow: 0 6px 0 #9fc4e3; cursor: pointer; width: min(200px, 44vw); height: min(176px, 40vw); min-height: 132px; }
+.kid-launch:hover { background: #eaf4fb; }
+.kid-launch:active { transform: scale(0.97); }
+.kid-launch .kid-pic { font-size: 4.4rem; }
+.kid-word { font-size: 1.45rem; font-weight: 800; line-height: 1.1; }
+.kid-warm-launch { width: min(340px, 90vw); height: 118px; min-height: 0; flex-direction: row; gap: 0.7rem; border-color: #f5c242; box-shadow: 0 6px 0 #e0a800; background: #fff8dc; }
+.kid-warm-launch:hover { background: #fff3c4; }
+.kid-warm-launch .kid-pic { font-size: 4.2rem; }
+.kid-warm-launch.done { background: #dff3e3; border-color: #8fcb9c; box-shadow: 0 6px 0 #8fcb9c; }
+.kid-shelf { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; width: 100%; }
+.kid-shelf[hidden] { display: none; }
+.kid-back { width: 84px; height: 84px; align-self: flex-start; }
+.kid-back .kid-pic { font-size: 2.6rem; }
+.kid-game { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; }
+.kid-game[hidden] { display: none; }
+.kid-kinder { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 0.85rem 0.55rem; width: 100%; }
+.kid-game { width: 146px; flex: 0 0 146px; }
+.kid-shelf .kid-act { width: 132px; height: 132px; margin: 0; }
+.kid-shelf .kid-act .kid-pic { font-size: 4.2rem; }
+.k-ministops { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; max-width: 146px; }
+.k-ministops:empty { display: none; }
+.k-ministops .k-stop { width: 22px; height: 22px; font-size: 0.8rem; }
+.k-ministops .k-stop.here { box-shadow: none; border-width: 2px; }
+.kid-home .kid-buttons { gap: 1.2rem; margin-top: 0.2rem; }
+.kid-home .kid-buttons .kid-btn { width: 88px; height: 88px; }
+.kid-home .kid-buttons .kid-pic { font-size: 2.6rem; }
+
 /* v18: rhyme sort, who's the character, size and shape sort, picture graph, week strip, missing number */
 .k-bins { display: flex; gap: 0.8rem; justify-content: center; width: 100%; flex-wrap: wrap; }
 .k-bin { flex: 1 1 180px; max-width: 280px; justify-content: center; }

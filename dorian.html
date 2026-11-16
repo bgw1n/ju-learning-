@@ -13,34 +13,46 @@
 <body class="kid">
   <div id="parent-bar" class="parent-bar" hidden><a class="btn small ghost" href="parent.html?p=dorian">&larr; Grown-up page</a></div>
   <main class="kid-home">
-    <h1 class="kid-hello"><span id="kid-star" aria-hidden="true">&#128075;</span> Hi, Dorian!</h1>
+    <h1 class="kid-hello" id="kid-hello"><span id="kid-star" aria-hidden="true">&#128075;</span> Hi, Dorian!</h1>
     <div class="kid-stage" id="kid-stage" role="button" tabindex="0" aria-label="Hi Dorian">&#128640;</div>
-    <p class="kid-soon">Tap a picture to play! <span aria-hidden="true">&#127880;</span></p>
-    <div id="kid-warmup" class="kid-money kid-warmup" role="group" aria-label="Warm-up">
-      <a class="kid-btn kid-act kid-warm" href="kinder.html?a=warmup" data-act="warmup" data-say="Warm-up! A little bit of everything." aria-label="Warm-up"><span class="kid-pic" aria-hidden="true">&#9728;&#65039;</span></a>
+    <div id="kid-pick" class="kid-pick">
+      <div id="kid-warmup" class="kid-warmup" role="group" aria-label="Warm-up">
+        <a class="kid-launch kid-warm-launch" href="kinder.html?a=warmup" data-act="warmup" data-say="Warm-up" aria-label="Warm-up"><span class="kid-pic" aria-hidden="true">&#9728;&#65039;</span><span class="kid-word">Warm-up</span></a>
+      </div>
+      <div class="kid-pair" role="group" aria-label="Reading and math">
+        <a class="kid-launch" href="dorian.html?g=reading" data-open="reading" data-say="Reading" aria-label="Reading"><span class="kid-pic" aria-hidden="true">&#128214;</span><span class="kid-word">Reading</span></a>
+        <a class="kid-launch" href="dorian.html?g=math" data-open="math" data-say="Math" aria-label="Math"><span class="kid-pic" aria-hidden="true">&#129774;</span><span class="kid-word">Math</span></a>
+      </div>
+      <div class="kid-pair" role="group" aria-label="Move and stars">
+        <a class="kid-launch" href="dorian.html?g=move" data-open="move" data-say="Move" aria-label="Move"><span class="kid-pic" aria-hidden="true">&#128682;</span><span class="kid-word">Move</span></a>
+        <a class="kid-launch" href="dorian.html?g=stars" data-open="stars" data-say="Stars" aria-label="Stars"><span class="kid-pic" aria-hidden="true">&#11088;</span><span class="kid-word">Stars</span></a>
+      </div>
     </div>
-    <div id="kid-kinder" class="kid-money kid-kinder" role="group" aria-label="Letters, words and numbers">
-      <a class="kid-btn kid-act" href="kinder.html?a=letters" data-act="letters" data-say="Letter sounds" aria-label="Letter sounds"><span class="kid-pic" aria-hidden="true">&#128292;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=build" data-act="build" data-say="Build a word" aria-label="Build a word"><span class="kid-pic" aria-hidden="true">&#129521;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=sight" data-act="sight" data-say="Sight words" aria-label="Sight words"><span class="kid-pic" aria-hidden="true">&#128064;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=count" data-act="count" data-say="Count to thirty" aria-label="Count to thirty"><span class="kid-pic" aria-hidden="true">&#128290;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=add" data-act="add" data-say="Add it up" aria-label="Add it up"><span class="kid-pic" aria-hidden="true">&#129518;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=more" data-act="more" data-say="Which has more?" aria-label="Which has more?"><span class="kid-pic" aria-hidden="true">&#9878;&#65039;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=look" data-act="look" data-say="Look and tap" aria-label="Look and tap"><span class="kid-pic" aria-hidden="true">&#128270;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=rhyme" data-act="rhyme" data-say="Rhyme" aria-label="Rhyme"><span class="kid-pic" aria-hidden="true">&#127925;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=shapes" data-act="shapes" data-say="Shapes" aria-label="Shapes"><span class="kid-pic" aria-hidden="true">&#128314;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=push" data-act="push" data-say="Push or pull" aria-label="Push or pull"><span class="kid-pic" aria-hidden="true">&#128682;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=take" data-act="take" data-say="Take away" aria-label="Take away"><span class="kid-pic" aria-hidden="true">&#127880;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=rsort" data-act="rsort" data-say="Rhyme sort" aria-label="Rhyme sort"><span class="kid-pic" aria-hidden="true">&#129419;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=who" data-act="who" data-say="Who is it?" aria-label="Who is it?"><span class="kid-pic" aria-hidden="true">&#128059;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=sort" data-act="sort" data-say="Sort" aria-label="Sort"><span class="kid-pic" aria-hidden="true">&#128230;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=graph" data-act="graph" data-say="Picture graph" aria-label="Picture graph"><span class="kid-pic" aria-hidden="true">&#128202;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=cal" data-act="cal" data-say="Yesterday and tomorrow" aria-label="Yesterday and tomorrow"><span class="kid-pic" aria-hidden="true">&#128197;</span></a>
-      <a class="kid-btn kid-act" href="kinder.html?a=hundred" data-act="hundred" data-say="Missing number" aria-label="Missing number"><span class="kid-pic" aria-hidden="true">&#128175;</span></a>
+    <div id="kid-shelf" class="kid-shelf" hidden>
+      <a class="kid-btn kid-back" href="dorian.html" data-say="Home" aria-label="Home"><span class="kid-pic" aria-hidden="true">&#127968;</span></a>
+      <div id="kid-kinder" class="kid-kinder" role="group" aria-label="Games">
+        <div class="kid-game" data-game="letters"><a class="kid-btn kid-act" href="kinder.html?a=letters" data-act="letters" data-shelf="reading" data-say="Letter sounds" aria-label="Letter sounds"><span class="kid-pic" aria-hidden="true">&#128292;</span></a><div class="k-ministops" data-mini-path="letters"></div></div>
+        <div class="kid-game" data-game="build"><a class="kid-btn kid-act" href="kinder.html?a=build" data-act="build" data-shelf="reading" data-say="Build a word" aria-label="Build a word"><span class="kid-pic" aria-hidden="true">&#129521;</span></a><div class="k-ministops" data-mini-path="build"></div></div>
+        <div class="kid-game" data-game="sight"><a class="kid-btn kid-act" href="kinder.html?a=sight" data-act="sight" data-shelf="reading" data-say="Sight words" aria-label="Sight words"><span class="kid-pic" aria-hidden="true">&#128064;</span></a><div class="k-ministops" data-mini-path="sight"></div></div>
+        <div class="kid-game" data-game="rhyme"><a class="kid-btn kid-act" href="kinder.html?a=rhyme" data-act="rhyme" data-shelf="reading" data-say="Rhyme" aria-label="Rhyme"><span class="kid-pic" aria-hidden="true">&#127925;</span></a><div class="k-ministops" data-mini-path="rhyme"></div></div>
+        <div class="kid-game" data-game="rsort"><a class="kid-btn kid-act" href="kinder.html?a=rsort" data-act="rsort" data-shelf="reading" data-say="Rhyme sort" aria-label="Rhyme sort"><span class="kid-pic" aria-hidden="true">&#129419;</span></a><div class="k-ministops" data-mini-path="rsort"></div></div>
+        <div class="kid-game" data-game="who"><a class="kid-btn kid-act" href="kinder.html?a=who" data-act="who" data-shelf="reading" data-say="Who is it?" aria-label="Who is it?"><span class="kid-pic" aria-hidden="true">&#128059;</span></a><div class="k-ministops" data-mini-path="who"></div></div>
+        <div class="kid-game" data-game="look"><a class="kid-btn kid-act" href="kinder.html?a=look" data-act="look" data-shelf="reading" data-say="Look and tap" aria-label="Look and tap"><span class="kid-pic" aria-hidden="true">&#128270;</span></a><div class="k-ministops" data-mini-path="look"></div></div>
+        <div class="kid-game" data-game="count"><a class="kid-btn kid-act" href="kinder.html?a=count" data-act="count" data-shelf="math" data-say="Count to thirty" aria-label="Count to thirty"><span class="kid-pic" aria-hidden="true">&#128290;</span></a><div class="k-ministops" data-mini-path="count"></div></div>
+        <div class="kid-game" data-game="add"><a class="kid-btn kid-act" href="kinder.html?a=add" data-act="add" data-shelf="math" data-say="Add it up" aria-label="Add it up"><span class="kid-pic" aria-hidden="true">&#129518;</span></a><div class="k-ministops" data-mini-path="add"></div></div>
+        <div class="kid-game" data-game="more"><a class="kid-btn kid-act" href="kinder.html?a=more" data-act="more" data-shelf="math" data-say="Which has more?" aria-label="Which has more?"><span class="kid-pic" aria-hidden="true">&#9878;&#65039;</span></a><div class="k-ministops" data-mini-path="more"></div></div>
+        <div class="kid-game" data-game="take"><a class="kid-btn kid-act" href="kinder.html?a=take" data-act="take" data-shelf="math" data-say="Take away" aria-label="Take away"><span class="kid-pic" aria-hidden="true">&#127880;</span></a><div class="k-ministops" data-mini-path="take"></div></div>
+        <div class="kid-game" data-game="shapes"><a class="kid-btn kid-act" href="kinder.html?a=shapes" data-act="shapes" data-shelf="math" data-say="Shapes" aria-label="Shapes"><span class="kid-pic" aria-hidden="true">&#128314;</span></a><div class="k-ministops" data-mini-path="shapes"></div></div>
+        <div class="kid-game" data-game="sort"><a class="kid-btn kid-act" href="kinder.html?a=sort" data-act="sort" data-shelf="math" data-say="Sort" aria-label="Sort"><span class="kid-pic" aria-hidden="true">&#128230;</span></a><div class="k-ministops" data-mini-path="sort"></div></div>
+        <div class="kid-game" data-game="graph"><a class="kid-btn kid-act" href="kinder.html?a=graph" data-act="graph" data-shelf="math" data-say="Picture graph" aria-label="Picture graph"><span class="kid-pic" aria-hidden="true">&#128202;</span></a><div class="k-ministops" data-mini-path="graph"></div></div>
+        <div class="kid-game" data-game="cal"><a class="kid-btn kid-act" href="kinder.html?a=cal" data-act="cal" data-shelf="math" data-say="Yesterday and tomorrow" aria-label="Yesterday and tomorrow"><span class="kid-pic" aria-hidden="true">&#128197;</span></a><div class="k-ministops" data-mini-path="cal"></div></div>
+        <div class="kid-game" data-game="hundred"><a class="kid-btn kid-act" href="kinder.html?a=hundred" data-act="hundred" data-shelf="math" data-say="Missing number" aria-label="Missing number"><span class="kid-pic" aria-hidden="true">&#128175;</span></a><div class="k-ministops" data-mini-path="hundred"></div></div>
+        <div class="kid-game" data-game="push"><a class="kid-btn kid-act" href="kinder.html?a=push" data-act="push" data-shelf="move" data-say="Push or pull" aria-label="Push or pull"><span class="kid-pic" aria-hidden="true">&#128682;</span></a><div class="k-ministops" data-mini-path="push"></div></div>
+      </div>
+      <div id="kid-starpath" class="k-starpath" role="group" aria-label="Your stars" hidden></div>
+      <div id="kid-stickers" class="kid-stickers" role="group" aria-label="Your stickers" hidden></div>
     </div>
     <div id="kid-money" class="kid-money" role="group" aria-label="Money activities" hidden></div>
-    <div id="kid-starpath" class="k-starpath" role="group" aria-label="Your star path" hidden></div>
-    <div id="kid-stickers" class="kid-stickers" role="group" aria-label="Your stickers" hidden></div>
     <div class="kid-buttons">
       <button type="button" class="kid-btn" id="hear" aria-label="Hear it again">
         <span class="kid-pic" aria-hidden="true">&#128266;</span>
