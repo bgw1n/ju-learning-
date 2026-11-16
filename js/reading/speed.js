@@ -1,5 +1,6 @@
 /* reading/speed.js - Reading Speed.
    Pick a passage, flash one word at a time (red focus letter), then a one-minute read-aloud.
+   Each one waits for Ready, then a 3, 2, 1, Go! countdown. Words and the 60-second clock stay still until Go.
    The grown-up taps missed words. The timer never stops for those taps.
    When the minute ends, or she finishes early, the grown-up taps the last word she read.
    Score = words up to that word, minus the red ones. An early finish scales to one minute.
@@ -8,6 +9,34 @@
   const h = JU.ui.h;
   let currentPassage = null;
   JU.reading.current = function () { return currentPassage; };
+
+  function countMs() {
+    const n = window.__JU_RS_COUNT_MS;
+    return (typeof n === 'number' && n >= 0) ? n : 1000;
+  }
+  /* A tiny beep on each count. Optional: if the browser blocks sound, the numbers still show. */
+  function countBeep(go) {
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      const ctx = JU._countAudio || (JU._countAudio = new Ctx());
+      if (ctx.state === 'suspended') ctx.resume();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.value = go ? 880 : 620;
+      g.gain.setValueAtTime(0.05, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.09);
+      o.connect(g);
+      g.connect(ctx.destination);
+      o.start();
+      o.stop(ctx.currentTime + 0.09);
+    } catch (e) { /* the countdown still works without a beep */ }
+  }
+  function countBox() {
+    return h('div', { class: 'rs-count', id: 'rs-count', hidden: true, 'data-step': '' },
+      h('div', { class: 'rs-count-num', id: 'rs-count-num' }, '3'));
+  }
 
   function latestRound(rounds) {
     let best = null;
@@ -127,7 +156,6 @@
         currentPassage = passage;
         const tokens = passage.tokens;
         let index = 0;
-        let paused = false;
         let dirty = false;
         let alive = true;
         let timer = 0;
@@ -147,12 +175,14 @@
             h('div', { class: 'rs-bar', id: 'rs-bar' }, fillEl)));
         const backBtn = h('button', { class: 'btn', type: 'button', id: 'rs-back' }, '\u27F2 Back a phrase');
         const pauseBtn = h('button', { class: 'btn primary', type: 'button', id: 'rs-pause' }, 'Pause');
+        const readyBtn = h('button', { class: 'btn primary rs-ready', type: 'button', id: 'rs-ready' }, 'Ready');
+        const countEl = countBox();
         const nudge = h('div', { class: 'rs-nudge', id: 'rs-nudge', hidden: true });
         const speedNum = h('span', { id: 'rs-speed-num' }, String(wpm));
         const slider = h('input', { type: 'range', id: 'rs-wpm', min: '40', max: '200', step: '5', value: String(wpm), 'aria-label': 'Speed in words per minute, 40 to 200' });
         const toRead = h('button', { class: 'btn', type: 'button', id: 'rs-to-read' }, 'Start read-aloud');
         const toPassages = h('button', { class: 'btn', type: 'button', id: 'rs-to-passages' }, 'Passages');
-        const root = h('div', { class: 'rs-screen rs-flash', id: 'rs-flash', 'data-paused': '0' },
+        const root = h('div', { class: 'rs-screen rs-flash', id: 'rs-flash', 'data-paused': '0', 'data-phase': 'ready', 'data-counting': '0' },
           h('div', { class: 'rs-flash-top' },
             h('div', { class: 'rs-hud-bit' }, h('span', { class: 'rs-hud-l' }, 'Passage'), h('span', { class: 'rs-hud-v rs-hud-title' }, passage.title)),
             h('div', { class: 'rs-flash-name' },
@@ -168,8 +198,11 @@
                 h('label', { for: 'rs-wpm' }, '40'),
                 slider,
                 h('label', { class: 'end' }, '200'))),
-            h('div', { class: 'rs-ctrl rs-ctrl-end' }, pauseBtn, nudge, toRead)));
+            h('div', { class: 'rs-ctrl rs-ctrl-end' }, pauseBtn, readyBtn, nudge, toRead)),
+          countEl);
 
+        let gate = 'ready';
+        let countTimer = 0;
         function waitMs() {
           const factor = (typeof window.__JU_RS_FLASH_FACTOR === 'number') ? window.__JU_RS_FLASH_FACTOR : 1;
           return Math.max(0, Math.round(JU.reading.delayMs(tokens[index] || '', wpm) * factor));
@@ -198,34 +231,70 @@
           posEl.textContent = 'Word ' + n + ' of ' + total;
           pctEl.textContent = pct + '% through';
           fillEl.style.width = pct + '%';
-          stateEl.textContent = paused ? 'Paused' : '';
-          pauseBtn.textContent = paused ? '\u25B6 Resume' : '\u275A\u275A Pause';
-          root.dataset.paused = paused ? '1' : '0';
+          stateEl.textContent = gate === 'pause' ? 'Paused' : (gate === 'ready' ? 'Tap Ready' : '');
+          pauseBtn.hidden = gate === 'ready' || gate === 'count';
+          readyBtn.hidden = gate !== 'ready';
+          pauseBtn.textContent = gate === 'pause' ? '\u25B6 Resume' : '\u275A\u275A Pause';
+          root.dataset.paused = gate === 'pause' ? '1' : '0';
+          root.dataset.phase = gate;
+          root.dataset.counting = gate === 'count' ? '1' : '0';
           paintSpeed();
         }
         function arm() {
           clearTimeout(timer);
-          if (!alive || paused) return;
+          if (!alive || gate !== 'run') return;
           timer = setTimeout(() => {
-            if (!alive || paused) return;
+            if (!alive || gate !== 'run') return;
             if (index >= tokens.length - 1) { finishRun(); return; }
             index += 1;
             paint();
             arm();
           }, waitMs());
         }
-        function togglePause() {
-          if (!alive) return;
-          paused = !paused;
-          if (paused) dirty = true;
+        function showCount(steps, onDone) {
+          clearTimeout(countTimer);
+          gate = 'count';
           paint();
-          if (paused) clearTimeout(timer);
-          else arm();
+          let i = 0;
+          function step() {
+            if (!alive || !root.isConnected || gate !== 'count') return;
+            if (i >= steps.length) {
+              countEl.hidden = true;
+              onDone();
+              return;
+            }
+            const label = steps[i];
+            countEl.hidden = false;
+            countEl.dataset.step = label;
+            countEl.querySelector('.rs-count-num').textContent = label;
+            countBeep(label === 'Go!');
+            i += 1;
+            countTimer = setTimeout(step, countMs());
+          }
+          step();
+        }
+        function beginRun() {
+          if (!alive) return;
+          gate = 'run';
+          paint();
+          arm();
+        }
+        function togglePause() {
+          if (!alive || gate === 'ready' || gate === 'count') return;
+          if (gate === 'run') {
+            gate = 'pause';
+            dirty = true;
+            clearTimeout(timer);
+            paint();
+            return;
+          }
+          showCount(['3', '2', '1'], beginRun);
         }
         function finishRun() {
           if (!alive) return;
           alive = false;
           clearTimeout(timer);
+          clearTimeout(countTimer);
           JU.reading.flash = null;
           const clean = !dirty;
           if (clean) {
@@ -251,40 +320,44 @@
             h('div', { class: 'row' }, read, again, back)));
           read.focus();
         }
-        card.addEventListener('click', () => togglePause());
+        card.addEventListener('click', () => { if (gate === 'run' || gate === 'pause') togglePause(); });
         card.addEventListener('keydown', e => {
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePause(); }
         });
         pauseBtn.addEventListener('click', e => { e.stopPropagation(); togglePause(); });
+        readyBtn.addEventListener('click', e => {
+          e.stopPropagation();
+          if (!alive || gate !== 'ready') return;
+          showCount(['3', '2', '1', 'Go!'], beginRun);
+        });
         backBtn.addEventListener('click', () => {
-          if (!alive) return;
+          if (!alive || gate === 'ready' || gate === 'count') return;
           dirty = true;
           index = JU.reading.phraseBack(tokens, index);
           paint();
-          arm();
+          if (gate === 'run') arm();
         });
         slider.addEventListener('input', () => {
           wpm = JU.reading.snapWpm(slider.value, wpm);
           slider.value = String(wpm);
           paintSpeed();
           remember({ flashWpm: wpm, smoothStreak: streak, smoothAt: smoothAt });
-          arm();
+          if (gate === 'run') arm();
         });
-        toRead.addEventListener('click', () => { alive = false; clearTimeout(timer); JU.reading.flash = null; showRead(passage); });
-        toPassages.addEventListener('click', () => { alive = false; clearTimeout(timer); JU.reading.flash = null; showPicker(); });
+        toRead.addEventListener('click', () => { alive = false; clearTimeout(timer); clearTimeout(countTimer); JU.reading.flash = null; showRead(passage); });
+        toPassages.addEventListener('click', () => { alive = false; clearTimeout(timer); clearTimeout(countTimer); JU.reading.flash = null; showPicker(); });
 
         JU.reading.flash = {
           jump(i) {
-            if (!alive) return;
+            if (!alive || gate === 'count') return;
             index = Math.max(0, Math.min(tokens.length - 1, i | 0));
             paint();
-            arm();
+            if (gate === 'run') arm();
           },
           index() { return index; }
         };
         stage.replaceChildren(root);
         paint();
-        arm();
       }
 
       function showRead(passage) {
@@ -292,20 +365,24 @@
         JU.reading.flash = null;
         const tokens = passage.tokens;
         const misses = new Set();
-        let phase = 'mark';
+        let phase = 'wait';
         let chosen = false;
         let scoreMs = JU.reading.READ_MS;
         let early = false;
-        const t0 = Date.now();
+        let t0 = 0;
         let tickTimer = 0;
+        let countTimer = 0;
+        let live = true;
         function limit() {
           const n = window.__JU_RS_READ_MS;
           return (typeof n === 'number' && n > 0) ? n : JU.reading.READ_MS;
         }
         const timeEl = h('span', { class: 'rs-hud-v rs-time', id: 'rs-time' }, '1:00');
-        const prompt = h('div', { class: 'rs-end-prompt', id: 'rs-prompt' }, 'She keeps reading. Tap a missed word.');
+        const prompt = h('div', { class: 'rs-end-prompt', id: 'rs-prompt' }, 'Tap Ready. She starts after Go.');
         const hint = h('p', { class: 'rs-end-hint', id: 'rs-end-hint' }, 'The timer does not stop when you tap a word. Tap again to undo a red word. Score = words read up to the last word, minus the red ones.');
-        const done = h('button', { class: 'btn primary', type: 'button', id: 'rs-done' }, 'Done');
+        const done = h('button', { class: 'btn primary', type: 'button', id: 'rs-done', hidden: true }, 'Done');
+        const ready = h('button', { class: 'btn primary rs-ready', type: 'button', id: 'rs-ready' }, 'Ready');
+        const countEl = countBox();
         const passageEl = h('div', { class: 'rs-passage', id: 'rs-passage' });
         passage.paras.forEach(para => {
           const p = h('p', null);
@@ -323,6 +400,44 @@
           timeEl.textContent = m + ':' + (r < 10 ? '0' : '') + r;
           timeEl.classList.toggle('low', s <= 10 && phase === 'mark');
           timeEl.setAttribute('aria-label', s + ' seconds left');
+        }
+        function showCount(steps, onDone) {
+          clearTimeout(countTimer);
+          phase = 'count';
+          root.dataset.phase = 'count';
+          root.dataset.counting = '1';
+          ready.hidden = true;
+          prompt.textContent = 'Get ready.';
+          let i = 0;
+          function step() {
+            if (!live || !root.isConnected || phase !== 'count') return;
+            if (i >= steps.length) {
+              countEl.hidden = true;
+              root.dataset.counting = '0';
+              onDone();
+              return;
+            }
+            const label = steps[i];
+            countEl.hidden = false;
+            countEl.dataset.step = label;
+            countEl.querySelector('.rs-count-num').textContent = label;
+            countBeep(label === 'Go!');
+            i += 1;
+            countTimer = setTimeout(step, countMs());
+          }
+          step();
+        }
+        function startClock() {
+          if (!live || phase === 'mark') return;
+          phase = 'mark';
+          root.dataset.phase = 'mark';
+          root.dataset.running = '1';
+          root.dataset.counting = '0';
+          t0 = Date.now();
+          done.hidden = false;
+          ready.hidden = true;
+          prompt.textContent = 'She keeps reading. Tap a missed word.';
+          tickTimer = setInterval(tick, 100);
         }
         function tick() {
           if (phase !== 'mark') return;
@@ -392,7 +507,7 @@
           }
         });
         done.addEventListener('click', () => finishClock(true));
-        const root = h('div', { class: 'rs-screen rs-read', id: 'rs-read', 'data-passage': passage.id },
+        const root = h('div', { class: 'rs-screen rs-read', id: 'rs-read', 'data-passage': passage.id, 'data-running': '0', 'data-counting': '0', 'data-phase': 'wait' },
           h('div', { class: 'rs-read-hud' },
             h('div', null,
               h('div', { class: 'rs-kicker' }, 'Read-aloud check'),
@@ -405,13 +520,19 @@
               h('div', { class: 'rs-end-kicker' }, 'When she stops'),
               h('h3', null, 'Next step'),
               prompt,
+              ready,
               done,
-              hint)));
+              hint)),
+          countEl);
+        ready.addEventListener('click', () => {
+          if (!live || phase !== 'wait') return;
+          showCount(['3', '2', '1', 'Go!'], startClock);
+        });
         stage.replaceChildren(root);
         paintTime(limit());
         timeEl.dataset.elapsed = '0';
         timeEl.dataset.stopped = '0';
-        tickTimer = setInterval(tick, 100);
+        timeEl.dataset.early = '0';
       }
 
       function showResults(passage, sc, early, scoreMs, isNew, roundId) {

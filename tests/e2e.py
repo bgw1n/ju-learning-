@@ -788,6 +788,17 @@ def passage_tokens(text):
 def norm_tok(token):
     return re.sub(r'^[^a-z0-9]+|[^a-z0-9]+$', '', token.lower())
 
+def rs_go(page, timeout=8000):
+    """Tap Ready and wait until the countdown has finished."""
+    page.wait_for_selector('#rs-ready:not([hidden])')
+    page.click('#rs-ready')
+    page.wait_for_function("""() => {
+      const flash = document.getElementById('rs-flash');
+      if (flash) return flash.dataset.phase === 'run';
+      const read = document.getElementById('rs-read');
+      return !!(read && read.dataset.running === '1');
+    }""", timeout=timeout)
+
 def rs_overflow(page, label):
     over = page.evaluate("() => document.documentElement.scrollWidth - document.documentElement.clientWidth")
     check(over <= 1, label + ' fits without sideways scrolling (%s px)' % over)
@@ -873,9 +884,24 @@ def reading_speed(br):
     page.click('#rs-to-passages')
     page.wait_for_selector('#rs-picker')
 
-    page.evaluate('window.__JU_RS_FLASH_FACTOR = 30')
+    page.evaluate('window.__JU_RS_FLASH_FACTOR = 30; window.__JU_RS_COUNT_MS = 500')
     page.click('.rs-pcard[data-id="wolf-island"]')
-    page.wait_for_selector('#rs-word')
+    page.wait_for_selector('#rs-ready')
+    page.wait_for_timeout(400)
+    waiting = page.evaluate("""() => ({
+      i: document.getElementById('rs-word').dataset.i,
+      phase: document.getElementById('rs-flash').dataset.phase
+    })""")
+    check(waiting['i'] == '0' and waiting['phase'] == 'ready', 'reading: flash waits on Ready and the first word stays put')
+    page.click('#rs-ready')
+    page.wait_for_selector('#rs-count:not([hidden])')
+    counting = page.evaluate("""() => ({
+      step: document.getElementById('rs-count').dataset.step,
+      i: document.getElementById('rs-word').dataset.i,
+      phase: document.getElementById('rs-flash').dataset.phase
+    })""")
+    check(counting['step'] in ('3', '2', '1', 'Go!') and counting['i'] == '0' and counting['phase'] == 'count', 'reading: words do not advance during the flash countdown (%s)' % counting)
+    page.wait_for_function("() => document.getElementById('rs-flash').dataset.phase === 'run'", timeout=8000)
     flash = page.evaluate("""() => {
       const word = document.getElementById('rs-word');
       const token = JU.reading.current().tokens[Number(word.dataset.i)];
@@ -900,6 +926,13 @@ def reading_speed(br):
     page.click('#rs-back')
     page.wait_for_function("() => Number(document.getElementById('rs-word').dataset.i) < 18")
     check(page.get_attribute('#rs-flash', 'data-paused') == '1', 'reading: back a phrase moves earlier and stays paused')
+    held_i = page.get_attribute('#rs-word', 'data-i')
+    page.click('#rs-pause')
+    page.wait_for_selector('#rs-count:not([hidden])')
+    page.wait_for_timeout(200)
+    check(page.get_attribute('#rs-flash', 'data-counting') == '1' and page.get_attribute('#rs-word', 'data-i') == held_i, 'reading: resume counts 3, 2, 1 before the word moves')
+    page.wait_for_function("() => document.getElementById('rs-flash').dataset.phase === 'run'", timeout=8000)
+    page.evaluate('window.__JU_RS_COUNT_MS = 0')
     page.evaluate("""() => {
       const s = document.getElementById('rs-wpm');
       s.value = '75';
@@ -910,18 +943,28 @@ def reading_speed(br):
     page.wait_for_selector('#rs-picker')
     page.evaluate('window.__JU_RS_FLASH_FACTOR = 0')
     page.click('.rs-pcard[data-id="wolf-island"]')
+    rs_go(page)
     page.wait_for_selector('#rs-flash-done', timeout=45000)
     check('Smooth!' in page.inner_text('#rs-flash-done') and page.locator('#rs-nudge:not([hidden])').count() == 0, 'reading: one smooth flash does not suggest a faster speed yet')
     page.click('#rs-flash-again')
+    rs_go(page)
     page.wait_for_selector('#rs-flash-done', timeout=45000)
     check('80' in page.inner_text('#rs-nudge') and page.locator('#rs-nudge:not([hidden])').count() == 1, 'reading: two smooth flashes suggest 5 wpm faster')
     page.evaluate('window.__JU_RS_FLASH_FACTOR = 30')
     page.click('#rs-flash-again')
     page.wait_for_selector('#rs-flash')
     check('80' in page.inner_text('#rs-nudge'), 'reading: the suggestion is waiting on the next flash')
-    page.evaluate('window.__JU_RS_Q_MS = 0')
+    page.evaluate('window.__JU_RS_Q_MS = 0; window.__JU_RS_COUNT_MS = 500')
     page.click('#rs-to-read')
     page.wait_for_selector('#rs-read')
+    page.wait_for_selector('#rs-ready')
+    page.wait_for_timeout(400)
+    check(page.inner_text('#rs-time') == '1:00' and page.get_attribute('#rs-time', 'data-elapsed') == '0' and page.get_attribute('#rs-read', 'data-running') == '0', 'reading: the 60-second clock stays at 1:00 until Ready')
+    page.click('#rs-ready')
+    page.wait_for_selector('#rs-count:not([hidden])')
+    check(page.inner_text('#rs-time') == '1:00' and page.get_attribute('#rs-time', 'data-elapsed') == '0' and page.get_attribute('#rs-read', 'data-running') == '0', 'reading: the clock stays at 1:00 during the countdown')
+    page.wait_for_function("() => document.getElementById('rs-read').dataset.running === '1'", timeout=8000)
+    page.evaluate('window.__JU_RS_COUNT_MS = 0')
     page.wait_for_function("() => Number(document.getElementById('rs-time').dataset.elapsed) > 200")
     e1 = int(page.get_attribute('#rs-time', 'data-elapsed'))
     page.click('.rs-tok[data-i="4"]')
@@ -1035,10 +1078,11 @@ def reading_speed(br):
     page.wait_for_url('**/child.html')
     page.goto(BASE + 'game.html?s=reading&g=speed')
     page.wait_for_selector('#rs-picker')
-    page.evaluate('window.__JU_RS_READ_MS = 700; window.__JU_RS_FLASH_FACTOR = 30')
+    page.evaluate('window.__JU_RS_READ_MS = 700; window.__JU_RS_FLASH_FACTOR = 30; window.__JU_RS_COUNT_MS = 0')
     page.click('.rs-pcard[data-id="wolf-island"]')
     page.wait_for_selector('#rs-to-read')
     page.click('#rs-to-read')
+    rs_go(page)
     page.wait_for_function("() => document.getElementById('rs-time') && document.getElementById('rs-time').dataset.stopped === '1'", timeout=8000)
     check(page.locator('#rs-results').count() == 0 and 'Time' in page.inner_text('#rs-prompt'), 'reading: a finished minute asks for the last word before it scores')
     page.click('.rs-tok[data-i="10"]')
@@ -1074,8 +1118,16 @@ def reading_speed(br):
         pg.wait_for_url('**/child.html')
         pg.goto(BASE + 'game.html?s=reading&g=speed')
         pg.wait_for_selector('#rs-picker')
-        pg.evaluate('window.__JU_RS_FLASH_FACTOR = 40; window.__JU_RS_Q_MS = 0')
+        pg.evaluate('window.__JU_RS_FLASH_FACTOR = 40; window.__JU_RS_Q_MS = 0; window.__JU_RS_COUNT_MS = %s' % ('1000' if tag == 'phone' else '0'))
         pg.click('.rs-pcard[data-id="wolf-island"]')
+        pg.wait_for_selector('#rs-ready')
+        pg.click('#rs-ready')
+        if tag == 'phone':
+            pg.wait_for_selector('#rs-count:not([hidden])')
+            pg.evaluate('window.scrollTo(0,0)')
+            rs_overflow(pg, 'reading phone countdown')
+            save_shot(pg, 'rs-count-flash-phone.png')
+        pg.wait_for_function("() => document.getElementById('rs-flash').dataset.phase === 'run'", timeout=8000)
         pg.wait_for_selector('#rs-word')
         jumped = pg.evaluate("""() => {
           const tokens = JU.reading.current().tokens;
@@ -1091,6 +1143,14 @@ def reading_speed(br):
         save_shot(pg, 'rs-flash-%s.png' % tag)
         pg.click('#rs-to-read')
         pg.wait_for_selector('#rs-passage')
+        pg.wait_for_selector('#rs-ready')
+        pg.click('#rs-ready')
+        if tag == 'phone':
+            pg.wait_for_selector('#rs-count:not([hidden])')
+            check(pg.inner_text('#rs-time') == '1:00', 'reading: phone countdown still shows 1:00')
+            pg.evaluate('window.scrollTo(0,0)')
+            save_shot(pg, 'rs-count-read-phone.png')
+        pg.wait_for_function("() => document.getElementById('rs-read').dataset.running === '1'", timeout=8000)
         ids = pg.evaluate("""() => {
           const tokens = JU.reading.current().tokens;
           const n = JU.reading.normWord;

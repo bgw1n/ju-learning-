@@ -1,5 +1,9 @@
 # Changelog
 
+## v19.1 (preview, not published)
+- **Countdown.** Flash practice and the one-minute read-aloud wait for a Ready tap, then a big 3, 2, 1, Go! The words stay put, and the 60-second clock stays at 1:00, until Go. Resuming a paused flash counts 3, 2, 1 before the words move again. A short beep marks each number when the browser allows it.
+- Preview, not published.
+
 ## v19 (published Nov 16, 2026)
 - **Reading Speed** for Julianna. A new tile on her games home, next to Math Fact Flash Cards. She picks an original animal-habitat passage (about 150 to 250 words, with three questions). Flash practice shows one word at a time, with the focus letter in red. The speed slider runs from 40 to 200 and remembers her last speed. A comma, a sentence end, or a long word gets a little extra pause. She can tap to pause and go back a phrase. After two smooth flashes, the game suggests 5 words per minute faster.
 - **One-minute read-aloud.** The passage is on the screen and the timer does not stop when a grown-up taps a missed word (tap again to undo). When the minute ends, or she finishes early, the grown-up taps the last word she read. The score is words read up to that word, minus the red ones. An early finish scales to one minute. Accuracy is shown too. Then the three comprehension questions.
