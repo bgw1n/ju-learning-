@@ -299,7 +299,7 @@ def kinder_nov16(br):
     check(page.locator('#kid-hello').is_visible() and page.locator('#hear').is_visible() and page.locator('#bye').is_visible(), 'home keeps the greeting, hear-again, and bye')
     check(not page.locator('#kid-kinder [data-act="hundred"]').is_visible(), 'home does not list every game')
     check(page.locator('#kid-starpath').is_hidden(), 'home does not show the star list')
-    save_shot(page, 'kinder_home_phone.png', 'main.kid-home')
+    save_shot(page, 'kinder_home_icons.png', 'main.kid-home')
 
     page.click('[data-open="reading"]')
     page.wait_for_url('**g=reading**')
@@ -310,7 +310,7 @@ def kinder_nov16(br):
     for act in ['hundred', 'count', 'push']:
         check(not page.locator('.kid-game[data-game="%s"]' % act).is_visible(), 'reading shelf hides ' + act)
     check(page.locator('#kid-starpath').is_hidden(), 'reading shelf is not the long star list')
-    save_shot(page, 'kinder_reading_phone.png', 'main.kid-home')
+    save_shot(page, 'kinder_reading_icons.png', 'main.kid-home')
     page.click('[data-say="Home"]')
     page.wait_for_selector('#kid-pick:not([hidden])')
 
@@ -320,7 +320,7 @@ def kinder_nov16(br):
         check(page.locator('.kid-game[data-game="%s"]' % act).is_visible(), 'math shelf shows ' + act)
         check(page.locator('[data-mini-path="%s"] .k-stop' % act).count() >= 1, 'math stars sit with ' + act)
     check(not page.locator('.kid-game[data-game="sight"]').is_visible(), 'math shelf hides reading games')
-    save_shot(page, 'kinder_math_phone.png', 'main.kid-home')
+    save_shot(page, 'kinder_math_icons.png', 'main.kid-home')
 
     page.goto(BASE + 'dorian.html?g=move')
     page.wait_for_selector('.kid-game[data-game="push"]:not([hidden])')
@@ -331,7 +331,7 @@ def kinder_nov16(br):
     for act in ['rsort', 'who', 'sort', 'graph', 'cal', 'hundred', 'push', 'take', 'sight']:
         check(page.locator('#kid-starpath [data-path="%s"]' % act).count() == 1, 'stars view keeps ' + act)
     check(not page.locator('.kid-game[data-game="hundred"]').is_visible(), 'stars view is the path, not the game tiles')
-    save_shot(page, 'kinder_stars_phone.png', 'main.kid-home')
+    save_shot(page, 'kinder_stars_icons.png', 'main.kid-home')
     page.set_viewport_size({'width': 1024, 'height': 768})
 
     # Pure plans: 10 questions, unlock numbers, build -ug levels, sight focus.
